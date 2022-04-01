@@ -1,0 +1,3 @@
+- docker-compose -f docker/docker-compose-dev.yml up -d
+- yarn
+- yarn start:dev
