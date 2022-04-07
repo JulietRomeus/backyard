@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
-import { UserModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { UserModule } from './users/users.module';
       useClass: TypeOrmConfigService,
     }),
 
-    // Import User Module
+    // Modules
     UserModule,
   ],
 })
