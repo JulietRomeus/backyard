@@ -1,5 +1,5 @@
 import { User } from '../../entitys/user.entity';
-export interface IGetUserResponse {
+export interface GetUserResponse {
   status: number;
   message: string;
   data: User | User[] | null;

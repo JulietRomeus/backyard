@@ -1,15 +1,39 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { IGetUserResponse } from './interfaces/response/find-user-response.interface.ts';
+import { CreateUserBodyDto } from './interfaces/body/create-user-body.dto';
+import { GetUserResponse } from './interfaces/response/get-user-response.interface.ts';
 import { UserService } from './user.services';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  /* ------------------------------- Create User ------------------------------ */
+  @MessagePattern('CREATE_USER')
+  public async createUser(user: CreateUserBodyDto): Promise<GetUserResponse> {
+    try {
+      const result = await this.userService.createUser(user);
+      return {
+        status: HttpStatus.CREATED,
+        message: 'CREATE_USER_OK',
+        data: result,
+        errors: null,
+        timestamp: new Date().toISOString(),
+      };
+    } catch (e) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'CREATE_USER_BAD_REQUEST',
+        data: null,
+        errors: [{ code: HttpStatus.BAD_REQUEST, message: e.message || '' }],
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
   /* -------------------------------- Get Users ------------------------------- */
   @MessagePattern('GET_USERS')
-  public async getUsers(): Promise<IGetUserResponse> {
+  public async getUsers(): Promise<GetUserResponse> {
     try {
       const result = await this.userService.getUsers();
       return {
@@ -36,7 +60,7 @@ export class UserController {
   @MessagePattern('GET_USER_BY_UUID')
   public async getUserByUuid(params: {
     uuid: string;
-  }): Promise<IGetUserResponse> {
+  }): Promise<GetUserResponse> {
     try {
       const result = await this.userService.getUserByUuid(params.uuid);
       return {

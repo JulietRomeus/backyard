@@ -1,7 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { User } from 'src/user/entitys/user.entity';
-import { IGetUserResponse } from 'src/user/interfaces/response/find-user-response.interface.ts';
 import { TypeORMError } from 'typeorm';
 
 @Catch(RpcException)
