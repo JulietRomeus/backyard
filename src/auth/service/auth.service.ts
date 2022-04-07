@@ -1,38 +1,38 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entitys/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from './jwt.service';
-import { Auth } from '../entity/auth.entity';
 
 @Injectable()
 export class AuthService {
-  @InjectRepository(Auth)
-  private readonly repository: Repository<Auth>;
+  @InjectRepository(User)
+  private readonly repository: Repository<User>;
 
   @Inject(JwtService)
   private readonly jwtService: JwtService;
 
   public async register({ email, password }: any): Promise<any> {
-    let auth: Auth = await this.repository.findOne({ where: { email } });
+    let user: User = await this.repository.findOne({ where: { email } });
 
-    if (auth) {
+    if (user) {
       return { status: HttpStatus.CONFLICT, error: ['E-Mail already exists'] };
     }
 
-    auth = new Auth();
+    user = new User();
 
-    auth.email = email;
-    auth.password = this.jwtService.encodePassword(password);
+    user.email = email;
+    user.password = this.jwtService.encodePassword(password);
 
-    await this.repository.save(auth);
+    await this.repository.save(user);
 
     return { status: HttpStatus.CREATED, error: null };
   }
 
   public async login({ email, password }: any): Promise<any> {
-    const auth: Auth = await this.repository.findOne({ where: { email } });
+    const user: User = await this.repository.findOne({ where: { email } });
 
-    if (!auth) {
+    if (!user) {
       return {
         status: HttpStatus.NOT_FOUND,
         error: ['E-Mail not found'],
@@ -42,7 +42,7 @@ export class AuthService {
 
     const isPasswordValid: boolean = this.jwtService.isPasswordValid(
       password,
-      auth.password,
+      user.password,
     );
 
     if (!isPasswordValid) {
@@ -53,28 +53,28 @@ export class AuthService {
       };
     }
 
-    const token: string = this.jwtService.generateToken(auth);
+    const token: string = this.jwtService.generateToken(user);
 
     return { token, status: HttpStatus.OK, error: null };
   }
 
   public async googleLogin({ email }: any): Promise<any> {
-    const auth: Auth = await this.repository.findOne({ where: { email } });
+    const user: User = await this.repository.findOne({ where: { email } });
 
-    if (!auth) {
+    if (!user) {
       return {
         status: HttpStatus.NOT_FOUND,
         error: ['E-Mail not found'],
         token: null,
       };
     }
-    const token: string = this.jwtService.generateToken(auth);
+    const token: string = this.jwtService.generateToken(user);
 
     return { token, status: HttpStatus.OK, error: null };
   }
 
   public async validate({ token }: any): Promise<any> {
-    const decoded: Auth = await this.jwtService.verify(token);
+    const decoded: User = await this.jwtService.verify(token);
 
     if (!decoded) {
       return {
@@ -84,9 +84,9 @@ export class AuthService {
       };
     }
 
-    const auth: Auth = await this.jwtService.validateUser(decoded);
+    const user: User = await this.jwtService.validateUser(decoded);
 
-    if (!auth) {
+    if (!user) {
       return {
         status: HttpStatus.CONFLICT,
         error: ['User not found'],
@@ -94,6 +94,6 @@ export class AuthService {
       };
     }
 
-    return { status: HttpStatus.OK, error: null, userId: decoded.id };
+    return { status: HttpStatus.OK, error: null, userId: decoded.uuid };
   }
 }

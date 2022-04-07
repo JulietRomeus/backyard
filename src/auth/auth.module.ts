@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/user/entitys/user.entity';
 import { AuthController } from './auth.controller';
-import { Auth } from './entity/auth.entity';
 import { AuthService } from './service/auth.service';
 import { JwtService } from './service/jwt.service';
 import { JwtStrategy } from './strategy/jwt.strategy';
@@ -13,7 +13,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
       secret: 'dev',
       signOptions: { expiresIn: '365d' },
     }),
-    TypeOrmModule.forFeature([Auth]),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtService, JwtStrategy],

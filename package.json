@@ -24,12 +24,12 @@
     "migration:revert": "yarn run typeorm migration:revert"
   },
   "dependencies": {
-    "@nestjs/common": "^8.0.0",
-    "@nestjs/config": "^2.0.0",
-    "@nestjs/core": "^8.0.0",
     "@apollo/federation": "^0.36.0",
     "@apollo/subgraph": "^0.4.0",
     "@nestjs/apollo": "^10.0.8",
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.0.0",
+    "@nestjs/core": "^8.0.0",
     "@nestjs/graphql": "^10.0.8",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/mapped-types": "*",
@@ -44,6 +44,7 @@
     "class-validator": "^0.13.2",
     "graphql": "15.7.2",
     "kafkajs": "^1.16.0",
+    "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
