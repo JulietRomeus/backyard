@@ -24,13 +24,9 @@
     "migration:revert": "yarn run typeorm migration:revert"
   },
   "dependencies": {
-    "@apollo/federation": "^0.36.0",
-    "@apollo/subgraph": "^0.4.0",
-    "@nestjs/apollo": "^10.0.8",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/graphql": "^10.0.8",
     "@nestjs/microservices": "^8.4.3",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
