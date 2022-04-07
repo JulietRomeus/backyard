@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
 import { PositionModule } from './position/position.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,7 +13,6 @@ import { UserModule } from './user/user.module';
       envFilePath: '.env.dev',
       isGlobal: true,
     }),
-
     // Import Postgres Connection Service
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
@@ -21,6 +21,7 @@ import { UserModule } from './user/user.module';
     // Modules
     UserModule,
     PositionModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Position } from 'src/position/entitys/position.entity';
 import { User } from 'src/user/entitys/user.entity';
+import { Auth } from 'src/auth/entity/auth.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -11,7 +12,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     return {
       type: 'postgres',
       url: configService.get<string>('POSTGRES_SERVICE_URL'),
-      entities: [User, Position],
+      entities: [User, Position, Auth],
       migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
       cli: {
         migrationsDir: 'src/migrations',
