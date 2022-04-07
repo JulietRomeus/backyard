@@ -1,12 +1,8 @@
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
+import { PositionModule } from './position/position.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -24,6 +20,7 @@ import { UserModule } from './user/user.module';
 
     // Modules
     UserModule,
+    PositionModule,
   ],
 })
 export class AppModule {}
