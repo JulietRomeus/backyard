@@ -1,39 +1,25 @@
+import { Menu } from 'src/menu/entities/menu.entity';
 import { User } from 'src/user/entitys/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'position' })
-export class Position {
+@Entity({ name: 'role' })
+export class Role {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column()
+  @Column({ nullable: true })
   nameTh?: string;
 
   @Column()
   nameEn: string;
-
-  @Column()
-  abbreviation?: string;
-
-  @Column({ type: 'int' })
-  priority: number;
-
-  @Column()
-  iconUrl?: string;
-
-  @Column()
-  desc?: string;
-
-  @Column({ nullable: true })
-  test?: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -41,8 +27,10 @@ export class Position {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => User, (user) => user.positions)
+  @ManyToMany(() => User, (user) => user.roles)
   users: User[];
 
-  departmentUuid?: string;
+  @ManyToMany(() => Menu, (menu) => menu.roles)
+  @JoinTable()
+  menus: Menu[];
 }
