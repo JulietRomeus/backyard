@@ -1,6 +1,12 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import {
+  Controller,
+  UseFilters,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
+import { EventPattern, RpcException } from '@nestjs/microservices';
 import { AuthService } from './service/auth.service';
+import { AllExceptionsFilter } from './rpc-exception.filter';
 
 @Controller()
 export class AuthController {
@@ -20,8 +26,17 @@ export class AuthController {
   googleLogin(data: any) {
     return this.authService.googleLogin(data);
   }
+
+  @UseFilters(new AllExceptionsFilter())
   @EventPattern({ cmd: 'validate' })
   validate(payload: any): Promise<any> {
-    return this.authService.validate(payload);
+    throw new RpcException({
+      status: HttpStatus.BAD_REQUEST,
+      message: 'GET_USER_BY_UUID_BAD_REQUEST',
+      data: null,
+      errors: [{ code: HttpStatus.BAD_REQUEST, message: '' }],
+      timestamp: new Date().toISOString(),
+    });
+    // return this.authService.validate(payload);
   }
 }
