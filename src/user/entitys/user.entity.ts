@@ -1,4 +1,5 @@
 import { Position } from 'src/position/entitys/position.entity';
+import { Role } from 'src/role/entities/role.entity';
 import {
   Column,
   CreateDateColumn,
@@ -55,4 +56,8 @@ export class User {
   @ManyToMany(() => Position, (position) => position.users)
   @JoinTable()
   positions: Position[];
+
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable()
+  roles: Role[];
 }

@@ -26,9 +26,7 @@ export class UserService {
   /* -------------------------------- Find All -------------------------------- */
   getUsers(): Promise<User[]> {
     return this.userRepository.find({
-      relations: {
-        positions: true,
-      },
+      relations: ['positions', 'roles', 'roles.menus'],
     });
   }
 
@@ -36,9 +34,7 @@ export class UserService {
   getUserByUuid(uuid: string) {
     return this.userRepository.findOne({
       where: { uuid: uuid },
-      relations: {
-        positions: true,
-      },
+      relations: ['positions', 'roles', 'roles.menus'],
     });
   }
 }
