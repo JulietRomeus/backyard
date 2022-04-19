@@ -1,6 +1,6 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entitys/user.entity';
+import { User } from 'src/modules/user/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from './jwt.service';
 

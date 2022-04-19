@@ -19,25 +19,21 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:generate": "yarn run typeorm migration:generate dist/migrations/migration_update -d dist/config/typeorm-config.migrations",
+    "migration:generate": "yarn run typeorm migration:generate dist/migrations/migration_update -d dist/config/typeorm-config.migrations.js",
     "migration:run": "yarn run typeorm migration:run",
     "migration:revert": "yarn run typeorm migration:revert"
   },
   "dependencies": {
-    "@apollo/federation": "^0.36.0",
-    "@apollo/subgraph": "^0.4.0",
-    "@nestjs/apollo": "^10.0.8",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/graphql": "^10.0.8",
+    "@nestjs/cqrs": "^8.0.3",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^8.4.3",
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
-    "apollo-server-express": "^3.6.7",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
@@ -50,7 +46,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.4"
+    "typeorm": "^0.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
