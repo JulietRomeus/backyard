@@ -3,10 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
-import { PositionModule } from './position/position.module';
-import { RoleModule } from './role/role.module';
-import { UserModule } from './user/user.module';
-import { MenuModule } from './menu/menu.module';
+import { MenuModule } from './modules/menu/menu.module';
 
 @Module({
   imports: [
