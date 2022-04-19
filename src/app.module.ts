@@ -12,15 +12,16 @@ import { MenuModule } from './menu/menu.module';
   imports: [
     // Import Config
     ConfigModule.forRoot({
-      envFilePath: '.env.dev',
+      envFilePath: '.env',
       isGlobal: true,
     }),
-    // Import Postgres Connection Service
+
+    // Import Postgres
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
 
-    // Modules
+    // Import Modules
     UserModule,
     PositionModule,
     AuthModule,
