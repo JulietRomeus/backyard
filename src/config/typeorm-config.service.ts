@@ -1,20 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { Menu } from 'src/menu/entities/menu.entity';
-import { Position } from 'src/position/entitys/position.entity';
-import { Role } from 'src/role/entities/role.entity';
-import { User } from 'src/user/entitys/user.entity';
+import { Department } from 'src/modules/department/department.entity';
+import { Menu } from 'src/modules/menu/menu.entity';
+import { Position } from 'src/modules/position/position.entity';
+import { Role } from 'src/modules/role/role.entity';
+import { User } from 'src/modules/user/user.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     const configService = new ConfigService();
+
     return {
       type: 'postgres',
-      url: configService.get<string>('POSTGRES_SERVICE_URL'),
-      entities: [User, Position, Role, Menu],
+      entities: [User, Position, Department, Role, Menu],
       migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
+      replication: {
+        master: {
+          host: configService.get<string>('BASE_URI'),
+          port: configService.get<number>('POSTGRES_MASTER_PORT'),
+          username: configService.get<string>('POSTGRES_USER'),
+          password: configService.get<string>('POSTGRES_PASSWORD'),
+          database: configService.get<string>('POSTGRES_DB'),
+        },
+        slaves: [
+          {
+            host: configService.get<string>('BASE_URI'),
+            port: configService.get<number>('POSTGRES_SLAVE_PORT'),
+            username: configService.get<string>('POSTGRES_USER'),
+            password: configService.get<string>('POSTGRES_PASSWORD'),
+            database: configService.get<string>('POSTGRES_DB'),
+          },
+        ],
+      },
       cli: {
         migrationsDir: 'src/migrations',
       },
