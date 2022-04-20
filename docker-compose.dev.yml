@@ -1,17 +1,5 @@
 version: "3"
 services:
-  rtarf-user-eventstore:
-    container_name: rtarf-user-eventstore
-    image: ghcr.io/eventstore/eventstore:20.6.1-alpha.0.69-arm64v8
-    ports:
-      - 2113:2113
-      - 1113:1113
-    environment:
-      - EVENTSTORE_RUN_PROJECTIONS=All
-      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
-      - EVENTSTORE_INSECURE=true
-    networks:
-      - backend
 
   rtarf-user-db-master:
     container_name: rtarf-user-db-master
@@ -27,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ./.data/master/postgres/dev/:/bitnami/postgresql
+      - .data/master/postgres/dev/:/bitnami/postgresql
     networks:
       - backend
 
@@ -35,6 +23,8 @@ services:
     container_name: rtarf-user-db-slave
     image: docker.io/bitnami/postgresql:14
     restart: always
+    depends_on:
+      - rtarf-user-db-master
     ports:
       - "${POSTGRES_SLAVE_PORT}:5432"
     environment:
@@ -45,6 +35,21 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - backend
+
+  rtarf-user-service:
+    container_name: 'rtarf-user-service'
+    build:
+      context: .
+    depends_on:
+      - rtarf-user-db-master
+      - rtarf-user-db-slave
+    restart: always
+    ports:
+      - "${USER_SERVICE_PORT}:3000"
+    env_file:
+      - .env
     networks:
       - backend
 

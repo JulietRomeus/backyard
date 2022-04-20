@@ -18,7 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
       replication: {
         master: {
-          host: configService.get<string>('BASE_URI'),
+          host: configService.get<string>('POSTGRES_MASTER_HOST'),
           port: configService.get<number>('POSTGRES_MASTER_PORT'),
           username: configService.get<string>('POSTGRES_USER'),
           password: configService.get<string>('POSTGRES_PASSWORD'),
@@ -26,7 +26,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         },
         slaves: [
           {
-            host: configService.get<string>('BASE_URI'),
+            host: configService.get<string>('POSTGRES_SLAVE_HOST'),
             port: configService.get<number>('POSTGRES_SLAVE_PORT'),
             username: configService.get<string>('POSTGRES_USER'),
             password: configService.get<string>('POSTGRES_PASSWORD'),
@@ -39,8 +39,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       },
 
       // enable schema sync in development mode
-      synchronize:
-        configService.get<string>('NODE_ENV') === 'development' ? true : false,
+      synchronize: true, // configService.get<string>('NODE_ENV') === 'development' ? true : false,
     };
   }
 }
