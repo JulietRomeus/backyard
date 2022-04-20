@@ -25,16 +25,25 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const context = ctx.getContext() as KafkaContext | TcpContext;
     const topic = context.getArgs()[1] || 'UNKNOWN';
 
-    console.log((exception as any).message);
-    const toSnakeCase = (str: string) => str.replace(' ', '_').toUpperCase();
+    const toSnakeCase = (str: string) => str.toUpperCase().replace(/ /g, '_');
     const isThrowHttpStatus = (e) => typeof e.getStatus === 'function';
 
-    let status = isThrowHttpStatus(exception)
-      ? (exception as any).getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
-    let message =
-      toSnakeCase((exception as any).message) || 'INTERNAL_SERVER_ERROR';
+    let status;
+    let message;
     let error = (exception as any).message;
+
+    if (isThrowHttpStatus(exception)) {
+      status = (exception as any).getStatus();
+      message = toSnakeCase((exception as any).message);
+    } else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      message = 'INTERNAL_SERVER_ERROR';
+    }
+    // let status = isThrowHttpStatus(exception)
+    //   ?
+    //   : HttpStatus.INTERNAL_SERVER_ERROR;
+    // let message =
+    //    || 'INTERNAL_SERVER_ERROR';
 
     switch (exception.constructor || exception.constructor.name) {
       /* ---------------------------- TypeOrmException ---------------------------- */

@@ -1,4 +1,9 @@
-import { Controller, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  HttpStatus,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { CreateUserDto } from '../user/interfaces/dtos/create-user.dto';
 import { UserService } from '../user/user.service';
@@ -33,6 +38,10 @@ export class AuthController {
   @MessagePattern('GET_USER_BY_ME')
   public async getUserByMe(payload): Promise<any> {
     const authentication = payload.authentication;
+
+    if (!authentication)
+      throw new UnauthorizedException('Authentication not found');
+
     const token = authentication.substring(7, authentication.length);
     const decode = (await this.authService.decodeToken(token)) as any;
 
