@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { RpcException, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
-import { TypeOrmExceptionFilter } from './filters/typeorm-exception.filter';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -12,7 +12,7 @@ async function bootstrap() {
     },
   });
 
-  app.useGlobalFilters(new TypeOrmExceptionFilter());
+  app.useGlobalFilters(new GlobalExceptionFilter());
   await app.listen();
 }
 bootstrap();
