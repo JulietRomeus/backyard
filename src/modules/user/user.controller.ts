@@ -1,13 +1,16 @@
 import {
   Controller,
   HttpStatus,
+  NotFoundException,
   Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { CreateUserDto } from './interfaces/dtos/create-user.dto';
+import { DeleteUserDto } from './interfaces/dtos/delete-user.dto';
 import { GetUserResponse } from './interfaces/dtos/get-user-response.interface.ts';
+import { UpdateUserDto } from './interfaces/dtos/update-user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -28,10 +31,30 @@ export class UserController {
   }
 
   /* ------------------------------- Update User ------------------------------ */
-  // TODO Update user
+  @MessagePattern('UPDATE_USER')
+  public async updateUser(payload: UpdateUserDto) {
+    const result = await this.userService.updateUser(payload);
+    return {
+      status: HttpStatus.OK,
+      message: 'UPDATE_USER_OK',
+      data: result,
+      errors: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
 
   /* ------------------------------- Delete User ------------------------------ */
-  // TODO Delete user
+  @MessagePattern('DELETE_USER')
+  public async deleteUser(payload: DeleteUserDto) {
+    const result = await this.userService.deleteUser(payload);
+    return {
+      status: HttpStatus.OK,
+      message: 'DELETE_USER_OK',
+      data: result,
+      errors: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
 
   /* -------------------------------- Get Users ------------------------------- */
   @MessagePattern('GET_USERS')
