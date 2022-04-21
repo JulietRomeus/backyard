@@ -2,10 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Department } from 'src/modules/department/department.entity';
-import { Menu } from 'src/modules/menu/menu.entity';
-import { Position } from 'src/modules/position/position.entity';
-import { Role } from 'src/modules/role/role.entity';
-import { User } from 'src/modules/user/user.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -14,7 +10,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
     return {
       type: 'postgres',
-      entities: [User, Position, Department, Role, Menu],
+      entities: [Department],
       migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
       replication: {
         master: {

@@ -1,3 +1,4 @@
+import { AbstractEntity } from 'src/common/entitys/abstract.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,13 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Position } from 'src/modules/position/position.entity';
-
 @Entity({ name: 'department' })
-export class Department {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Department extends AbstractEntity {
   @Column({ nullable: true })
   nameTh?: string;
 
@@ -39,13 +35,4 @@ export class Department {
     type: 'text',
   })
   desc?: string;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
-
-  @OneToMany(() => Position, (position) => position.department)
-  positions: Position[];
 }

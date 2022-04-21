@@ -2,10 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
-import { UserModule } from './modules/user/user.module';
-import { RoleModule } from './modules/role/role.module';
-import { MenuModule } from './modules/menu/menu.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { DepartmentModule } from './modules/department/department.module';
 
 @Module({
   imports: [
@@ -21,10 +18,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
 
     // Import Modules
-    UserModule,
-    RoleModule,
-    MenuModule,
-    AuthModule,
+    DepartmentModule,
   ],
 })
 export class AppModule {}

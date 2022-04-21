@@ -8,7 +8,7 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: '0.0.0.0',
-      port: process.env.USER_API_PORT || 3100,
+      port: process.env.MAIN_API_PORT || 3200,
     },
   });
 

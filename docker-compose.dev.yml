@@ -1,8 +1,8 @@
 version: "3"
 services:
 
-  rtarf-user-db-master:
-    container_name: rtarf-user-db-master
+  rtarf-main-db-master:
+    container_name: rtarf-main-db-master
     image: docker.io/bitnami/postgresql:14
     restart: always
     ports:
@@ -19,39 +19,38 @@ services:
     networks:
       - backend
 
-  rtarf-user-db-slave:
-    container_name: rtarf-user-db-slave
+  rtarf-main-db-slave:
+    container_name: rtarf-main-db-slave
     image: docker.io/bitnami/postgresql:14
     restart: always
     depends_on:
-      - rtarf-user-db-master
+      - rtarf-main-db-master
     ports:
       - "${POSTGRES_SLAVE_PORT}:5432"
     environment:
       - POSTGRESQL_REPLICATION_MODE=slave
       - POSTGRESQL_REPLICATION_USER=replicator
       - POSTGRESQL_REPLICATION_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRESQL_MASTER_HOST=rtarf-user-db-master
+      - POSTGRESQL_MASTER_HOST=rtarf-main-db-master
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - backend
-
-  rtarf-user-service:
-    container_name: 'rtarf-user-service'
-    build:
-      context: .
-    depends_on:
-      - rtarf-user-db-master
-      - rtarf-user-db-slave
-    restart: always
-    ports:
-      - "${USER_SERVICE_PORT}:3000"
-    env_file:
-      - .env
-    networks:
-      - backend
+  # rtarf-main-service:
+  #   container_name: 'rtarf-main-service'
+  #   build:
+  #     context: .
+  #   depends_on:
+  #     - rtarf-main-db-master
+  #     - rtarf-main-db-slave
+  #   restart: always
+  #   ports:
+  #     - "${MAIN_SERVICE_PORT}:3000"
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - backend
 
 networks:
   backend:
