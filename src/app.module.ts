@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
-import { DepartmentModule } from './modules/department/department.module';
+import { DivisionModule } from './modules/division/division.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { DepartmentModule } from './modules/department/department.module';
     }),
 
     // Import Modules
-    DepartmentModule,
+    DivisionModule,
   ],
 })
 export class AppModule {}

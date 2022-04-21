@@ -1,5 +1,5 @@
 {
-  "name": "rtarf-api-main-service",
+  "name": "rtarf-api-disaster-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -40,6 +40,7 @@
     "class-validator": "^0.13.2",
     "graphql": "15.7.2",
     "kafkajs": "^1.16.0",
+    "mssql": "^8.1.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
