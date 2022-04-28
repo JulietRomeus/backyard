@@ -1,24 +1,27 @@
+import { HttpService } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './config/typeorm-config.service';
-import { DivisionModule } from './modules/division/division.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './guards/roles.guard';
+import { TeamModule } from './modules/team/team.module';
 
 @Module({
   imports: [
     // Import Config
+
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
     }),
 
-    // Import Postgres
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-    }),
-
     // Import Modules
-    DivisionModule,
+    TeamModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
