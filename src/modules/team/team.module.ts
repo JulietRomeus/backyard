@@ -11,9 +11,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         timeout: 5000,
-        baseURL: configService.get('DIRECTUS_USER_URI'),
+        baseURL: configService.get('DIRECTUS_DISASTER_URI'),
         headers: {
-          authorization: 'Bearer 1234',
+          authorization: `Bearer ${configService.get(
+            'DIRECTUS_DISASTER_ACCESS_TOKEN',
+          )}`,
         },
       }),
       inject: [ConfigService],
