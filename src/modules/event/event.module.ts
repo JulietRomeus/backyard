@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TeamService } from './team.service';
-import { TeamController } from './team.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventService } from './event.service';
+import { EventController } from './event.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -11,15 +10,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         timeout: 5000,
-        baseURL: configService.get('DIRECTUS_USER_URI'),
+        baseURL: configService.get('DIRECTUS_DISASTER_URI'),
         headers: {
-          authorization: 'Bearer 1234',
+          authorization: `Bearer ${configService.get(
+            'DIRECTUS_DISASTER_ACCESS_TOKEN',
+          )}`,
         },
       }),
       inject: [ConfigService],
     }),
   ],
-  controllers: [TeamController],
-  providers: [TeamService],
+  controllers: [EventController],
+  providers: [EventService],
 })
-export class TeamModule {}
+export class EventModule {}

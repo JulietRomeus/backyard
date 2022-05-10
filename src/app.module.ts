@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
 import { TeamModule } from './modules/team/team.module';
+import { EventModule } from './modules/event/event.module';
 
 @Module({
   imports: [
@@ -16,6 +17,8 @@ import { TeamModule } from './modules/team/team.module';
 
     // Import Modules
     TeamModule,
+
+    EventModule,
   ],
   providers: [
     {

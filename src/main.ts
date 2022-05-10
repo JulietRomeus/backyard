@@ -32,7 +32,7 @@ async function bootstrap() {
 
     /* --------------------------------- Startup -------------------------------- */
     await app.listen(
-      configService.get<number>('DIASASTER_MONITORING_SERVICE_PORT') || 3310,
+      configService.get<number>('DISASTER_MONITORING_SERVICE_PORT') || 3310,
     );
   }
   bootstrap();
