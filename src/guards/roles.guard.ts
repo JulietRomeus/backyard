@@ -30,9 +30,9 @@ export class RolesGuard {
     if (!authorization)
       throw new UnauthorizedException('authorization header not provide.');
 
-    const userServiceUrl = `http://${this.configService.get(
+    const userServiceUrl = `${this.configService.get(
       'USER_SERVICE_URI',
-    )}:${this.configService.get('USER_SERVICE_PORT')}/auth/permission`;
+    )}/auth/permission`;
 
     const result = await axios.get(userServiceUrl, {
       headers: { authorization: headers.authorization },
@@ -50,7 +50,7 @@ export class RolesGuard {
     const userRows = userRawRoles.map((role) => role.name);
 
     const isAccept = roles.filter((role) => userRows.includes(role));
-    if (!isAccept.length)
+    if (!isAccept.length && roles.length !== 0)
       throw new UnauthorizedException('authorization role mismatch.');
     const userRawUnits = payload?.units || [];
 
@@ -58,6 +58,7 @@ export class RolesGuard {
     req.body = {
       request_by: {
         id: payload?.id,
+        displayname: payload?.displayname,
         email: payload?.email,
         roles: userRows,
         units: userUnits,

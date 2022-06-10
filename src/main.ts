@@ -10,13 +10,30 @@ async function bootstrap() {
   async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
-
+    const whitelist = [
+      'http://localhost:3100',
+      'http://localhost:9000',
+      'https://bigdata.rtarf.maholan.app',
+    ];
+    app.enableCors({
+      origin: (origin, callback) => {
+        // console.log('ORIGIN', origin);
+        if (!origin || whitelist.indexOf(origin) !== -1) {
+          // console.log('allow');
+          callback(null, true);
+        } else {
+          // console.log('not allow');
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+    });
     /* --------------------------------- Global --------------------------------- */
     // Filter
     app.useGlobalFilters(new HttpExceptionFilter());
 
     // Pipe
     app.useGlobalPipes(new ValidationPipe());
+    app.setGlobalPrefix('disaster-monitoring');
 
     /* --------------------------------- Swagger -------------------------------- */
     const options = new DocumentBuilder()
@@ -28,7 +45,7 @@ async function bootstrap() {
       )
       .build();
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('disaster-monitoring/api', app, document);
 
     /* --------------------------------- Startup -------------------------------- */
     await app.listen(

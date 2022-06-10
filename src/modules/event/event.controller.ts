@@ -10,20 +10,30 @@ import {
   HttpStatus,
   Req,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { ResponseEventDto } from './dto/response-event.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('event')
+@ApiTags('Event (เหตุการณ์ภัยพิบัติ)')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  @Roles('maholan_superadmin', 'admin')
+  // @Roles('maholan_superadmin', 'admin')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'สร้าง event ใหม่' })
   async create(@Body() createEventDto: CreateEventDto): Promise<any> {
-    // console.log('>>>>> req body', req.body);
-    // console.log('Body', createEventDto);
 
     const response = await this.eventService.create(createEventDto);
     const data = { ...response.data };
@@ -37,25 +47,95 @@ export class EventController {
   }
 
   @Get()
-  @Roles('maholan_superadmin', 'admin')
+  // @Roles('maholan_superadmin', 'admin')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล event ทั้งหมด' })
+  @ApiOkResponse({
+    description: 'Event object',
+    type: ResponseEventDto,
+    isArray: true,
+  })
   async findAll(@Req() req: any): Promise<any> {
     const response: any = await this.eventService.findAll();
-    const data = { ...response.data };
-    return {
-      status: HttpStatus.OK,
-      message: 'GET_EVENT_SUCCESS',
-      data: data.data,
-      error: null,
-      timestamp: new Date().toISOString(),
-    };
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_ALL_EVENT_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_ALL_EVENT_FAILED',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
+  @Get('disaster_type')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลประเภทของสาธารณภัย' })
+  // @ApiOkResponse({
+  //   description: 'Event object',
+  //   type: ResponseEventDto,
+  //   isArray: true,
+  // })
+  async disasterType() {
+    const response: any = await this.eventService.disasterType();
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_DISASTER_TYPE_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_DISASTER_TYPE_FAILED',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventService.findOne(+id);
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล event' })
+  @ApiOkResponse({
+    description: 'Event object',
+    type: ResponseEventDto,
+  })
+  async findOne(@Param('id') id: string) {
+    const response: any = await this.eventService.findOne(+id);
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_EVENT_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // console.log('>>>> error');
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_EVENT_ERROR',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 
   @Patch(':id')
+  @Roles()
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.update(+id, updateEventDto);
   }
