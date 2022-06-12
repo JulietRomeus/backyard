@@ -38,6 +38,9 @@ const eventResponse = `event_id
                   mooban_code
                   long
                   lat
+                  population
+                  dwellings
+                  farmland
                 } 
                 create_by
                 create_by_id
