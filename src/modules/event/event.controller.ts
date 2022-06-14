@@ -30,11 +30,11 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  // @Roles('maholan_superadmin', 'admin')
+  @Roles()
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'สร้าง event ใหม่' })
   async create(@Body() createEventDto: CreateEventDto): Promise<any> {
-
+    // console.log('>>>', createEventDto);
     const response = await this.eventService.create(createEventDto);
     const data = { ...response.data };
     return {
@@ -136,8 +136,36 @@ export class EventController {
 
   @Patch(':id')
   @Roles()
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(+id, updateEventDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const response = await this.eventService.update(+id, updateEventDto);
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'UPDATE_EVENT_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Patch('/approve/:id')
+  @Roles()
+  async approve(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const response = await this.eventService.approve(+id, updateEventDto);
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'APPROVE_EVENT_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Delete(':id')

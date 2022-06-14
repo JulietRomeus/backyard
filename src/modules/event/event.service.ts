@@ -12,7 +12,11 @@ const eventResponse = `event_id
                     disaster_type_name
                 }
                 disaster_level
-                event_status
+                event_status{
+                  id
+                  name
+                  color
+                }
                 status
                 note
                 expect_start_date
@@ -60,10 +64,15 @@ export class EventService {
     let createObj: any = createEventDto;
     createObj.create_date = now();
     createObj.create_by = createObj.request_by.id;
-    const result = await firstValueFrom(
-      this.httpService.post(`/items/event`, createObj),
-    );
-    return result;
+    createObj.event_status = { id: '2' };
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/items/event/`, createObj),
+      );
+      return result.data;
+    } catch (error) {
+      return error.response.data.errors;
+    }
   }
 
   async findAll() {
@@ -80,6 +89,7 @@ export class EventService {
       );
       return result.data;
     } catch (error) {
+      console.log('-->', error.response.data);
       return error.response.data.errors;
     }
   }
@@ -120,37 +130,40 @@ export class EventService {
       );
       return result.data;
     } catch (error) {
+      console.log('--->', error.response.data.errors);
       return error.response.data.errors;
     }
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
-    //     const query = `mutation {
-    //       update_event_item(event_id: ${id}, data:
-    //         ${JSON.stringify(updateEventDto)}) {
-    //         event_id
-    //       }
-    //     }
-    // `;
-    //     console.log(query);
-    //     const variables = {};
-    //     try {
-    //       const result = await firstValueFrom(
-    //         this.httpService.post(`/graphql`, { query, variables }),
-    //       );
-    //       return result.data;
-    //     } catch (error) {
-    //       return error.response.data.errors;
-    //     }
-    let createObj: UpdateEventDto = updateEventDto;
-    console.log(createObj.request_by);
-    createObj.create_date = now();
-    createObj.create_by_id = createObj.request_by.id;
-    createObj.create_by = createObj.request_by.displayname;
+    let updateObj: UpdateEventDto = updateEventDto;
+    // console.log(createObj.request_by);
+    updateObj.update_date = now();
+    updateObj.event_status = { id: '2' };
+    updateObj.update_by_id = updateObj.request_by.id;
+    updateObj.update_by = updateObj.request_by.displayname;
     try {
       const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, createObj),
+        this.httpService.patch(`/items/event/${id}`, updateObj),
       );
+      return result.data;
+    } catch (error) {
+      return error.response.data.errors;
+    }
+  }
+
+  async approve(id: number, updateEventDto: UpdateEventDto) {
+    console.log('>>>>', id);
+    let updateObj: any = updateEventDto;
+    updateObj.approve_date = now();
+    updateObj.event_status = { id: '3' };
+    updateObj.approve_by_id = updateObj.request_by.id;
+    updateObj.approve_by = updateObj.request_by.displayname;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/event/${id}`, updateObj),
+      );
+      console.log('result', result);
       return result.data;
     } catch (error) {
       return error.response.data.errors;
