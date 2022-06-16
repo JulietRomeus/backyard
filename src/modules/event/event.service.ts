@@ -77,7 +77,7 @@ export class EventService {
 
   async findAll() {
     const query = `query{
-      event{
+      event(filter: { status: { _eq: 1 } },sort: ["-create_date"]){
         ${eventResponse}
       }
   }
