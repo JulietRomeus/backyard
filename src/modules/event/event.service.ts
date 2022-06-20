@@ -52,6 +52,9 @@ const eventResponse = `event_id
                 update_by
                 update_by_id
                 update_date
+                approve_by
+                approve_by_id
+                approve_date
                 delete_by
                 delete_by_id
                 delete_date`;
@@ -63,7 +66,10 @@ export class EventService {
   async create(createEventDto: CreateEventDto) {
     let createObj: any = createEventDto;
     createObj.create_date = now();
-    createObj.create_by = createObj.request_by.id;
+    createObj.create_by_id = createObj.request_by.id;
+    createObj.create_by = createObj.request_by.displayname;
+    createObj.update_by_id = createObj.request_by.id;
+    createObj.update_by = createObj.request_by.displayname;
     createObj.event_status = { id: '2' };
     try {
       const result = await firstValueFrom(
