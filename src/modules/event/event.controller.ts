@@ -105,6 +105,35 @@ export class EventController {
     }
   }
 
+  @Get('event_status')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลสถานะของสาธารณภัย' })
+  // @ApiOkResponse({
+  //   description: 'Event object',
+  //   type: ResponseEventDto,
+  //   isArray: true,
+  // })
+  async eventStatus() {
+    const response: any = await this.eventService.eventStatus();
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_EVENT_STATUS_TYPE_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_EVENT_STATUS_FAILED',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
   @Get(':id')
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล event' })
@@ -136,6 +165,8 @@ export class EventController {
 
   @Patch(':id')
   @Roles()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดทข้อมูลเหตุการณ์สาธารณภัย' })
   async update(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
@@ -153,11 +184,13 @@ export class EventController {
 
   @Patch('/approve/:id')
   @Roles()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อนุมัติเหตุการณ์สาธารณภัย' })
   async approve(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
   ) {
-    const response = await this.eventService.approve(+id, updateEventDto);
+    const response = await this.eventService.approve(id, updateEventDto);
     const data = { ...response.data };
     return {
       status: HttpStatus.CREATED,
@@ -168,8 +201,60 @@ export class EventController {
     };
   }
 
+  @Patch('/sendback/:id')
+  @Roles()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ปิดสถานการณ์สาธารณภัย' })
+  async sendback(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const response = await this.eventService.sendback(id, updateEventDto);
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'SENDBACK_EVENT_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Patch('/finish/:id')
+  @Roles()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ปิดสถานการณ์สาธารณภัย' })
+  async finish(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const response = await this.eventService.finish(id, updateEventDto);
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'FINISH_EVENT_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventService.remove(+id);
+  @Roles()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ลบเหตุการณ์สาธารณภัย' })
+  async remove(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const response = await this.eventService.remove(id, updateEventDto);
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'REMOVE_EVENT_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
   }
 }

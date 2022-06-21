@@ -14,6 +14,7 @@ const eventResponse = `event_id
                 disaster_level
                 event_status{
                   id
+                  no
                   name
                   color
                 }
@@ -55,6 +56,9 @@ const eventResponse = `event_id
                 approve_by
                 approve_by_id
                 approve_date
+                finish_by
+                finish_by_id
+                finish_date
                 delete_by
                 delete_by_id
                 delete_date`;
@@ -141,6 +145,28 @@ export class EventService {
     }
   }
 
+  async eventStatus() {
+    const query = `query{
+      event_status(filter:{status:{_eq:1}}){
+          id
+          name
+          no
+          color
+      }
+  }
+`;
+    const variables = {};
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      return result.data;
+    } catch (error) {
+      console.log('--->', error.response.data.errors);
+      return error.response.data.errors;
+    }
+  }
+
   async update(id: number, updateEventDto: UpdateEventDto) {
     let updateObj: UpdateEventDto = updateEventDto;
     // console.log(createObj.request_by);
@@ -158,8 +184,8 @@ export class EventService {
     }
   }
 
-  async approve(id: number, updateEventDto: UpdateEventDto) {
-    console.log('>>>>', id);
+  async approve(id: string, updateEventDto: UpdateEventDto) {
+    // console.log('>>>>', id);
     let updateObj: any = updateEventDto;
     updateObj.approve_date = now();
     updateObj.event_status = { id: '3' };
@@ -169,14 +195,65 @@ export class EventService {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
-      console.log('result', result);
+      // console.log('result', result);
       return result.data;
     } catch (error) {
       return error.response.data.errors;
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async sendback(id: string, updateEventDto: UpdateEventDto) {
+    // console.log('>>>>', id);
+    let updateObj: any = updateEventDto;
+    updateObj.update_date = now();
+    updateObj.event_status = { id: '4' };
+    updateObj.update_by_id = updateObj.request_by.id;
+    updateObj.update_by = updateObj.request_by.displayname;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/event/${id}`, updateObj),
+      );
+      // console.log('result', result);
+      return result.data;
+    } catch (error) {
+      return error.response.data.errors;
+    }
+  }
+
+  async finish(id: string, updateEventDto: UpdateEventDto) {
+    // console.log('>>>>', id);
+    let updateObj: any = updateEventDto;
+    updateObj.finish_date = now();
+    updateObj.event_status = { id: '1005' };
+    updateObj.finish_by_id = updateObj.request_by.id;
+    updateObj.finish_by = updateObj.request_by.displayname;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/event/${id}`, updateObj),
+      );
+      // console.log('result', result);
+      return result.data;
+    } catch (error) {
+      return error.response.data.errors;
+    }
+  }
+
+  async remove(id: string, updateEventDto: UpdateEventDto) {
+    // console.log('>>>>', id);
+    //
+    let updateObj: any = updateEventDto;
+    updateObj.delete_date = now();
+    updateObj.delete_by_id = updateObj.request_by.id;
+    updateObj.delete_by = updateObj.request_by.displayname;
+    updateObj.status = 0;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/event/${id}`, updateObj),
+      );
+      // console.log('result', result);
+      return result.data;
+    } catch (error) {
+      return error.response.data.errors;
+    }
   }
 }
