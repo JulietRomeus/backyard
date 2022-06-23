@@ -72,8 +72,6 @@ export class EventService {
     createObj.create_date = now();
     createObj.create_by_id = createObj.request_by.id;
     createObj.create_by = createObj.request_by.displayname;
-    createObj.update_by_id = createObj.request_by.id;
-    createObj.update_by = createObj.request_by.displayname;
     createObj.event_status = { id: '2' };
     try {
       const result = await firstValueFrom(
@@ -169,7 +167,7 @@ export class EventService {
 
   async update(id: number, updateEventDto: UpdateEventDto) {
     let updateObj: UpdateEventDto = updateEventDto;
-    // console.log(createObj.request_by);
+    console.log('---->', updateObj.request_by);
     updateObj.update_date = now();
     updateObj.event_status = { id: '2' };
     updateObj.update_by_id = updateObj.request_by.id;

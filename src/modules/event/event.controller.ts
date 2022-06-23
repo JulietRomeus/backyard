@@ -47,7 +47,7 @@ export class EventController {
   }
 
   @Get()
-  // @Roles('maholan_superadmin', 'admin')
+  @Roles('maholan_superadmin', 'admin')
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล event ทั้งหมด' })
   @ApiOkResponse({

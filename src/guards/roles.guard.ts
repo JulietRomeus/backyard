@@ -54,7 +54,7 @@ export class RolesGuard {
       throw new UnauthorizedException('authorization role mismatch.');
     const userRawUnits = payload?.units || [];
 
-    const userUnits = userRawUnits.map((unit) => unit.name);
+    const userUnits = userRawUnits.map((unit) => unit);
     req.body = {
       request_by: {
         id: payload?.id,

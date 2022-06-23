@@ -17,7 +17,7 @@ export class CreateEventDto extends RequestByDto {
   })
   disaster_type?: {
     disaster_type_id: string;
-    disaster_type_name: string;
+    disaster_type_name: string | null;
   };
 
   @ApiProperty({
