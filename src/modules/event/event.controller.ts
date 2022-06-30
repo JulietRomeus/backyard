@@ -33,7 +33,7 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  @Roles()
+  @Permission({ route: defaultRoute, action: 'create' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'สร้าง event ใหม่' })
   async create(@Body() createEventDto: CreateEventDto): Promise<any> {
@@ -50,7 +50,6 @@ export class EventController {
   }
 
   @Get()
-  // @Roles(...event.create)
   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล event ทั้งหมด' })
@@ -81,6 +80,7 @@ export class EventController {
   }
 
   @Get('disaster_type')
+  @Permission()
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลประเภทของสาธารณภัย' })
   // @ApiOkResponse({
@@ -110,13 +110,9 @@ export class EventController {
   }
 
   @Get('event_status')
+  @Permission()
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลสถานะของสาธารณภัย' })
-  // @ApiOkResponse({
-  //   description: 'Event object',
-  //   type: ResponseEventDto,
-  //   isArray: true,
-  // })
   async eventStatus() {
     const response: any = await this.eventService.eventStatus();
     if (response.data) {
@@ -139,6 +135,7 @@ export class EventController {
   }
 
   @Get(':id')
+  @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล event' })
   @ApiOkResponse({
@@ -168,7 +165,7 @@ export class EventController {
   }
 
   @Patch(':id')
-  @Roles()
+  @Permission({ route: defaultRoute, action: 'update' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'อัพเดทข้อมูลเหตุการณ์สาธารณภัย' })
   async update(
@@ -187,7 +184,7 @@ export class EventController {
   }
 
   @Patch('/approve/:id')
-  @Roles(...event.approve)
+  @Permission({ route: defaultRoute, action: 'approve' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'อนุมัติเหตุการณ์สาธารณภัย' })
   async approve(
@@ -207,7 +204,7 @@ export class EventController {
   }
 
   @Patch('/sendback/:id')
-  @Roles()
+  @Permission({ route: defaultRoute, action: 'approve' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ปิดสถานการณ์สาธารณภัย' })
   async sendback(
@@ -226,7 +223,7 @@ export class EventController {
   }
 
   @Patch('/finish/:id')
-  @Roles()
+  @Permission({ route: defaultRoute, action: 'finish' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ปิดสถานการณ์สาธารณภัย' })
   async finish(
@@ -245,7 +242,7 @@ export class EventController {
   }
 
   @Delete(':id')
-  @Roles()
+  @Permission({ route: defaultRoute, action: 'delete' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ลบเหตุการณ์สาธารณภัย' })
   async remove(
