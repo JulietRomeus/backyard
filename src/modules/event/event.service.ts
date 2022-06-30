@@ -47,12 +47,16 @@ const eventResponse = `event_id
                   dwellings
                   farmland
                 } 
+                comment
                 create_by
                 create_by_id
                 create_date
                 update_by
                 update_by_id
                 update_date
+                sendback_by
+                sendback_by_id
+                sendback_date
                 approve_by
                 approve_by_id
                 approve_date
@@ -72,7 +76,9 @@ export class EventService {
     createObj.create_date = now();
     createObj.create_by_id = createObj.request_by.id;
     createObj.create_by = createObj.request_by.displayname;
-    createObj.event_status = { id: '2' };
+    createObj.event_status = {
+      id: '2',
+    };
     try {
       const result = await firstValueFrom(
         this.httpService.post(`/items/event/`, createObj),
@@ -167,9 +173,11 @@ export class EventService {
 
   async update(id: number, updateEventDto: UpdateEventDto) {
     let updateObj: UpdateEventDto = updateEventDto;
-    console.log('---->', updateObj.request_by);
+    // console.log('---->', updateEventDto);
     updateObj.update_date = now();
-    updateObj.event_status = { id: '2' };
+    updateObj.event_status = {
+      id: updateEventDto.event_status.no === '3' ? '3' : '2',
+    };
     updateObj.update_by_id = updateObj.request_by.id;
     updateObj.update_by = updateObj.request_by.displayname;
     try {
@@ -203,10 +211,10 @@ export class EventService {
   async sendback(id: string, updateEventDto: UpdateEventDto) {
     // console.log('>>>>', id);
     let updateObj: any = updateEventDto;
-    updateObj.update_date = now();
+    updateObj.sendback_date = now();
     updateObj.event_status = { id: '4' };
-    updateObj.update_by_id = updateObj.request_by.id;
-    updateObj.update_by = updateObj.request_by.displayname;
+    updateObj.sendback_by_id = updateObj.request_by.id;
+    updateObj.sendback_by = updateObj.request_by.displayname;
     try {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/event/${id}`, updateObj),

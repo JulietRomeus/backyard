@@ -30,7 +30,7 @@ export class CreateEventDto extends RequestByDto {
     example: 1,
     nullable: true,
   })
-  event_status?: { id: string };
+  event_status?: { id: string; no?: string };
 
   @ApiProperty({
     example: 1,

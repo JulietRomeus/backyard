@@ -23,8 +23,11 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ResponseEventDto } from './dto/response-event.dto';
 import { Roles } from 'src/decorators/roles.decorator';
+import { Permission } from 'src/decorators/permission.decorator';
+import { event } from '../../perm-Config';
+const defaultRoute = 'event';
 
-@Controller('event')
+@Controller(defaultRoute)
 @ApiTags('Event (เหตุการณ์ภัยพิบัติ)')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
@@ -47,7 +50,8 @@ export class EventController {
   }
 
   @Get()
-  @Roles('maholan_superadmin', 'admin')
+  // @Roles(...event.create)
+  @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล event ทั้งหมด' })
   @ApiOkResponse({
@@ -183,7 +187,7 @@ export class EventController {
   }
 
   @Patch('/approve/:id')
-  @Roles()
+  @Roles(...event.approve)
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'อนุมัติเหตุการณ์สาธารณภัย' })
   async approve(
@@ -191,6 +195,7 @@ export class EventController {
     @Body() updateEventDto: UpdateEventDto,
   ) {
     const response = await this.eventService.approve(id, updateEventDto);
+
     const data = { ...response.data };
     return {
       status: HttpStatus.CREATED,

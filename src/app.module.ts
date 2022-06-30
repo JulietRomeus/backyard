@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
+import { PermissionGuard } from './guards/permission.guard';
 import { EventModule } from './modules/event/event.module';
 
 @Module({
@@ -21,6 +22,10 @@ import { EventModule } from './modules/event/event.module';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
   ],
 })

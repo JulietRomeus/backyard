@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     HttpModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        timeout: 5000,
+        timeout: 10000,
         baseURL: configService.get('DIRECTUS_DISASTER_URI'),
         headers: {
           authorization: `Bearer ${configService.get(
