@@ -63,7 +63,7 @@ export class PermissionGuard {
     }
 
     req.body = {
-      request_by: data.request_by,
+      request_by: { ...data.request_by, data_permission: data.data_permission },
       ...req.body,
     };
     return true;
