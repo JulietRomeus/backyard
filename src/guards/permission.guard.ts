@@ -41,7 +41,7 @@ export class PermissionGuard {
 
     const userServiceUrl = `${this.configService.get(
       'USER_SERVICE_URI',
-    )}/permission`;
+    )}/permission/${perm.service}/${perm.route}`;
 
     const result = await axios.get(userServiceUrl, {
       headers: { authorization: headers.authorization },
