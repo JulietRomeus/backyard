@@ -24,10 +24,10 @@ export class PermissionGuard {
       context.getHandler(),
     );
 
-    if (!perm) return true;
-    if (!perm.service) {
-      perm.service = this.configService.get('DEFAULT_SERVICE_NAME');
-    }
+    // if (!perm.service) {
+      
+    //   perm.service = 'task';
+    // }
     // console.log('PERM', perm);
 
     const ctx = context.switchToHttp();
@@ -39,6 +39,31 @@ export class PermissionGuard {
     if (!authorization)
       throw new UnauthorizedException('authorization header not provide.');
 
+    if (!perm) {
+      const userServiceUrl = `${this.configService.get(
+        'USER_SERVICE_URI',
+      )}/permission/`;
+      const result = await axios.get(userServiceUrl, {
+        headers: { authorization: headers.authorization },
+      });
+      const data = result.data;
+
+      if (!data)
+        throw new UnauthorizedException(
+          result.data.error || 'authorization invalid',
+        );
+      req.body = {
+        request_by: { ...data },
+        ...req.body,
+      };
+      return true;
+    }
+
+
+    if (!perm.service) {
+      perm.service = this.configService.get('DEFAULT_SERVICE_NAME');
+    }
+    
     const userServiceUrl = `${this.configService.get(
       'USER_SERVICE_URI',
     )}/permission/${perm.service}/${perm.route}`;
@@ -46,6 +71,8 @@ export class PermissionGuard {
     const result = await axios.get(userServiceUrl, {
       headers: { authorization: headers.authorization },
     });
+
+
     // console.log('result', result.data);
     const data = result.data;
     if (!data)
