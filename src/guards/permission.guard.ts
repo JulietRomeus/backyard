@@ -53,12 +53,16 @@ export class PermissionGuard {
         result.data.error || 'authorization invalid',
       );
 
-    if (
-      !(
-        data.action_permission[perm.service][perm.route][perm.action] ||
-        data.action_permission[perm.service][perm.route]['master']
-      )
-    ) {
+    try {
+      if (
+        !(
+          data.action_permission[perm.service][perm.route][perm.action] ||
+          data.action_permission[perm.service][perm.route]['master']
+        )
+      ) {
+        throw new UnauthorizedException('authorization role mismatch.');
+      }
+    } catch {
       throw new UnauthorizedException('authorization role mismatch.');
     }
 
