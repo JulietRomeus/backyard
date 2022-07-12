@@ -1,4 +1,3 @@
-import { Response } from 'express';
 import {
   Controller,
   Get,
@@ -172,7 +171,7 @@ export class EventController {
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
   ) {
-    const response = await this.eventService.update(+id, updateEventDto);
+    const response = await this.eventService.update(id, updateEventDto);
     const data = { ...response.data };
     return {
       status: HttpStatus.CREATED,
@@ -231,6 +230,25 @@ export class EventController {
     @Body() updateEventDto: UpdateEventDto,
   ) {
     const response = await this.eventService.finish(id, updateEventDto);
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'FINISH_EVENT_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Patch('/restore/:id')
+  @Permission({ route: defaultRoute, action: 'finish' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ปิดสถานการณ์สาธารณภัย' })
+  async restore(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const response = await this.eventService.restore(id, updateEventDto);
     const data = { ...response.data };
     return {
       status: HttpStatus.CREATED,

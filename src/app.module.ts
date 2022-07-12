@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
 import { PermissionGuard } from './guards/permission.guard';
 import { EventModule } from './modules/event/event.module';
+import { InfoModule } from './modules/info/info.module';
 
 @Module({
   imports: [
@@ -17,6 +18,8 @@ import { EventModule } from './modules/event/event.module';
 
     // Import Modules
     EventModule,
+
+    InfoModule,
   ],
   providers: [
     {

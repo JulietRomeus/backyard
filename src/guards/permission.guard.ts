@@ -25,7 +25,7 @@ export class PermissionGuard {
     );
 
     // if (!perm.service) {
-      
+
     //   perm.service = 'task';
     // }
     // console.log('PERM', perm);
@@ -59,11 +59,10 @@ export class PermissionGuard {
       return true;
     }
 
-
     if (!perm.service) {
       perm.service = this.configService.get('DEFAULT_SERVICE_NAME');
     }
-    
+
     const userServiceUrl = `${this.configService.get(
       'USER_SERVICE_URI',
     )}/permission/${perm.service}/${perm.route}`;
@@ -71,7 +70,6 @@ export class PermissionGuard {
     const result = await axios.get(userServiceUrl, {
       headers: { authorization: headers.authorization },
     });
-
 
     // console.log('result', result.data);
     const data = result.data;
@@ -94,7 +92,11 @@ export class PermissionGuard {
     }
 
     req.body = {
-      request_by: { ...data.request_by, data_permission: data.data_permission },
+      request_by: {
+        ...data.request_by,
+        data_permission: data.data_permission,
+        token: headers.authorization,
+      },
       ...req.body,
     };
     return true;

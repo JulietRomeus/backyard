@@ -1,31 +1,34 @@
 import { HttpService } from '@nestjs/axios';
+
 import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { CreateInfoDto } from './dto/create-info.dto';
+import { UpdateInfoDto } from './dto/update-info.dto';
 import { firstValueFrom } from 'rxjs';
 import now from '../../utils/now';
 import task from '../../utils/task';
-const defaultRoute = 'event';
+const defaultRoute = 'info';
 
-const eventResponse = `event_id
-                event_name
+const objResponse = `info_id
+                title
+                detail
+                event{
+                  event_id
+                  event_name
+                }
                 disaster_type {
                     disaster_type_id
                     disaster_type_name
                 }
-                disaster_level
-                event_status{
+                critical_flag 
+                form_status{
                   id
                   no
                   name
                   color
                 }
                 status
-                note
-                expect_start_date
-                expect_end_date
-                start_date
-                end_date
+                expect_from
+                expect_to
                 files{
                   id
                   directus_files_id
@@ -37,8 +40,8 @@ const eventResponse = `event_id
                       filename_download
                   }   
                 }
-                event_area{
-                  event_area_id
+                info_area{
+                  id
                   province_code
                   amphoe_code
                   tambon_code
@@ -62,43 +65,38 @@ const eventResponse = `event_id
                 approve_by
                 approve_by_id
                 approve_date
-                finish_by
-                finish_by_id
-                finish_date
                 delete_by
                 delete_by_id
                 delete_date`;
-
 @Injectable()
-export class EventService {
+export class InfoService {
   constructor(private readonly httpService: HttpService) {}
 
-  async create(createEventDto: CreateEventDto) {
+  async create(createEventDto: CreateInfoDto) {
     let createObj: any = createEventDto;
     createObj.create_date = now();
     createObj.create_by_id = createObj.request_by.id;
     createObj.create_by = createObj.request_by.displayname;
-    createObj.event_status = {
+    createObj.form_status = {
       id: '2',
     };
     try {
       const result = await firstValueFrom(
-        this.httpService.post(`/items/event/`, createObj),
+        this.httpService.post(`/items/info/`, createObj),
       );
-      const resEvent = result.data;
-      // console.log(result.data);
+      const resObj = result.data;
+
       try {
         task.create({
           token: createEventDto.request_by.token,
           route: defaultRoute,
-          ref_id: resEvent.data.event_id,
-          data: { name: createEventDto.event_name },
+          ref_id: resObj.data.info_id,
+          data: { name: createEventDto.title },
         });
       } catch (error) {
         return error;
       }
-
-      return resEvent;
+      return result.data;
     } catch (error) {
       return error.response.data.errors;
     }
@@ -106,8 +104,8 @@ export class EventService {
 
   async findAll() {
     const query = `query{
-      event(filter: { status: { _eq: 1 } },sort: ["-create_date"]){
-        ${eventResponse}
+      info(filter: { status: { _eq: 1 } },sort: ["-create_date"]){
+        ${objResponse}
       }
   }
 `;
@@ -118,15 +116,16 @@ export class EventService {
       );
       return result.data;
     } catch (error) {
-      console.log('-->', error.response.data);
+      console.log('err find all info', error.response.data);
       return error.response.data.errors;
     }
   }
 
   async findOne(id: number) {
+    // console.log('first', id);
     const query = `query{
-      event_by_id(id:${id}){
-        ${eventResponse}
+      info_by_id(id:${id}){
+        ${objResponse}
       }
   }
 `;
@@ -138,7 +137,7 @@ export class EventService {
       );
       return result.data;
     } catch (error) {
-      console.log('--->', error.response.data.errors);
+      // console.log('find a info>', error.response.data.errors);
       return error.response.data.errors;
     }
   }
@@ -164,9 +163,46 @@ export class EventService {
     }
   }
 
-  async eventStatus() {
+  async eventOption() {
     const query = `query{
-      event_status(filter:{status:{_eq:1}}){
+      event(filter:{_and:[{status:{_eq:1}},
+        {_or:[
+          {
+            event_status:{
+              no:{
+                _eq:"3"
+              }
+            }
+          },
+          {
+            event_status:{
+              no:{
+                _eq:"5"
+              }
+            }
+          }
+        ]}
+      ]}){
+          event_id
+          event_name
+      }
+  }
+`;
+    const variables = {};
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      return result.data;
+    } catch (error) {
+      // console.log('--->', error.response.data.errors);
+      return error.response.data.errors;
+    }
+  }
+
+  async formStatus() {
+    const query = `query{
+      form_status(filter:{status:{_eq:1}}){
           id
           name
           no
@@ -181,74 +217,60 @@ export class EventService {
       );
       return result.data;
     } catch (error) {
-      console.log('--->', error.response.data.errors);
+      console.log('err form status ', error.response.data.errors);
       return error.response.data.errors;
     }
   }
 
-  async update(id: string, updateEventDto: UpdateEventDto) {
-    let updateObj: UpdateEventDto = updateEventDto;
-    const status_no = updateEventDto.event_status.no;
-    const curStatus =
-      updateEventDto.event_status.no === '3'
-        ? '3'
-        : updateEventDto.event_status.no === '5'
-        ? '5'
-        : '2';
-    const resStatus = await firstValueFrom(
-      this.httpService.get(`/items/event_status?filter[no][_eq]=${curStatus}`),
-    );
-    const status_id = resStatus.data.data[0].id;
+  async update(id: string, updateInfoDto: UpdateInfoDto) {
+    let updateObj: UpdateInfoDto = updateInfoDto;
+    // console.log('---->', updateInfoDto);
     updateObj.update_date = now();
-    updateObj.event_status = {
-      id: status_id,
+    updateObj.form_status = {
+      id: updateInfoDto.form_status.no === '3' ? '3' : '2',
     };
     updateObj.update_by_id = updateObj.request_by.id;
     updateObj.update_by = updateObj.request_by.displayname;
     try {
       const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, updateObj),
-      );
+        this.httpService.patch(`/items/info/${id}`, updateObj),
+      );b
       try {
         task.update({
-          token: updateEventDto.request_by.token,
+          token: updateInfoDto.request_by.token,
           route: defaultRoute,
-          node_order: status_no === '3' ? 1 : status_no === '5' ? 2 : 0,
+          node_order: updateInfoDto.form_status.no === '1' ? 1 : 0,
           ref_id: id,
-          data: updateEventDto,
+          data: updateInfoDto,
         });
       } catch (error) {
         return error;
       }
-
       return result.data;
     } catch (error) {
       return error.response.data.errors;
     }
   }
 
-  async approve(id: string, updateEventDto: UpdateEventDto) {
+  async approve(id: string, updateInfoDto: UpdateInfoDto) {
     // console.log('>>>>', id);
-    const resStatus = await firstValueFrom(
-      this.httpService.get(`/items/event_status?filter[no][_eq]=${3}`),
-    );
-    const status_id = resStatus.data.data[0].id;
-    let updateObj: any = updateEventDto;
+    let updateObj: any = updateInfoDto;
     updateObj.approve_date = now();
-    updateObj.event_status = { id: status_id };
+    updateObj.form_status = { id: '3' };
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {
       const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, updateObj),
+        this.httpService.patch(`/items/info/${id}`, updateObj),
       );
+      // console.log('result', result);
       try {
         task.update({
-          token: updateEventDto.request_by.token,
+          token: updateInfoDto.request_by.token,
           route: defaultRoute,
           node_order: 1,
           ref_id: id,
-          data: updateEventDto,
+          data: updateInfoDto,
         });
       } catch (error) {
         return error;
@@ -259,30 +281,27 @@ export class EventService {
     }
   }
 
-  async sendback(id: string, updateEventDto: UpdateEventDto) {
+  async sendback(id: string, updateInfoDto: UpdateInfoDto) {
     // console.log('>>>>', id);
-    const resStatus = await firstValueFrom(
-      this.httpService.get(`/items/event_status?filter[no][_eq]=${4}`),
-    );
-    const status_id = resStatus.data.data[0].id;
-    let updateObj: any = updateEventDto;
+    let updateObj: any = updateInfoDto;
     updateObj.sendback_date = now();
-    updateObj.event_status = { id: status_id };
+    updateObj.form_status = { id: '4' };
     updateObj.sendback_by_id = updateObj.request_by.id;
     updateObj.sendback_by = updateObj.request_by.displayname;
     try {
       const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, updateObj),
+        this.httpService.patch(`/items/info/${id}`, updateObj),
       );
+      // console.log('result', result);
       try {
         task.update({
-          token: updateEventDto.request_by.token,
+          token: updateInfoDto.request_by.token,
           route: defaultRoute,
           node_order: 0,
           ref_id: id,
           method: 'back',
-          data: updateEventDto,
-          note: updateEventDto.comment,
+          data: updateInfoDto,
+          note: updateInfoDto.comment,
         });
       } catch (error) {
         return error;
@@ -293,74 +312,10 @@ export class EventService {
     }
   }
 
-  async restore(id: string, updateEventDto: UpdateEventDto) {
-    // console.log('>>>>', id);
-    const resStatus = await firstValueFrom(
-      this.httpService.get(`/items/event_status?filter[no][_eq]=${5}`),
-    );
-    const status_id = resStatus.data.data[0].id;
-    let updateObj: any = updateEventDto;
-    updateObj.finish_date = now();
-    updateObj.event_status = { id: status_id };
-    updateObj.finish_by_id = updateObj.request_by.id;
-    updateObj.finish_by = updateObj.request_by.displayname;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, updateObj),
-      );
-      try {
-        task.update({
-          token: updateEventDto.request_by.token,
-          route: defaultRoute,
-          node_order: 2,
-          ref_id: id,
-          data: updateEventDto,
-        });
-      } catch (error) {
-        return error;
-      }
-      return result.data;
-    } catch (error) {
-      return error.response.data.errors;
-    }
-  }
-
-  async finish(id: string, updateEventDto: UpdateEventDto) {
-    // console.log('>>>>', id);
-    const resStatus = await firstValueFrom(
-      this.httpService.get(`/items/event_status?filter[no][_eq]=${6}`),
-    );
-    const status_id = resStatus.data.data[0].id;
-    let updateObj: any = updateEventDto;
-    updateObj.finish_date = now();
-    updateObj.event_status = { id: status_id };
-    updateObj.finish_by_id = updateObj.request_by.id;
-    updateObj.finish_by = updateObj.request_by.displayname;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, updateObj),
-      );
-      try {
-        task.update({
-          token: updateEventDto.request_by.token,
-          route: defaultRoute,
-          node_order: 3,
-          ref_id: id,
-          data: updateEventDto,
-        });
-      } catch (error) {
-        return error;
-      }
-      return result.data;
-    } catch (error) {
-      return error.response.data.errors;
-    }
-  }
-
-  async remove(id: string, updateEventDto: UpdateEventDto) {
+  async remove(id: string, updateInfoDto: UpdateInfoDto) {
     // console.log('>>>>', id);
     //
-    let updateObj: any = updateEventDto;
+    let updateObj: any = updateInfoDto;
     updateObj.delete_date = now();
     updateObj.delete_by_id = updateObj.request_by.id;
     updateObj.delete_by = updateObj.request_by.displayname;
@@ -372,14 +327,13 @@ export class EventService {
       // console.log('result', result);
       try {
         task.delete({
-          token: updateEventDto.request_by.token,
+          token: updateInfoDto.request_by.token,
           route: defaultRoute,
           ref_id: id,
         });
       } catch (error) {
         return error;
       }
-
       return result.data;
     } catch (error) {
       return error.response.data.errors;

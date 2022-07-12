@@ -8,5 +8,6 @@ export class RequestByDto {
     email: Array<string>;
     roles: Array<string>;
     units: Array<string>;
+    token: string;
   };
 }
