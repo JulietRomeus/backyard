@@ -234,7 +234,7 @@ export class InfoService {
     try {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/info/${id}`, updateObj),
-      );b
+      );
       try {
         task.update({
           token: updateInfoDto.request_by.token,
