@@ -15,6 +15,7 @@ async function bootstrap() {
       'http://localhost:9000',
       'https://bigdata.rtarf.maholan.app',
       'https://bigdata.rtarf.maholan.dev',
+      'https://bigdata.rtarf.mi.th',
     ];
     app.enableCors({
       origin: (origin, callback) => {
