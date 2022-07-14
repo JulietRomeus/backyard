@@ -156,6 +156,31 @@ export class InfoController {
     }
   }
 
+  @Get('agency')
+  @Permission()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล Agency' })
+  async agencyOption() {
+    const response: any = await this.infoService.agencyOption();
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_AGENCY_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_AGENCY_FAILED',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
   @Get(':id')
   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')

@@ -11,6 +11,10 @@ const defaultRoute = 'info';
 const objResponse = `info_id
                 title
                 detail
+                agency{
+                  agency_id
+                  agency_name
+                }
                 event{
                   event_id
                   event_name
@@ -87,7 +91,7 @@ export class InfoService {
       const resObj = result.data;
 
       try {
-        task.create({
+        await task.create({
           token: createEventDto.request_by.token,
           route: defaultRoute,
           ref_id: resObj.data.info_id,
@@ -200,6 +204,28 @@ export class InfoService {
     }
   }
 
+  async agencyOption() {
+    const query = `query{
+      agency(filter:{_and:[{status:{_eq:1}},
+      ]}){
+          agency_id
+          agency_no
+          agency_name
+      }
+  }
+`;
+    const variables = {};
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      return result.data;
+    } catch (error) {
+      // console.log('--->', error.response.data.errors);
+      return error.response.data.errors;
+    }
+  }
+
   async formStatus() {
     const query = `query{
       form_status(filter:{status:{_eq:1}}){
@@ -236,14 +262,16 @@ export class InfoService {
         this.httpService.patch(`/items/info/${id}`, updateObj),
       );
       try {
-        task.update({
+        await task.update({
           token: updateInfoDto.request_by.token,
           route: defaultRoute,
           node_order: updateInfoDto.form_status.no === '1' ? 1 : 0,
           ref_id: id,
           data: updateInfoDto,
         });
+        // console.log(resTask);
       } catch (error) {
+        // console.log('EEE', error);
         return error;
       }
       return result.data;
@@ -265,7 +293,7 @@ export class InfoService {
       );
       // console.log('result', result);
       try {
-        task.update({
+        await task.update({
           token: updateInfoDto.request_by.token,
           route: defaultRoute,
           node_order: 1,
@@ -294,7 +322,7 @@ export class InfoService {
       );
       // console.log('result', result);
       try {
-        task.update({
+        await task.update({
           token: updateInfoDto.request_by.token,
           route: defaultRoute,
           node_order: 0,
@@ -326,7 +354,7 @@ export class InfoService {
       );
       // console.log('result', result);
       try {
-        task.delete({
+        await task.delete({
           token: updateInfoDto.request_by.token,
           route: defaultRoute,
           ref_id: id,

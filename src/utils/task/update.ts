@@ -9,18 +9,18 @@ type TaskType = {
   data?: any;
   note?: string;
 };
-export default ({
+export default async ({
   token,
   route,
   node_order,
   ref_id,
   method,
   data,
-  note, 
+  note,
 }: TaskType) => {
   try {
     delete data.request_by;
-    axios.patch(
+    await axios.patch(
       `${process.env.GENERAL_URI || ''}/workspace/${
         process.env.DEFAULT_SERVICE_NAME
       }/${route}/${node_order}/${ref_id}${
@@ -33,6 +33,7 @@ export default ({
         },
       },
     );
+    
     // console.log('result', result.data.data);
   } catch (error) {
     // console.log(process.env.MAIN_DIRECTUS_TOKEN);

@@ -5,9 +5,9 @@ type TaskType = {
   route: string;
   ref_id: string;
 };
-export default ({ token, route, ref_id }: TaskType) => {
+export default async ({ token, route, ref_id }: TaskType) => {
   try {
-    axios.delete(
+    await axios.delete(
       `${process.env.GENERAL_URI || ''}/workspace/${
         process.env.DEFAULT_SERVICE_NAME
       }/${route}/${ref_id}`,

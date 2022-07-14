@@ -88,7 +88,7 @@ export class EventService {
       const resEvent = result.data;
       // console.log(result.data);
       try {
-        task.create({
+        await task.create({
           token: createEventDto.request_by.token,
           route: defaultRoute,
           ref_id: resEvent.data.event_id,
@@ -210,7 +210,7 @@ export class EventService {
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
       try {
-        task.update({
+        await task.update({
           token: updateEventDto.request_by.token,
           route: defaultRoute,
           node_order: status_no === '3' ? 1 : status_no === '5' ? 2 : 0,
@@ -243,7 +243,7 @@ export class EventService {
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
       try {
-        task.update({
+        await task.update({
           token: updateEventDto.request_by.token,
           route: defaultRoute,
           node_order: 1,
@@ -275,7 +275,7 @@ export class EventService {
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
       try {
-        task.update({
+        await task.update({
           token: updateEventDto.request_by.token,
           route: defaultRoute,
           node_order: 0,
@@ -309,7 +309,7 @@ export class EventService {
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
       try {
-        task.update({
+        await task.update({
           token: updateEventDto.request_by.token,
           route: defaultRoute,
           node_order: 2,
@@ -341,7 +341,7 @@ export class EventService {
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
       try {
-        task.update({
+        await task.update({
           token: updateEventDto.request_by.token,
           route: defaultRoute,
           node_order: 3,
@@ -371,7 +371,7 @@ export class EventService {
       );
       // console.log('result', result);
       try {
-        task.delete({
+        await task.delete({
           token: updateEventDto.request_by.token,
           route: defaultRoute,
           ref_id: id,

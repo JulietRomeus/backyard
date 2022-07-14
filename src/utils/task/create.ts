@@ -6,9 +6,9 @@ type TaskType = {
   ref_id: string;
   data: { name: string; units?: string[] };
 };
-export default ({ token, route, ref_id, data }: TaskType) => {
+export default async ({ token, route, ref_id, data }: TaskType) => {
   try {
-    axios.post(
+    await axios.post(
       `${process.env.GENERAL_URI || ''}/workspace/${
         process.env.DEFAULT_SERVICE_NAME
       }/${route}/${ref_id}`,

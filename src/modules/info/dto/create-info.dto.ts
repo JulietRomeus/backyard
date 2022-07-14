@@ -21,6 +21,18 @@ export class CreateInfoDto extends RequestByDto {
   };
 
   @ApiProperty({
+    example: {
+      agency_id: 'xxxxx',
+      agency_name: 'ไทยรัฐ',
+    },
+    nullable: true,
+  })
+  agency?: {
+    agency_id: string;
+    agency_name: string | null;
+  };
+
+  @ApiProperty({
     example: 1,
     nullable: true,
   })
