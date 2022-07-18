@@ -1,5 +1,4 @@
 import { HttpService } from '@nestjs/axios';
-
 import { Injectable } from '@nestjs/common';
 import { CreateInfoDto } from './dto/create-info.dto';
 import { UpdateInfoDto } from './dto/update-info.dto';
@@ -118,6 +117,7 @@ export class InfoService {
       const result = await firstValueFrom(
         this.httpService.post(`/graphql`, { query, variables }),
       );
+      console.log('>>>>>', result.data);
       return result.data;
     } catch (error) {
       console.log('err find all info', error.response.data);
@@ -350,7 +350,7 @@ export class InfoService {
     updateObj.status = 0;
     try {
       const result = await firstValueFrom(
-        this.httpService.patch(`/items/event/${id}`, updateObj),
+        this.httpService.patch(`/items/info/${id}`, updateObj),
       );
       // console.log('result', result);
       try {

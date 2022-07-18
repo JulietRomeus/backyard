@@ -73,6 +73,7 @@ export class PermissionGuard {
 
     // console.log('result', result.data);
     const data = result.data;
+    // console.log('>>>perm', data);
     if (!data)
       throw new UnauthorizedException(
         result.data.error || 'authorization invalid',
@@ -90,12 +91,25 @@ export class PermissionGuard {
     } catch {
       throw new UnauthorizedException('authorization role mismatch.');
     }
-
+    let filter = '';
+    if (data.data_permission[perm.service][perm.route].all) {
+      filter = 'all';
+    }
+    if (data.data_permission[perm.service][perm.route].unit_child) {
+      filter = 'unit_child';
+    }
+    if (data.data_permission[perm.service][perm.route].unit) {
+      filter = 'unit';
+    }
+    if (data.data_permission[perm.service][perm.route].self) {
+      filter = 'self';
+    }
     req.body = {
       request_by: {
         ...data.request_by,
         data_permission: data.data_permission,
         token: headers.authorization,
+        filter: filter,
       },
       ...req.body,
     };

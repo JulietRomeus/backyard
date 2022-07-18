@@ -9,5 +9,7 @@ export class RequestByDto {
     roles: Array<string>;
     units: Array<string>;
     token: string;
+    filter: string;
+    data_permission: any;
   };
 }

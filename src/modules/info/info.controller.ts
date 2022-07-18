@@ -50,12 +50,13 @@ export class InfoController {
   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล INFO ทั้งหมด' })
-  @ApiOkResponse({
-    description: 'INFO object',
-    type: ResponseInfoDto,
-    isArray: true,
-  })
+  // @ApiOkResponse({
+  //   description: 'INFO object',
+  //   type: ResponseInfoDto,
+  //   isArray: true,
+  // })
   async findAll(@Req() req: any): Promise<any> {
+    // console.log('>>>>>');
     const response: any = await this.infoService.findAll();
     if (response.data) {
       return {
