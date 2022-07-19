@@ -100,6 +100,7 @@ export class WarningService {
   constructor(private readonly httpService: HttpService) {}
 
   async create(CreateWarningDto: CreateWarningDto) {
+    // console.log('>>>>>');
     let createObj: any = CreateWarningDto;
     createObj.create_date = now();
     createObj.create_by_id = createObj.request_by.id;
@@ -112,7 +113,7 @@ export class WarningService {
         this.httpService.post(`/items/warning/`, createObj),
       );
       const resObj = result.data;
-
+      // console.log('>>>>create', resObj);
       try {
         await task.create({
           token: CreateWarningDto.request_by.token,
@@ -421,26 +422,66 @@ export class WarningService {
   async recieve(id: string, updateWarningDto: UpdateWarningDto) {
     // console.log('>>>>', id);
     let updateObj: any = updateWarningDto;
-    updateObj.approve_date = now();
-    updateObj.warning_status = { id: 'pending_acknowledge' };
-    updateObj.approve_by_id = updateObj.request_by.id;
-    updateObj.approve_by = updateObj.request_by.displayname;
+    // console.log('unit', updateWarningDto);
+    const warning_target = updateObj.data.warning_target.map((unit: any) => {
+      if (unit.unit_no.includes(updateObj.unit)) {
+        return {
+          ...unit,
+          ack_status: 1,
+          ack_date: now(),
+          note: updateObj?.comment || '',
+        };
+      } else {
+        return { ...unit };
+      }
+    });
+    // console.log('warning target', warning_target);
+    let isComplete = true;
+    warning_target.map((w: any) => {
+      if (w.ack_status !== 1) {
+        isComplete = false;
+      }
+    });
+    let updataData: any = {};
+    if (isComplete === true) {
+      updataData.complete_date = now();
+      updataData.warning_status = { id: 'complete' };
+      updataData.complete_by_id = updateObj.request_by.id;
+      updataData.complete_by = updateObj.request_by.displayname;
+      updataData.warning_target = warning_target;
+    } else {
+      updataData.warning_target = warning_target;
+    }
     try {
       const result = await firstValueFrom(
-        this.httpService.patch(`/items/warning/${id}`, updateObj),
+        this.httpService.patch(`/items/warning/${id}`, updataData),
       );
-      // console.log('result', result);
-      try {
-        await task.update({
-          token: updateWarningDto.request_by.token,
-          route: defaultRoute,
-          node_order: 3,
-          ref_id: id,
-          data: updateWarningDto,
-        });
-      } catch (error) {
-        return error;
+      if (isComplete === true) {
+        try {
+          await task.update({
+            token: updateWarningDto.request_by.token,
+            route: defaultRoute,
+            node_order: 3,
+            ref_id: id,
+            data: updataData,
+          });
+        } catch (error) {
+          return error;
+        }
+      } else {
+        try {
+          await task.update({
+            token: updateWarningDto.request_by.token,
+            route: defaultRoute,
+            node_order: 2,
+            ref_id: id,
+            data: updataData,
+          });
+        } catch (error) {
+          return error;
+        }
       }
+
       return result.data;
     } catch (error) {
       return error.response.data.errors;
