@@ -81,24 +81,35 @@ export class InfoService {
     createObj.create_by_id = createObj.request_by.id;
     createObj.create_by = createObj.request_by.displayname;
     createObj.form_status = {
-      id: '2',
+      id:
+        createEventDto?.agency?.agency_id === '2' ||
+        createEventDto?.agency?.agency_id === '3' ||
+        createEventDto?.agency?.agency_id === '4'
+          ? '3'
+          : '2',
     };
     try {
       const result = await firstValueFrom(
         this.httpService.post(`/items/info/`, createObj),
       );
       const resObj = result.data;
-
-      try {
-        await task.create({
-          token: createEventDto.request_by.token,
-          route: defaultRoute,
-          ref_id: resObj.data.info_id,
-          data: { name: createEventDto.title },
-        });
-      } catch (error) {
-        return error;
+      if (
+        createEventDto?.agency?.agency_id !== '2' &&
+        createEventDto?.agency?.agency_id !== '3' &&
+        createEventDto?.agency?.agency_id !== '4'
+      ) {
+        try {
+          await task.create({
+            token: createEventDto.request_by.token,
+            route: defaultRoute,
+            ref_id: resObj.data.info_id,
+            data: { name: createEventDto.title },
+          });
+        } catch (error) {
+          return error;
+        }
       }
+
       return result.data;
     } catch (error) {
       return error.response.data.errors;
