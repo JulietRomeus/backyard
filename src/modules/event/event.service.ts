@@ -48,6 +48,13 @@ const eventResponse = `event_id
                   population
                   dwellings
                   farmland
+                  population_damage
+                  dwellings_damage
+                  farmland_damage
+                  deaths
+                  injury
+                  lost_people
+                  announce_flag
                 } 
                 comment
                 create_by
