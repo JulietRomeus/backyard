@@ -5,6 +5,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { firstValueFrom } from 'rxjs';
 import now from '../../utils/now';
 import task from '../../utils/task';
+import { StatusEnum } from '../../common/status.enum';
 const defaultRoute = 'event';
 
 const eventResponse = `event_id
@@ -39,10 +40,15 @@ const eventResponse = `event_id
                 }
                 event_area{
                   event_area_id
+                  region_code
                   province_code
                   amphoe_code
                   tambon_code
                   mooban_code
+                  province_name
+                  amphoe_name
+                  tambon_name
+                  mooban_name
                   long
                   lat
                   population
@@ -389,6 +395,26 @@ export class EventService {
 
       return result.data;
     } catch (error) {
+      return error.response.data.errors;
+    }
+  }
+
+  async getLastByID(id: number) {
+    const query = `query{
+      event(filter:{event_id:{_eq:${id}},event_status:{no:{_in:["${StatusEnum.EVENT_APPROVAL}","${StatusEnum.EVENT_COMPLETED}"]}}}){
+        ${eventResponse}
+      }
+  }
+`;
+    const variables = {};
+
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      return result.data;
+    } catch (error) {
+      console.log('--->', error.response.data.errors);
       return error.response.data.errors;
     }
   }

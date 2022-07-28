@@ -277,4 +277,33 @@ export class EventController {
       timestamp: new Date().toISOString(),
     };
   }
+  @Get('get-last/:id')
+  @Permission({ route: defaultRoute, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล event by id และที่เผชิญเหตุ กับยุติแล้ว' })
+  @ApiOkResponse({
+    description: 'Event object',
+    type: ResponseEventDto,
+  })
+  async getLastByID(@Param('id') id: string) {
+    const response: any = await this.eventService.getLastByID(+id);
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_EVENT_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // console.log('>>>> error');
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_EVENT_ERROR',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
 }
