@@ -11,6 +11,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
     const whitelist = [
+      'http://192.168.1.*',
       'http://localhost:3100',
       'http://localhost:9000',
       'https://bigdata.rtarf.maholan.app',

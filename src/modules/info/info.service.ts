@@ -5,6 +5,7 @@ import { UpdateInfoDto } from './dto/update-info.dto';
 import { firstValueFrom } from 'rxjs';
 import now from '../../utils/now';
 import task from '../../utils/task';
+import notification from '../../utils/notification';
 const defaultRoute = 'info';
 
 const objResponse = `info_id
@@ -59,6 +60,7 @@ const objResponse = `info_id
                 create_by
                 create_by_id
                 create_date
+                publish_date
                 update_by
                 update_by_id
                 update_date
@@ -68,9 +70,13 @@ const objResponse = `info_id
                 approve_by
                 approve_by_id
                 approve_date
+                notification_by
+                notification_by_id
+                notification_date
                 delete_by
                 delete_by_id
-                delete_date`;
+                delete_date
+                is_notification`;
 @Injectable()
 export class InfoService {
   constructor(private readonly httpService: HttpService) {}
@@ -78,14 +84,18 @@ export class InfoService {
   async create(createEventDto: CreateInfoDto) {
     let createObj: any = createEventDto;
     createObj.create_date = now();
+    createObj.publish_date = createEventDto.publish_date
+      ? createEventDto.publish_date
+      : now();
     createObj.create_by_id = createObj.request_by.id;
     createObj.create_by = createObj.request_by.displayname;
+    createObj.status = 1;
     createObj.form_status = {
       id:
         createEventDto?.agency?.agency_id === '2' ||
         createEventDto?.agency?.agency_id === '3' ||
         createEventDto?.agency?.agency_id === '4'
-          ? '3'
+          ? '6'
           : '2',
     };
     try {
@@ -109,6 +119,21 @@ export class InfoService {
           return error;
         }
       }
+      if (createEventDto.critical_flag >= 3) {
+        try {
+          await notification.create({
+            token: createEventDto.request_by.token,
+            ref_id: resObj.data.info_id,
+            title: createEventDto.title,
+            message: createEventDto.detail,
+            type: 3,
+            category: 'info',
+            url: `disaster/info/form/${resObj.data.info_id}`,
+          });
+        } catch (error) {
+          return error;
+        }
+      }
 
       return result.data;
     } catch (error) {
@@ -118,7 +143,7 @@ export class InfoService {
 
   async findAll() {
     const query = `query{
-      info(filter: { status: { _eq: 1 } },sort: ["-create_date"]){
+      info(filter:{_and:[{ status: { _eq: 1 } }] },sort: ["-create_date"]){
         ${objResponse}
       }
   }
@@ -128,7 +153,7 @@ export class InfoService {
       const result = await firstValueFrom(
         this.httpService.post(`/graphql`, { query, variables }),
       );
-      console.log('>>>>>', result.data);
+      // console.log('>>>>>', result.data);
       return result.data;
     } catch (error) {
       console.log('err find all info', error.response.data);
@@ -295,9 +320,58 @@ export class InfoService {
     // console.log('>>>>', id);
     let updateObj: any = updateInfoDto;
     updateObj.approve_date = now();
-    updateObj.form_status = { id: '3' };
+    updateObj.form_status = { id: '5' };
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/info/${id}`, updateObj),
+      );
+      // console.log('result', result);
+      try {
+        await task.update({
+          token: updateInfoDto.request_by.token,
+          route: defaultRoute,
+          node_order: 1,
+          ref_id: id,
+          data: updateInfoDto,
+        });
+      } catch (error) {
+        return error;
+      }
+      // console.log(result);
+      if (
+        Number(result?.data?.data?.critical_flag) >= 3 &&
+        result?.data?.data.isNotification === true
+      ) {
+        console.log('>>> แจ้งเตือน');
+        try {
+          await notification.create({
+            token: updateInfoDto.request_by.token,
+            ref_id: id,
+            title: updateInfoDto.title,
+            message: updateInfoDto.detail,
+            type: 3,
+            category: 'info',
+            url: `disaster/info/form/${id}`,
+          });
+        } catch (error) {
+          return error;
+        }
+      }
+      return result.data;
+    } catch (error) {
+      return error.response.data.errors;
+    }
+  }
+
+  async notification(id: string, updateInfoDto: UpdateInfoDto) {
+    // console.log('>>>>', id);
+    let updateObj: any = updateInfoDto;
+    updateObj.notification_date = now();
+    updateObj.form_status = { id: '5' };
+    updateObj.notification_by_id = updateObj.request_by.id;
+    updateObj.notification_by = updateObj.request_by.displayname;
     try {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/info/${id}`, updateObj),

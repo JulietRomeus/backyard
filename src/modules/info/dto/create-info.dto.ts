@@ -60,6 +60,12 @@ export class CreateInfoDto extends RequestByDto {
     example: '2022-05-01 00:00:00',
     nullable: true,
   })
+  publish_date?: Date;
+
+  @ApiProperty({
+    example: '2022-05-01 00:00:00',
+    nullable: true,
+  })
   expect_form?: Date;
 
   @ApiProperty({
