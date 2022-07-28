@@ -25,6 +25,17 @@ export default async ({
   users,
 }: NotiType) => {
   try {
+    // console.log('>> data', {
+    //   title: title,
+    //   message: message,
+    //   type: type,
+    //   route_id: ref_id,
+    //   category: category,
+    //   url: url,
+    //   roles: roles,
+    //   units: units,
+    //   users: users,
+    // });
     await axios.post(
       `${process.env.MAIN_URI || ''}/notification`,
       {
@@ -44,6 +55,8 @@ export default async ({
         },
       },
     );
+    // console.log('res', res);
+    // return res;
     // console.log('result', result.data.data);
   } catch (error) {
     // console.log(process.env.MAIN_DIRECTUS_TOKEN);

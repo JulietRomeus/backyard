@@ -319,8 +319,9 @@ export class InfoService {
   async approve(id: string, updateInfoDto: UpdateInfoDto) {
     // console.log('>>>>', id);
     let updateObj: any = updateInfoDto;
+    const token = updateInfoDto.request_by.token;
     updateObj.approve_date = now();
-    updateObj.form_status = { id: '5' };
+    updateObj.form_status = { id: '2' }; //5
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {
@@ -328,6 +329,7 @@ export class InfoService {
         this.httpService.patch(`/items/info/${id}`, updateObj),
       );
       // console.log('result', result);
+      const resObj = result.data.data;
       try {
         await task.update({
           token: updateInfoDto.request_by.token,
@@ -339,28 +341,31 @@ export class InfoService {
       } catch (error) {
         return error;
       }
-      // console.log(result);
+      // console.log('-->', result.data);
       if (
-        Number(result?.data?.data?.critical_flag) >= 3 &&
-        result?.data?.data.isNotification === true
+        result.data.data.critical_flag >= 3 &&
+        result?.data?.data.is_notification === true
       ) {
-        console.log('>>> แจ้งเตือน');
+        // console.log('>>> แจ้งเตือน', updateInfoDto.request_by);
         try {
           await notification.create({
-            token: updateInfoDto.request_by.token,
+            token: token,
             ref_id: id,
-            title: updateInfoDto.title,
-            message: updateInfoDto.detail,
+            title: resObj.title,
+            message: resObj.detail,
             type: 3,
             category: 'info',
             url: `disaster/info/form/${id}`,
           });
+          // console.log('res noti', res);
         } catch (error) {
+          console.log(error);
           return error;
         }
       }
       return result.data;
     } catch (error) {
+      console.log(error);
       return error.response.data.errors;
     }
   }
