@@ -141,9 +141,18 @@ export class InfoService {
     }
   }
 
-  async findAll() {
+  async findAll(filter) {
+    let allFilter: any = [{ status: { _eq: 1 } }];
+    if (filter.form_status) {
+      allFilter.push({
+        form_status: { id: { _in: [...filter.form_status.split(',')] } },
+      });
+    }
     const query = `query{
-      info(filter:{_and:[{ status: { _eq: 1 } }] },sort: ["-create_date"]){
+      info(filter:{_and:${JSON.stringify(allFilter).replace(
+        /"([^"]+)":/g,
+        '$1:',
+      )} },sort: ["-create_date"]){
         ${objResponse}
       }
   }

@@ -117,9 +117,25 @@ export class EventService {
     }
   }
 
-  async findAll() {
+  async findAll(filter: any) {
+    let allFilter: any = [{ status: { _eq: 1 } }];
+    if (filter.event_status) {
+      allFilter.push({
+        event_status: { no: { _in: [...filter.event_status.split(',')] } },
+      });
+    }
+    if (filter.start_date) {
+      allFilter.push({ start_date: { _lte: `${filter.start_date}` } });
+    }
+    if (filter.end_date) {
+      allFilter.push({ end_date: { _gte: `${filter.end_date}` } });
+    }
+    // console.log(JSON.stringify(allFilter));
     const query = `query{
-      event(filter: { status: { _eq: 1 } },sort: ["-create_date"]){
+      event(filter:{_and: ${JSON.stringify(allFilter).replace(
+        /"([^"]+)":/g,
+        '$1:',
+      )}} ,sort: ["-create_date"]){
         ${eventResponse}
       }
   }

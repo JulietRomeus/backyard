@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Req,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -55,9 +56,9 @@ export class InfoController {
   //   type: ResponseInfoDto,
   //   isArray: true,
   // })
-  async findAll(@Req() req: any): Promise<any> {
+  async findAll(@Req() req: any, @Query() filter: any): Promise<any> {
     // console.log('>>>>>');
-    const response: any = await this.infoService.findAll();
+    const response: any = await this.infoService.findAll(filter);
     if (response.data) {
       return {
         status: HttpStatus.OK,

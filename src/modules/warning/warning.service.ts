@@ -130,10 +130,19 @@ export class WarningService {
     }
   }
 
-  async findAll({ request_by }: RequestByDto) {
+  async findAll({ request_by }: RequestByDto, filter: any) {
     // console.log('--', request_by.data_permission);
+    let allFilter: any = [{ status: { _eq: 1 } }];
+    if (filter.warning_status) {
+      allFilter.push({
+        warning_status: { id: { _in: [...filter.warning_status.split(',')] } },
+      });
+    }
     const query = `query{
-      warning(filter: {_and:[{ status: { _eq: 1 } },]},sort: ["-create_date"]){
+      warning(filter: {_and:${JSON.stringify(allFilter).replace(
+        /"([^"]+)":/g,
+        '$1:',
+      )}},sort: ["-create_date"]){
         ${objResponse}
       }
   }

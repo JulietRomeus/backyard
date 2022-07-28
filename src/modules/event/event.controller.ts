@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Req,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -57,8 +58,8 @@ export class EventController {
     type: ResponseEventDto,
     isArray: true,
   })
-  async findAll(@Req() req: any): Promise<any> {
-    const response: any = await this.eventService.findAll();
+  async findAll(@Req() req: any, @Query() filter: any): Promise<any> {
+    const response: any = await this.eventService.findAll(filter);
     if (response.data) {
       return {
         status: HttpStatus.OK,
@@ -280,7 +281,9 @@ export class EventController {
   @Get('get-last/:id')
   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูล event by id และที่เผชิญเหตุ กับยุติแล้ว' })
+  @ApiOperation({
+    summary: 'ดึงข้อมูล event by id และที่เผชิญเหตุ กับยุติแล้ว',
+  })
   @ApiOkResponse({
     description: 'Event object',
     type: ResponseEventDto,

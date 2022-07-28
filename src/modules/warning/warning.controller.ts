@@ -8,6 +8,7 @@ import {
   Delete,
   HttpStatus,
   Req,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -48,8 +49,8 @@ export class WarningController {
   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล WARNING ทั้งหมด' })
-  async findAll(@Body() body: any): Promise<any> {
-    const response: any = await this.warningService.findAll(body);
+  async findAll(@Body() body: any, @Query() filter: any): Promise<any> {
+    const response: any = await this.warningService.findAll(body, filter);
     if (response.data) {
       return {
         status: HttpStatus.OK,
