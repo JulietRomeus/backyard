@@ -13,6 +13,7 @@ const eventResponse = `event_id
                 event_name
                 disaster_type {
                     disaster_type_id
+                    disaster_type_no
                     disaster_type_name
                     image{
                       id
@@ -340,6 +341,7 @@ export class EventService {
 
   async update(id: string, updateEventDto: UpdateEventDto) {
     let updateObj: UpdateEventDto = updateEventDto;
+    const token = updateEventDto.request_by.token;
     const status_no = updateEventDto.event_status.no;
     const curStatus =
       updateEventDto.event_status.no === '3'
@@ -361,33 +363,62 @@ export class EventService {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
-      try {
-        await task.update({
-          token: updateEventDto.request_by.token,
-          route: defaultRoute,
-          node_order: status_no === '3' ? 1 : status_no === '5' ? 2 : 0,
+      // try {
+
+      const resEvent = result.data;
+      task.update({
+        token: updateEventDto.request_by.token,
+        route: defaultRoute,
+        node_order: status_no === '3' ? 1 : status_no === '5' ? 2 : 0,
+        ref_id: id,
+        data: updateEventDto,
+      });
+      // } catch (error) {
+      //   return error;
+      // }
+
+      // console.log('>', status_no);
+      if (status_no === '3') {
+        let units: any = [];
+        if (
+          updateEventDto?.event_area &&
+          updateEventDto?.event_area?.length > 0
+        ) {
+          units = await this.unitRespArea(updateEventDto.event_area);
+        }
+        // console.log('_____noti');
+        // ======= Unit Area CONDITION ========
+        // try {
+
+        // console.log('notification ::', token);
+        notification.create({
+          token: token,
           ref_id: id,
-          data: updateEventDto,
+          title: resEvent.data.event_name,
+          message: resEvent.data.note,
+          type: 1,
+          category: 'event',
+          url: `disaster/event/form/${id}`,
+          units: units,
         });
-      } catch (error) {
-        return error;
       }
 
-      return result.data;
+      return resEvent;
     } catch (error) {
       return error.response.data.errors;
     }
   }
 
   async approve(id: string, updateEventDto: UpdateEventDto) {
-    console.log('>>>>', updateEventDto);
+    // console.log('>>>>', updateEventDto);
     const resStatus = await firstValueFrom(
       this.httpService.get(`/items/event_status?filter[no][_eq]=${3}`),
     );
     const status_id = resStatus.data.data[0].id;
     let updateObj: any = updateEventDto;
+    const token: any = updateEventDto.request_by.token;
     updateObj.approve_date = now();
-    updateObj.event_status = { id: status_id };
+    updateObj.event_status = { id: status_id }; //status_id
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     delete updateObj.update_date;
@@ -396,19 +427,17 @@ export class EventService {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
-
       const resEvent = result.data;
-      try {
-        await task.update({
-          token: updateEventDto.request_by.token,
-          route: defaultRoute,
-          node_order: 1,
-          ref_id: id,
-          data: updateEventDto,
-        });
-      } catch (error) {
-        return error;
-      }
+
+      task.update({
+        token: updateEventDto.request_by.token,
+        route: defaultRoute,
+        node_order: 1,
+        ref_id: id,
+        data: updateEventDto,
+      });
+
+      // console.log('taskUpdate ::', taskUpdate);
 
       // ======= Notification condition ========
 
@@ -421,25 +450,32 @@ export class EventService {
         units = await this.unitRespArea(updateEventDto.event_area);
       }
       // ======= Unit Area CONDITION ========
-      try {
-        await notification.create({
-          token: updateEventDto.request_by.token,
-          ref_id: resEvent.data.event_id,
-          title: resEvent.data.event_name,
-          message: resEvent.data.note,
-          type: 1,
-          category: 'event',
-          url: `disaster/event/form/${resEvent.data.event_id}`,
-          units: units,
-        });
-      } catch (error) {
-        return error;
-      }
+      // try {
+
+      // console.log('notification ::', token);
+      notification.create({
+        token: token,
+        ref_id: resEvent.data.event_id,
+        title: resEvent.data.event_name,
+        message: resEvent.data.note,
+        type: 1,
+        category: 'event',
+        url: `disaster/event/form/${resEvent.data.event_id}`,
+        units: units,
+      });
+
+      // console.log('noti noti noti noti :::', noti);
+
+      // } catch (error) {
+      //   return error;
+      // }
 
       // ======= Notification condition ========
-
-      return result.data;
+      // console.log("")
+      // console.log('resEvent :::', resEvent);
+      return resEvent;
     } catch (error) {
+      console.log('error', error);
       return error.response.data.errors;
     }
   }

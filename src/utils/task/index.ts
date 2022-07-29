@@ -7,4 +7,5 @@ const task = {
   update: update,
   delete: deleteTask,
 };
+
 export default task;

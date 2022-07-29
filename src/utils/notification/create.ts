@@ -12,6 +12,7 @@ type NotiType = {
   units?: string[]; // unit code
   users?: string[];
 };
+
 export default async ({
   token,
   title,
@@ -25,22 +26,22 @@ export default async ({
   users,
 }: NotiType) => {
   try {
-    console.log('>> data', {
-      title: title,
-      message: message,
-      type: type,
-      route_id: ref_id.toString(),
-      category: category,
-      url: url,
-      roles: roles,
-      units: units,
-      users: users,
-    });
-    await axios.post(
+    // console.log('=-=-=-=-=-=-=-=-=-=  -=-= -= -= -=- =-= - =', {
+    //   title: (title && title !== '' && title) || 'ไม่ระบุ',
+    //   message: (message && message !== '' && message) || 'ไม่ระบุ',
+    //   type: type,
+    //   route_id: ref_id.toString(),
+    //   category: category,
+    //   url: url,
+    //   roles: roles,
+    //   units: units,
+    //   users: users,
+    // });
+    const resp = await axios.post(
       `${process.env.MAIN_URI || ''}/notification`,
       {
-        title: title,
-        message: message,
+        title: (title && title !== '' && title) || 'ไม่ระบุ',
+        message: (message && message !== '' && message) || 'ไม่ระบุ',
         type: type,
         route_id: ref_id.toString(),
         category: category,
@@ -55,8 +56,8 @@ export default async ({
         },
       },
     );
-    // console.log('res', res);
-    // return res;
+    console.log('res', resp.data);
+    return resp.data;
     // console.log('result', result.data.data);
   } catch (error) {
     // console.log(process.env.MAIN_DIRECTUS_TOKEN);

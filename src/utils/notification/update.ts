@@ -20,7 +20,7 @@ export default async ({
 }: TaskType) => {
   try {
     delete data.request_by;
-    const resp = await axios.patch(
+    await axios.patch(
       `${process.env.GENERAL_URI || ''}/workspace/${
         process.env.DEFAULT_SERVICE_NAME
       }/${route}/${node_order}/${ref_id}${
@@ -33,9 +33,7 @@ export default async ({
         },
       },
     );
-
-    return resp.data;
-
+    
     // console.log('result', result.data.data);
   } catch (error) {
     // console.log(process.env.MAIN_DIRECTUS_TOKEN);

@@ -3,39 +3,20 @@ import axios from 'axios';
 type TaskType = {
   token: string;
   route: string;
-  node_order: number;
   ref_id: string;
-  method?: string;
-  data?: any;
-  note?: string;
 };
-export default async ({
-  token,
-  route,
-  node_order,
-  ref_id,
-  method,
-  data,
-  note,
-}: TaskType) => {
+export default async ({ token, route, ref_id }: TaskType) => {
   try {
-    delete data.request_by;
-    const resp = await axios.patch(
+    await axios.delete(
       `${process.env.GENERAL_URI || ''}/workspace/${
         process.env.DEFAULT_SERVICE_NAME
-      }/${route}/${node_order}/${ref_id}${
-        (method === 'back' && '?method=back') || ''
-      }`,
-      { data: data, note: note },
+      }/${route}/${ref_id}`,
       {
         headers: {
           Authorization: `${token || ''}`,
         },
       },
     );
-
-    return resp.data;
-
     // console.log('result', result.data.data);
   } catch (error) {
     // console.log(process.env.MAIN_DIRECTUS_TOKEN);
