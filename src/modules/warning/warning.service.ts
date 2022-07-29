@@ -6,6 +6,7 @@ import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import { firstValueFrom } from 'rxjs';
 import now from '../../utils/now';
 import task from '../../utils/task';
+import notification from '../../utils/notification';
 const defaultRoute = 'warning';
 const objResponse = `warning_id
                 title
@@ -98,7 +99,89 @@ const objResponse = `warning_id
 @Injectable()
 export class WarningService {
   constructor(private readonly httpService: HttpService) {}
+  async unitRespArea(areas: any) {
+    // const areaName = 'info_area';
+    // console.log('area', areas);
+    let units = [];
+    const variables = {};
+    await Promise.all(
+      areas.map(async (a) => {
+        // ----- query Amphoe code ----- //
+        if (a.amphoe_code) {
+          try {
+            const query = `query{
+              unit_resp_area(filter:{_and:[{
+                amphoe_code:{
+                  _eq:"${a.amphoe_code}"
+                }
+              }]}){
+                unit_no
+                unit_name
+              }
+            }`;
+            const result = await firstValueFrom(
+              this.httpService.post(`/graphql`, { query, variables }),
+            );
+            // console.log('>>>>>', result.data.data.unit_resp_area);
+            if (
+              result?.data?.data?.unit_resp_area &&
+              result?.data?.data?.unit_resp_area?.length > 0
+            ) {
+              result?.data?.data?.unit_resp_area.map((u) => {
+                units.push(u.unit_no);
+              });
+            }
+          } catch (error) {
+            error?.response?.data?.errors[0]?.extensions?.graphqlErrors?.map(
+              (e) => {
+                console.log(e);
+              },
+            );
+            // return error.response.data.errors;
+          }
+          // ----- query Amphoe code ----- //
+        } else if (a.province_code) {
+          // ----- query Province code ----- //
+          try {
+            const query = `query{
+              unit_resp_area(filter:{_and:[{
+                province_code:{
+                  _eq:"${a.province_code}"
+                }
+              }]}){
+                unit_no
+                unit_name
+              }
+            }`;
+            const result = await firstValueFrom(
+              this.httpService.post(`/graphql`, { query, variables }),
+            );
+            // console.log('>>>>>', result.data.data.unit_resp_area);
+            if (
+              result?.data?.data?.unit_resp_area &&
+              result?.data?.data?.unit_resp_area?.length > 0
+            ) {
+              result?.data?.data?.unit_resp_area.map((u) => {
+                units.push(u.unit_no);
+              });
+            }
+          } catch (error) {
+            error?.response?.data?.errors[0]?.extensions?.graphqlErrors?.map(
+              (e) => {
+                console.log(e);
+              },
+            );
+            // return error.response.data.errors;
+          }
+          // ----- query Province code ----- //
+        }
+      }),
+    );
 
+    const uniqueUnit = [...new Set(units)];
+    // console.log('UNIT', uniqueUnit);
+    return uniqueUnit;
+  }
   async create(CreateWarningDto: CreateWarningDto) {
     // console.log('>>>>>');
     let createObj: any = CreateWarningDto;
@@ -124,6 +207,7 @@ export class WarningService {
       } catch (error) {
         return error;
       }
+
       return result.data;
     } catch (error) {
       return error.response.data.errors;
@@ -342,8 +426,9 @@ export class WarningService {
   async approve(id: string, updateWarningDto: UpdateWarningDto) {
     // console.log('>>>>', id);
     let updateObj: any = updateWarningDto;
+    const token = updateWarningDto.request_by.token;
     updateObj.approve_date = now();
-    updateObj.warning_status = { id: 'pending_acknowledge' };
+    updateObj.warning_status = { id: 'pending_approval' }; //pending_acknowledge
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {
@@ -351,18 +436,37 @@ export class WarningService {
         this.httpService.patch(`/items/warning/${id}`, updateObj),
       );
       // console.log('result', result);
-      try {
-        await task.update({
-          token: updateWarningDto.request_by.token,
-          route: defaultRoute,
-          node_order: 2,
-          ref_id: id,
-          data: updateWarningDto,
-        });
-      } catch (error) {
-        return error;
+      const resWanring = result.data;
+      // try {
+      task.update({
+        token: updateWarningDto.request_by.token,
+        route: defaultRoute,
+        node_order: 2,
+        ref_id: id,
+        data: updateWarningDto,
+      });
+      // } catch (error) {
+      //   return error;
+      // }
+      // console.log(updateWarningDto.warning_target);
+      let units: any = updateWarningDto?.warning_target?.map((u) => u.unit_no);
+      if (
+        updateWarningDto?.warning_area &&
+        updateWarningDto?.warning_area?.length > 0
+      ) {
+        units = await this.unitRespArea(updateWarningDto.warning_area);
       }
-      return result.data;
+      notification.create({
+        token: token,
+        ref_id: id,
+        title: updateWarningDto.title,
+        message: updateWarningDto.note,
+        type: 4,
+        category: 'warning',
+        url: `disaster/warning/form/${id}`,
+        units: units,
+      });
+      return resWanring;
     } catch (error) {
       return error.response.data.errors;
     }

@@ -56,7 +56,7 @@ export default async ({
         },
       },
     );
-    console.log('res', resp.data);
+    // console.log('res', resp.data);
     return resp.data;
     // console.log('result', result.data.data);
   } catch (error) {
