@@ -103,6 +103,7 @@ export class InfoService {
         this.httpService.post(`/items/info/`, createObj),
       );
       const resObj = result.data;
+      // ======= TASK CONDITION ========
       if (
         createEventDto?.agency?.agency_id !== '2' &&
         createEventDto?.agency?.agency_id !== '3' &&
@@ -119,7 +120,15 @@ export class InfoService {
           return error;
         }
       }
-      if (createEventDto.critical_flag >= 3) {
+      // ======= TASK CONDITION ========
+
+      // ======= NOTIFICATION CONDITION ========
+      if (
+        createEventDto?.agency?.agency_id === '2' ||
+        createEventDto?.agency?.agency_id === '3' ||
+        (createEventDto?.agency?.agency_id === '4' &&
+          createEventDto.critical_flag >= 3)
+      ) {
         try {
           await notification.create({
             token: createEventDto.request_by.token,
@@ -134,6 +143,7 @@ export class InfoService {
           return error;
         }
       }
+      // ======= NOTIFICATION CONDITION ========
 
       return result.data;
     } catch (error) {
@@ -330,7 +340,7 @@ export class InfoService {
     let updateObj: any = updateInfoDto;
     const token = updateInfoDto.request_by.token;
     updateObj.approve_date = now();
-    updateObj.form_status = { id: '2' }; //5
+    updateObj.form_status = { id: '5' }; //5
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {
