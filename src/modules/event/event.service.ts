@@ -13,6 +13,9 @@ const eventResponse = `event_id
                 disaster_type {
                     disaster_type_id
                     disaster_type_name
+                    image{
+                      id
+                    }
                 }
                 disaster_level
                 event_status{

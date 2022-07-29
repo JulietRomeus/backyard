@@ -246,6 +246,31 @@ export class InfoController {
     };
   }
 
+  @Patch('/notification/:id')
+  @Permission({ route: defaultRoute, action: 'notification' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อนุมัติข้อมูลข่าวสาร' })
+  async notification(
+    @Param('id') id: string,
+    @Body() updateInfoDto: UpdateInfoDto,
+    @Query() query: any,
+  ) {
+    const response = await this.infoService.notification(
+      id,
+      updateInfoDto,
+      query,
+    );
+
+    const data = { ...response.data };
+    return {
+      status: HttpStatus.CREATED,
+      message: 'NOTIFICATION_INFO_OK',
+      data: data,
+      error: null,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   @Patch('/sendback/:id')
   @Permission({ route: defaultRoute, action: 'approve' })
   @ApiBearerAuth('JWT')

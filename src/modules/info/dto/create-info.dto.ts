@@ -15,6 +15,7 @@ export class CreateInfoDto extends RequestByDto {
     },
     nullable: true,
   })
+  
   disaster_type?: {
     disaster_type_id: string;
     disaster_type_name: string | null;
@@ -28,7 +29,7 @@ export class CreateInfoDto extends RequestByDto {
     nullable: true,
   })
   agency?: {
-    agency_id: string;
+    agency_id: number;
     agency_name: string | null;
   };
 
@@ -125,4 +126,10 @@ export class CreateInfoDto extends RequestByDto {
     nullable: true,
   })
   delete_date?: Date;
+
+  @ApiProperty({
+    example: true,
+    nullable: true,
+  })
+  is_notification?: boolean;
 }
