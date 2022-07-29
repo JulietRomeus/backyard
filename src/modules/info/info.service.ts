@@ -153,21 +153,22 @@ export class InfoService {
         let units: any = [];
         if (createInfoDto?.info_area && createInfoDto?.info_area?.length > 0) {
           units = await this.unitRespArea(createInfoDto.info_area);
-          try {
-            await notification.create({
-              token: createInfoDto.request_by.token,
-              ref_id: resObj.data.info_id,
-              title: resObj.data.title,
-              message: resObj.data.detail,
-              type: 3,
-              category: 'info',
-              url: `disaster/info/form/${resObj.data.info_id}`,
-              units: units,
-            });
-          } catch (error) {
-            return error;
-          }
         }
+        try {
+          await notification.create({
+            token: createInfoDto.request_by.token,
+            ref_id: resObj.data.info_id,
+            title: resObj.data.title,
+            message: resObj.data.detail,
+            type: 3,
+            category: 'info',
+            url: `disaster/info/form/${resObj.data.info_id}`,
+            units: units,
+          });
+        } catch (error) {
+          return error;
+        }
+
         // ======= Unit Area CONDITION ========
       }
       // ======= NOTIFICATION CONDITION ========

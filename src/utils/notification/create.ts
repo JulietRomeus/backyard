@@ -25,17 +25,17 @@ export default async ({
   users,
 }: NotiType) => {
   try {
-    // console.log('>> data', {
-    //   title: title,
-    //   message: message,
-    //   type: type,
-    //   route_id: ref_id.toString(),
-    //   category: category,
-    //   url: url,
-    //   roles: roles,
-    //   units: units,
-    //   users: users,
-    // });
+    console.log('>> data', {
+      title: title,
+      message: message,
+      type: type,
+      route_id: ref_id.toString(),
+      category: category,
+      url: url,
+      roles: roles,
+      units: units,
+      users: users,
+    });
     await axios.post(
       `${process.env.MAIN_URI || ''}/notification`,
       {

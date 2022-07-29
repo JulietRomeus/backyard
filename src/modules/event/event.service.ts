@@ -5,6 +5,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { firstValueFrom } from 'rxjs';
 import now from '../../utils/now';
 import task from '../../utils/task';
+import notification from '../../utils/notification';
 import { StatusEnum } from '../../common/status.enum';
 const defaultRoute = 'event';
 
@@ -89,6 +90,90 @@ const eventResponse = `event_id
 export class EventService {
   constructor(private readonly httpService: HttpService) {}
 
+  async unitRespArea(areas: any) {
+    // const areaName = 'info_area';
+    // console.log('area', areas);
+    let units = [];
+    const variables = {};
+    await Promise.all(
+      areas.map(async (a) => {
+        // ----- query Amphoe code ----- //
+        if (a.amphoe_code) {
+          try {
+            const query = `query{
+              unit_resp_area(filter:{_and:[{
+                amphoe_code:{
+                  _eq:"${a.amphoe_code}"
+                }
+              }]}){
+                unit_no
+                unit_name
+              }
+            }`;
+            const result = await firstValueFrom(
+              this.httpService.post(`/graphql`, { query, variables }),
+            );
+            // console.log('>>>>>', result.data.data.unit_resp_area);
+            if (
+              result?.data?.data?.unit_resp_area &&
+              result?.data?.data?.unit_resp_area?.length > 0
+            ) {
+              result?.data?.data?.unit_resp_area.map((u) => {
+                units.push(u.unit_no);
+              });
+            }
+          } catch (error) {
+            error?.response?.data?.errors[0]?.extensions?.graphqlErrors?.map(
+              (e) => {
+                console.log(e);
+              },
+            );
+            // return error.response.data.errors;
+          }
+          // ----- query Amphoe code ----- //
+        } else if (a.province_code) {
+          // ----- query Province code ----- //
+          try {
+            const query = `query{
+              unit_resp_area(filter:{_and:[{
+                province_code:{
+                  _eq:"${a.province_code}"
+                }
+              }]}){
+                unit_no
+                unit_name
+              }
+            }`;
+            const result = await firstValueFrom(
+              this.httpService.post(`/graphql`, { query, variables }),
+            );
+            // console.log('>>>>>', result.data.data.unit_resp_area);
+            if (
+              result?.data?.data?.unit_resp_area &&
+              result?.data?.data?.unit_resp_area?.length > 0
+            ) {
+              result?.data?.data?.unit_resp_area.map((u) => {
+                units.push(u.unit_no);
+              });
+            }
+          } catch (error) {
+            error?.response?.data?.errors[0]?.extensions?.graphqlErrors?.map(
+              (e) => {
+                console.log(e);
+              },
+            );
+            // return error.response.data.errors;
+          }
+          // ----- query Province code ----- //
+        }
+      }),
+    );
+
+    const uniqueUnit = [...new Set(units)];
+    // console.log('UNIT', uniqueUnit);
+    return uniqueUnit;
+  }
+
   async create(createEventDto: CreateEventDto) {
     let createObj: any = createEventDto;
     createObj.create_date = now();
@@ -97,6 +182,8 @@ export class EventService {
     createObj.event_status = {
       id: '2',
     };
+    delete createObj.update_date;
+    delete createObj.delete_date;
     try {
       const result = await firstValueFrom(
         this.httpService.post(`/items/event/`, createObj),
@@ -135,10 +222,43 @@ export class EventService {
     }
     // console.log(JSON.stringify(allFilter));
     const query = `query{
-      event(filter:{_and: ${JSON.stringify(allFilter).replace(
-        /"([^"]+)":/g,
-        '$1:',
-      )}} ,sort: ["-create_date"]){
+      event(filter:
+        {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
+       ,sort: ["-create_date"]){
+        ${eventResponse}
+      }
+  }
+`;
+    const variables = {};
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      return result.data;
+    } catch (error) {
+      console.log('-->', error.response.data);
+      return error.response.data.errors;
+    }
+  }
+
+  async findAllorActive(filter: any) {
+    let allFilter: any = [{ status: { _eq: 1 } }];
+    if (filter.event_status) {
+      allFilter.push({
+        event_status: { no: { _in: [...filter.event_status.split(',')] } },
+      });
+    }
+    if (filter.start_date) {
+      allFilter.push({ start_date: { _lte: `${filter.start_date}` } });
+    }
+    if (filter.end_date) {
+      allFilter.push({ end_date: { _gte: `${filter.end_date}` } });
+    }
+    // console.log(JSON.stringify(allFilter));
+    const query = `query{
+      event(filter:{_or:[{event_status:{no:{_eq:"3"}}}
+        {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
+      ]} ,sort: ["-create_date"]){
         ${eventResponse}
       }
   }
@@ -260,7 +380,7 @@ export class EventService {
   }
 
   async approve(id: string, updateEventDto: UpdateEventDto) {
-    // console.log('>>>>', id);
+    console.log('>>>>', updateEventDto);
     const resStatus = await firstValueFrom(
       this.httpService.get(`/items/event_status?filter[no][_eq]=${3}`),
     );
@@ -270,10 +390,14 @@ export class EventService {
     updateObj.event_status = { id: status_id };
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
+    delete updateObj.update_date;
+    delete updateObj.delete_date;
     try {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/event/${id}`, updateObj),
       );
+
+      const resEvent = result.data;
       try {
         await task.update({
           token: updateEventDto.request_by.token,
@@ -285,6 +409,35 @@ export class EventService {
       } catch (error) {
         return error;
       }
+
+      // ======= Notification condition ========
+
+      // ======= Unit Area CONDITION ========
+      let units: any = [];
+      if (
+        updateEventDto?.event_area &&
+        updateEventDto?.event_area?.length > 0
+      ) {
+        units = await this.unitRespArea(updateEventDto.event_area);
+      }
+      // ======= Unit Area CONDITION ========
+      try {
+        await notification.create({
+          token: updateEventDto.request_by.token,
+          ref_id: resEvent.data.event_id,
+          title: resEvent.data.event_name,
+          message: resEvent.data.note,
+          type: 1,
+          category: 'event',
+          url: `disaster/event/form/${resEvent.data.event_id}`,
+          units: units,
+        });
+      } catch (error) {
+        return error;
+      }
+
+      // ======= Notification condition ========
+
       return result.data;
     } catch (error) {
       return error.response.data.errors;
