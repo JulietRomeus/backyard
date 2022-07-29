@@ -1,3 +1,4 @@
+import { CreateEventDto } from './../event/dto/create-event.dto';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { CreateInfoDto } from './dto/create-info.dto';
@@ -148,22 +149,26 @@ export class InfoService {
           createInfoDto?.agency?.agency_id === 4) &&
         createInfoDto.critical_flag >= 3
       ) {
-      // ======= Unit Area CONDITION ========
-      // createInfoDto.
-      // ======= Unit Area CONDITION ========
-        try {
-          await notification.create({
-            token: createInfoDto.request_by.token,
-            ref_id: resObj.data.info_id,
-            title: resObj.data.title,
-            message: resObj.data.detail,
-            type: 3,
-            category: 'info',
-            url: `disaster/info/form/${resObj.data.info_id}`,
-          });
-        } catch (error) {
-          return error;
+        // ======= Unit Area CONDITION ========
+        let units: any = [];
+        if (createInfoDto?.info_area && createInfoDto?.info_area?.length > 0) {
+          units = await this.unitRespArea(createInfoDto.info_area);
+          try {
+            await notification.create({
+              token: createInfoDto.request_by.token,
+              ref_id: resObj.data.info_id,
+              title: resObj.data.title,
+              message: resObj.data.detail,
+              type: 3,
+              category: 'info',
+              url: `disaster/info/form/${resObj.data.info_id}`,
+              units: units,
+            });
+          } catch (error) {
+            return error;
+          }
         }
+        // ======= Unit Area CONDITION ========
       }
       // ======= NOTIFICATION CONDITION ========
 
@@ -171,6 +176,90 @@ export class InfoService {
     } catch (error) {
       return error.response.data.errors;
     }
+  }
+
+  async unitRespArea(areas: any) {
+    // const areaName = 'info_area';
+    // console.log('area', areas);
+    let units = [];
+    const variables = {};
+    await Promise.all(
+      areas.map(async (a) => {
+        // ----- query Amphoe code ----- //
+        if (a.amphoe_code) {
+          try {
+            const query = `query{
+              unit_resp_area(filter:{_and:[{
+                amphoe_code:{
+                  _eq:"${a.amphoe_code}"
+                }
+              }]}){
+                unit_no
+                unit_name
+              }
+            }`;
+            const result = await firstValueFrom(
+              this.httpService.post(`/graphql`, { query, variables }),
+            );
+            // console.log('>>>>>', result.data.data.unit_resp_area);
+            if (
+              result?.data?.data?.unit_resp_area &&
+              result?.data?.data?.unit_resp_area?.length > 0
+            ) {
+              result?.data?.data?.unit_resp_area.map((u) => {
+                units.push(u.unit_no);
+              });
+            }
+          } catch (error) {
+            error?.response?.data?.errors[0]?.extensions?.graphqlErrors?.map(
+              (e) => {
+                console.log(e);
+              },
+            );
+            // return error.response.data.errors;
+          }
+          // ----- query Amphoe code ----- //
+        } else if (a.province_code) {
+          // ----- query Province code ----- //
+          try {
+            const query = `query{
+              unit_resp_area(filter:{_and:[{
+                province_code:{
+                  _eq:"${a.province_code}"
+                }
+              }]}){
+                unit_no
+                unit_name
+              }
+            }`;
+            const result = await firstValueFrom(
+              this.httpService.post(`/graphql`, { query, variables }),
+            );
+            // console.log('>>>>>', result.data.data.unit_resp_area);
+            if (
+              result?.data?.data?.unit_resp_area &&
+              result?.data?.data?.unit_resp_area?.length > 0
+            ) {
+              result?.data?.data?.unit_resp_area.map((u) => {
+                units.push(u.unit_no);
+              });
+            }
+          } catch (error) {
+            error?.response?.data?.errors[0]?.extensions?.graphqlErrors?.map(
+              (e) => {
+                console.log(e);
+              },
+            );
+            // return error.response.data.errors;
+          }
+          // ----- query Province code ----- //
+        }
+      }),
+    );
+
+    const uniqueUnit = [...new Set(units)];
+    // console.log('UNIT', uniqueUnit);
+    return uniqueUnit;
   }
 
   async findAll(filter) {
@@ -326,8 +415,8 @@ export class InfoService {
   }
 
   async update(id: string, updateInfoDto: UpdateInfoDto) {
-    let updateObj: UpdateInfoDto = updateInfoDto;
-    console.log('----> form status', updateInfoDto.form_status.no);
+    let updateObj: any = updateInfoDto;
+    // console.log('----> form status', updateInfoDto.form_status.no);
     updateObj.update_date = now();
     updateObj.form_status = {
       id:
@@ -339,10 +428,13 @@ export class InfoService {
     };
     updateObj.update_by_id = updateObj.request_by.id;
     updateObj.update_by = updateObj.request_by.displayname;
+    delete updateObj.request_by;
     try {
+      // console.log('update', id, updateObj);
       const result = await firstValueFrom(
         this.httpService.patch(`/items/info/${id}`, updateObj),
       );
+      // console.log('res info ', result.data);
       try {
         await task.update({
           token: updateInfoDto.request_by.token,
@@ -358,7 +450,9 @@ export class InfoService {
       }
       return result.data;
     } catch (error) {
-      return error.response.data.errors;
+      // console.log('err ->', error.response.data.errors);
+      // console.log('err save info', error);
+      return error;
     }
   }
 
@@ -393,19 +487,22 @@ export class InfoService {
         resObj?.data.is_notification === true
       ) {
         // console.log('>>> แจ้งเตือน', updateInfoDto.request_by);
+        let units: any = [];
+        if (resObj?.data?.info_area && resObj?.data?.info_area?.length > 0) {
+          units = await this.unitRespArea(updateInfoDto.info_area);
+        }
         try {
           await notification.create({
-            token: token,
+            token: updateInfoDto.request_by.token,
             ref_id: id,
             title: resObj.data.title,
             message: resObj.data.detail,
             type: 3,
             category: 'info',
-            url: `disaster/info/form/${id}`,
+            url: `disaster/info/form/${resObj.data.info_id}`,
+            units: units,
           });
-          // console.log('res noti', res);
         } catch (error) {
-          console.log(error);
           return error;
         }
       }
@@ -419,7 +516,7 @@ export class InfoService {
   async notification(id: string, updateInfoDto: UpdateInfoDto, query: any) {
     // console.log('>>>>', query);
     let updateObj: any = updateInfoDto;
-    updateObj.form_status = { id: '5' };
+    updateObj.form_status = { id: '6' }; // 5
     updateObj.is_notification = query.complete ? false : true;
     updateObj.notification_date = now();
     updateObj.notification_by_id = updateObj.request_by.id;
@@ -431,6 +528,10 @@ export class InfoService {
       // console.log(result);
       const resObj = result.data;
       if (!query.complete || resObj.data.is_notification === true) {
+        let units: any = [];
+        if (resObj?.data?.info_area && resObj?.data?.info_area?.length > 0) {
+          units = await this.unitRespArea(updateInfoDto.info_area);
+        }
         try {
           await notification.create({
             token: updateInfoDto.request_by.token,
@@ -440,6 +541,7 @@ export class InfoService {
             type: 3,
             category: 'info',
             url: `disaster/info/form/${resObj.data.info_id}`,
+            units: units,
           });
         } catch (error) {
           return error;

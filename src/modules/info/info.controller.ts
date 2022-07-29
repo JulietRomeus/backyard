@@ -219,14 +219,25 @@ export class InfoController {
   @ApiOperation({ summary: 'อัพเดทข้อมูลข้อมูลข่าวสาร' })
   async update(@Param('id') id: string, @Body() updateInfoDto: UpdateInfoDto) {
     const response = await this.infoService.update(id, updateInfoDto);
-    const data = { ...response.data };
-    return {
-      status: HttpStatus.CREATED,
-      message: 'UPDATE_INFO_OK',
-      data: data,
-      error: null,
-      timestamp: new Date().toISOString(),
-    };
+
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_INFO_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // console.log('>>>> error');
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_INFO_ERROR',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 
   @Patch('/approve/:id')

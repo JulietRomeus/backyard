@@ -119,4 +119,12 @@ export class CreateEventDto extends RequestByDto {
     nullable: true,
   })
   delete_date?: Date;
+
+  event_area?: {
+    id?: string;
+    province_code?: string;
+    amphoe_code?: string;
+    tambon_code?: string;
+    mooban_code?: string;
+  }[];
 }
