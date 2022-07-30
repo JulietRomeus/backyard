@@ -244,26 +244,46 @@ export class EventService {
 
   async findAllorActive(filter: any) {
     let allFilter: any = [{ status: { _eq: 1 } }];
+    let event_status;
     if (filter.event_status) {
-      allFilter.push({
-        event_status: { no: { _in: [...filter.event_status.split(',')] } },
-      });
+      // allFilter.push({
+      //   event_status: { no: { _in: [...filter.event_status.split(',')] } },
+      // });
+      event_status = filter.event_status.split(',');
+      console.log(event_status);
     }
-    if (filter.start_date) {
-      allFilter.push({ start_date: { _lte: `${filter.start_date}` } });
-    }
-    if (filter.end_date) {
-      allFilter.push({ end_date: { _gte: `${filter.end_date}` } });
-    }
+    // if (filter.start_date) {
+    //   allFilter.push({ start_date: { _lte: `${filter.start_date}T23:59:59` } });
+    // }
+    // if (filter.end_date) {
+    //   allFilter.push({ end_date: { _gte: `${filter.end_date}T00:00:00` } });
+    // }
     // console.log(JSON.stringify(allFilter));
+    //     const query = `query{
+    //       event(filter:{_or:[{event_status:{no:{_eq:"3"}}}
+    //         {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
+    //       ]} ,sort: ["-create_date"]){
+    //         ${eventResponse}
+    //       }
+    //   }
+    // `;
     const query = `query{
-      event(filter:{_or:[{event_status:{no:{_eq:"3"}}}
-        {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
-      ]} ,sort: ["-create_date"]){
-        ${eventResponse}
-      }
-  }
-`;
+      event(filter:
+        {  _and:[
+            {status:{_eq:1}},
+            {event_status:{no:{_in:${JSON.stringify(event_status)}}}},
+            {_or:[
+                {_and:[
+                    {start_date:{_lte:"${filter.end_date}T23:59:59"}},
+                    {end_date:{_gte:"${filter.start_date}T00:00:00"}}
+                    ]},
+                {event_status:{no:{_eq:"3"}}}
+          ]}
+        ]},limit:-1){
+          ${eventResponse}
+        }
+    }`;
+    // console.log('query', query);
     const variables = {};
     try {
       const result = await firstValueFrom(

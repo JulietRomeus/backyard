@@ -240,6 +240,33 @@ export class InfoController {
     }
   }
 
+  @Patch('/submit/:id')
+  @Permission({ route: defaultRoute, action: 'update' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ส่งขออนุมัติข้อมูลข่าวสาร' })
+  async submit(@Param('id') id: string, @Body() updateInfoDto: UpdateInfoDto) {
+    const response = await this.infoService.submit(id, updateInfoDto);
+
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_INFO_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // console.log('>>>> error');
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_INFO_ERROR',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
   @Patch('/approve/:id')
   @Permission({ route: defaultRoute, action: 'approve' })
   @ApiBearerAuth('JWT')

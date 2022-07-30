@@ -129,16 +129,12 @@ export class InfoService {
         createInfoDto?.agency?.agency_id !== 3 &&
         createInfoDto?.agency?.agency_id !== 4
       ) {
-        try {
-          await task.create({
-            token: createInfoDto.request_by.token,
-            route: defaultRoute,
-            ref_id: resObj.data.info_id,
-            data: { name: createInfoDto.title },
-          });
-        } catch (error) {
-          return error;
-        }
+        task.create({
+          token: createInfoDto.request_by.token,
+          route: defaultRoute,
+          ref_id: resObj.data.info_id,
+          data: { name: createInfoDto.title },
+        });
       }
       // ======= TASK CONDITION ========
 
@@ -154,21 +150,16 @@ export class InfoService {
         if (createInfoDto?.info_area && createInfoDto?.info_area?.length > 0) {
           units = await this.unitRespArea(createInfoDto.info_area);
         }
-        try {
-          await notification.create({
-            token: createInfoDto.request_by.token,
-            ref_id: resObj.data.info_id,
-            title: resObj.data.title,
-            message: resObj.data.detail,
-            type: 3,
-            category: 'info',
-            url: `disaster/info/form/${resObj.data.info_id}`,
-            units: units,
-          });
-        } catch (error) {
-          return error;
-        }
-
+        notification.create({
+          token: createInfoDto.request_by.token,
+          ref_id: resObj.data.info_id,
+          title: resObj.data.title,
+          message: resObj.data.detail,
+          type: 3,
+          category: 'info',
+          url: `disaster/info/form/${resObj.data.info_id}`,
+          units: units,
+        });
         // ======= Unit Area CONDITION ========
       }
       // ======= NOTIFICATION CONDITION ========
@@ -440,7 +431,52 @@ export class InfoService {
         await task.update({
           token: updateInfoDto.request_by.token,
           route: defaultRoute,
-          node_order: updateInfoDto.form_status.no === '1' ? 1 : 0,
+          node_order:
+            updateInfoDto.form_status.no === 'complete' ||
+            updateInfoDto.form_status.no === 'approve'
+              ? 2
+              : updateInfoDto.form_status.no === 'pending'
+              ? 1
+              : updateInfoDto.form_status.no === 'sendback'
+              ? 0
+              : 0,
+          ref_id: id,
+          data: updateInfoDto,
+        });
+        // console.log(resTask);
+      } catch (error) {
+        // console.log('EEE', error);
+        return error;
+      }
+      return result.data;
+    } catch (error) {
+      // console.log('err ->', error.response.data.errors);
+      // console.log('err save info', error);
+      return error;
+    }
+  }
+
+  async submit(id: string, updateInfoDto: UpdateInfoDto) {
+    let updateObj: any = updateInfoDto;
+    // console.log('----> form status', updateInfoDto.form_status.no);
+    updateObj.update_date = now();
+    updateObj.form_status = {
+      id: '2',
+    };
+    updateObj.update_by_id = updateObj.request_by.id;
+    updateObj.update_by = updateObj.request_by.displayname;
+    delete updateObj.request_by;
+    try {
+      // console.log('update', id, updateObj);
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/info/${id}`, updateObj),
+      );
+      // console.log('res info ', result.data);
+      try {
+        await task.update({
+          token: updateInfoDto.request_by.token,
+          route: defaultRoute,
+          node_order: 1,
           ref_id: id,
           data: updateInfoDto,
         });
@@ -471,17 +507,15 @@ export class InfoService {
       );
       // console.log('result', result);
       const resObj = result.data;
-      try {
-        await task.update({
-          token: updateInfoDto.request_by.token,
-          route: defaultRoute,
-          node_order: 1,
-          ref_id: id,
-          data: updateInfoDto,
-        });
-      } catch (error) {
-        return error;
-      }
+
+      task.update({
+        token: updateInfoDto.request_by.token,
+        route: defaultRoute,
+        node_order: 2,
+        ref_id: id,
+        data: updateInfoDto,
+      });
+
       // console.log('-->', result.data);
       if (
         // result.data.data.critical_flag >= 3 ||
@@ -492,20 +526,17 @@ export class InfoService {
         if (resObj?.data?.info_area && resObj?.data?.info_area?.length > 0) {
           units = await this.unitRespArea(updateInfoDto.info_area);
         }
-        try {
-          await notification.create({
-            token: updateInfoDto.request_by.token,
-            ref_id: id,
-            title: resObj.data.title,
-            message: resObj.data.detail,
-            type: 3,
-            category: 'info',
-            url: `disaster/info/form/${resObj.data.info_id}`,
-            units: units,
-          });
-        } catch (error) {
-          return error;
-        }
+
+        notification.create({
+          token: token,
+          ref_id: id,
+          title: resObj.data.title,
+          message: resObj.data.detail,
+          type: 3,
+          category: 'info',
+          url: `disaster/info/form/${resObj.data.info_id}`,
+          units: units,
+        });
       }
       return resObj;
     } catch (error) {
@@ -517,7 +548,7 @@ export class InfoService {
   async notification(id: string, updateInfoDto: UpdateInfoDto, query: any) {
     // console.log('>>>>', query);
     let updateObj: any = updateInfoDto;
-    updateObj.form_status = { id: '6' }; // 5
+    updateObj.form_status = { id: '5' }; // 5
     updateObj.is_notification = query.complete ? false : true;
     updateObj.notification_date = now();
     updateObj.notification_by_id = updateObj.request_by.id;
@@ -531,22 +562,20 @@ export class InfoService {
       if (!query.complete || resObj.data.is_notification === true) {
         let units: any = [];
         if (resObj?.data?.info_area && resObj?.data?.info_area?.length > 0) {
+          console.log('info_area...');
           units = await this.unitRespArea(updateInfoDto.info_area);
+          console.log('unit noti ::: ', units);
         }
-        try {
-          await notification.create({
-            token: updateInfoDto.request_by.token,
-            ref_id: id,
-            title: resObj.data.title,
-            message: resObj.data.detail,
-            type: 3,
-            category: 'info',
-            url: `disaster/info/form/${resObj.data.info_id}`,
-            units: units,
-          });
-        } catch (error) {
-          return error;
-        }
+        notification.create({
+          token: updateInfoDto.request_by.token,
+          ref_id: id,
+          title: resObj.data.title,
+          message: resObj.data.detail,
+          type: 3,
+          category: 'info',
+          url: `disaster/info/form/${resObj.data.info_id}`,
+          units: units,
+        });
       }
       // console.log('res info', resObj);
       return resObj;
@@ -571,7 +600,7 @@ export class InfoService {
         await task.update({
           token: updateInfoDto.request_by.token,
           route: defaultRoute,
-          node_order: 0,
+          node_order: 1,
           ref_id: id,
           method: 'back',
           data: updateInfoDto,

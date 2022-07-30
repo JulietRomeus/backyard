@@ -37,6 +37,7 @@ export default async ({
     //   units: units,
     //   users: users,
     // });
+    console.log('noti', `${process.env.MAIN_URI || ''}/notification`);
     const resp = await axios.post(
       `${process.env.MAIN_URI || ''}/notification`,
       {
