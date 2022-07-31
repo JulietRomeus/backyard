@@ -252,9 +252,10 @@ export class EventService {
     }
   }
 
-  async findAllorActive({ filter, body }: { filter: any; body: RequestByDto }) {
+  async findAllorActive(filter) {
     let allFilter: any = [{ status: { _eq: 1 } }];
     let event_status;
+    // console.log('>', filter);
     if (filter.event_status) {
       // allFilter.push({
       //   event_status: { no: { _in: [...filter.event_status.split(',')] } },
@@ -299,6 +300,8 @@ export class EventService {
       const result = await firstValueFrom(
         this.httpService.post(`/graphql`, { query, variables }),
       );
+
+      // console.log('xxx', result.data);
       return result.data;
     } catch (error) {
       console.log('-->', error.response.data);
