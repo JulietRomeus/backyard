@@ -4,6 +4,7 @@ import { CreateWarningDto } from './dto/create-warning.dto';
 import { UpdateWarningDto } from './dto/update-warning.dto';
 import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import { firstValueFrom } from 'rxjs';
+
 import now from '../../utils/now';
 import task from '../../utils/task';
 import notification from '../../utils/notification';
@@ -49,6 +50,7 @@ const objResponse = `warning_id
                   id
                   name
                   color
+                  action
                 }
                 warning_date
                 files{
@@ -183,7 +185,7 @@ export class WarningService {
     return uniqueUnit;
   }
   async create(CreateWarningDto: CreateWarningDto) {
-    // console.log('>>>>>');
+    console.log('>>>>>', CreateWarningDto);
     let createObj: any = CreateWarningDto;
     createObj.create_date = now();
     createObj.create_by_id = createObj.request_by.id;
@@ -191,6 +193,11 @@ export class WarningService {
     createObj.warning_status = {
       id: 'pending_review',
     };
+    createObj.unit_no =
+      CreateWarningDto?.send_unit_no ||
+      CreateWarningDto?.request_by?.activeUnit?.code ||
+      CreateWarningDto?.request_by?.units[0]?.code ||
+      '';
     try {
       const result = await firstValueFrom(
         this.httpService.post(`/items/warning/`, createObj),
@@ -217,6 +224,10 @@ export class WarningService {
   async findAll({ request_by }: RequestByDto, filter: any) {
     // console.log('--', request_by.data_permission);
     let allFilter: any = [{ status: { _eq: 1 } }];
+
+    if (request_by.filter) {
+      allFilter.push(request_by.filter);
+    }
     if (filter.warning_status) {
       allFilter.push({
         warning_status: { id: { _in: [...filter.warning_status.split(',')] } },
@@ -308,8 +319,8 @@ export class WarningService {
   async infoOption() {
     const query = `query{
       info(filter:{_and:[{status:{_eq:1}},
-      {form_status:{id:{_eq:"3"}}}
-      ]} ){
+      {form_status:{id:{_in:["3","5"]}}}
+      ]},sort: ["-create_date"] ){
           info_id
           title
       }
@@ -331,7 +342,7 @@ export class WarningService {
     const query = `query{
       event(filter:{_and:[{status:{_eq:1}},
       {event_status:{id:{_eq:3}}}
-      ]} ){
+      ]},sort: ["-create_date"] ){
           event_id
           event_name
       }
@@ -428,7 +439,7 @@ export class WarningService {
     let updateObj: any = updateWarningDto;
     const token = updateWarningDto.request_by.token;
     updateObj.approve_date = now();
-    updateObj.warning_status = { id: 'pending_approval' }; //pending_acknowledge
+    updateObj.warning_status = { id: 'pending_acknowledge' }; //pending_acknowledge
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {

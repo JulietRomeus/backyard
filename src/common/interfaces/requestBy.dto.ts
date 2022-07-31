@@ -6,10 +6,11 @@ export class RequestByDto {
     id: string;
     displayname: string;
     email: Array<string>;
-    roles: Array<string>;
-    units: Array<string>;
+    roles: { id: string }[];
+    activeUnit: { id: string; code: string };
+    units: { id: string; code: string }[];
     token: string;
-    filter: string;
+    filter: any;
     data_permission: any;
   };
 }

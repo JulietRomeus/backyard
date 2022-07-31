@@ -19,6 +19,9 @@ export default async ({
   note,
 }: TaskType) => {
   try {
+    // console.log('route:', route);
+    // console.log('ref_id:', ref_id);
+    // console.log('node_order', node_order);
     delete data.request_by;
     const resp = await axios.patch(
       `${process.env.GENERAL_URI || ''}/workspace/${

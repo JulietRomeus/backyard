@@ -1,3 +1,4 @@
+import { RequestByDto } from './../../common/interfaces/requestBy.dto';
 import { CreateEventDto } from './../event/dto/create-event.dto';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
@@ -7,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import now from '../../utils/now';
 import task from '../../utils/task';
 import notification from '../../utils/notification';
+import { AnyRecord } from 'dns';
 const defaultRoute = 'info';
 
 const objResponse = `info_id
@@ -30,6 +32,7 @@ const objResponse = `info_id
                   no
                   name
                   color
+                  action
                 }
                 status
                 expect_from
@@ -57,6 +60,7 @@ const objResponse = `info_id
                   dwellings
                   farmland
                 } 
+                unit_no
                 comment
                 create_by
                 create_by_id
@@ -92,6 +96,10 @@ export class InfoService {
     createObj.create_by_id = createObj.request_by.id;
     createObj.create_by = createObj.request_by.displayname;
     createObj.status = 1;
+    createObj.unit_no =
+      createInfoDto.request_by?.activeUnit?.code ||
+      createInfoDto.request_by?.units[0]?.code ||
+      '';
     createObj.form_status = {
       id:
         (createInfoDto?.agency?.agency_id === 2 ||
@@ -104,7 +112,7 @@ export class InfoService {
               createInfoDto?.agency?.agency_id === 4) &&
             createInfoDto.critical_flag >= 3
           ? '5'
-          : '2',
+          : '1',
     };
     createObj.is_notification =
       (createInfoDto?.agency?.agency_id === 2 ||
@@ -254,13 +262,20 @@ export class InfoService {
     return uniqueUnit;
   }
 
-  async findAll(filter) {
+  async findAll({ filter, body }: { filter: any; body: RequestByDto }) {
+    // console.log('f', filter, 'req', request_by);
+    // console.log(body.request_by.filter);
     let allFilter: any = [{ status: { _eq: 1 } }];
+    if (body.request_by.filter) {
+      allFilter.push(body.request_by.filter);
+    }
+
     if (filter.form_status) {
       allFilter.push({
         form_status: { id: { _in: [...filter.form_status.split(',')] } },
       });
     }
+
     const query = `query{
       info(filter:{_and:${JSON.stringify(allFilter).replace(
         /"([^"]+)":/g,
@@ -270,6 +285,7 @@ export class InfoService {
       }
   }
 `;
+    // console.log(query);
     const variables = {};
     try {
       const result = await firstValueFrom(
@@ -408,6 +424,8 @@ export class InfoService {
 
   async update(id: string, updateInfoDto: UpdateInfoDto) {
     let updateObj: any = updateInfoDto;
+    const token = updateInfoDto.request_by.token;
+    const formStatus = updateInfoDto.form_status.no;
     // console.log('----> form status', updateInfoDto.form_status.no);
     updateObj.update_date = now();
     updateObj.form_status = {
@@ -416,6 +434,10 @@ export class InfoService {
           ? '3'
           : updateInfoDto.form_status.no === 'pending_notification'
           ? '6'
+          : updateInfoDto.form_status.no === 'create'
+          ? '1'
+          : updateInfoDto.form_status.no === 'sendback'
+          ? '4'
           : '2',
     };
     updateObj.update_by_id = updateObj.request_by.id;
@@ -427,27 +449,29 @@ export class InfoService {
         this.httpService.patch(`/items/info/${id}`, updateObj),
       );
       // console.log('res info ', result.data);
-      try {
-        await task.update({
-          token: updateInfoDto.request_by.token,
-          route: defaultRoute,
-          node_order:
-            updateInfoDto.form_status.no === 'complete' ||
-            updateInfoDto.form_status.no === 'approve'
-              ? 2
-              : updateInfoDto.form_status.no === 'pending'
-              ? 1
-              : updateInfoDto.form_status.no === 'sendback'
-              ? 0
-              : 0,
-          ref_id: id,
-          data: updateInfoDto,
-        });
-        // console.log(resTask);
-      } catch (error) {
-        // console.log('EEE', error);
-        return error;
-      }
+      console.log('---->2 form status', updateInfoDto.form_status.no);
+
+      // try {
+      task.update({
+        token: token,
+        route: defaultRoute,
+        node_order:
+          formStatus === 'complete' || formStatus === 'approve'
+            ? 2
+            : formStatus === 'pending'
+            ? 1
+            : formStatus === 'sendback'
+            ? 0
+            : 0,
+        ref_id: id,
+        data: updateInfoDto,
+      });
+      // } catch (error) {
+      //   console.log('errr', error);
+      // }
+
+      // console.log(resTask);
+
       return result.data;
     } catch (error) {
       // console.log('err ->', error.response.data.errors);
@@ -458,6 +482,7 @@ export class InfoService {
 
   async submit(id: string, updateInfoDto: UpdateInfoDto) {
     let updateObj: any = updateInfoDto;
+    const token = updateInfoDto.request_by.token;
     // console.log('----> form status', updateInfoDto.form_status.no);
     updateObj.update_date = now();
     updateObj.form_status = {
@@ -471,20 +496,22 @@ export class InfoService {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/info/${id}`, updateObj),
       );
-      // console.log('res info ', result.data);
-      try {
-        await task.update({
-          token: updateInfoDto.request_by.token,
-          route: defaultRoute,
-          node_order: 1,
-          ref_id: id,
-          data: updateInfoDto,
-        });
-        // console.log(resTask);
-      } catch (error) {
-        // console.log('EEE', error);
-        return error;
-      }
+      // console.log('res info 1', result.data);
+      // console.log('token', token);
+      // try {
+      task.update({
+        token: token,
+        route: defaultRoute,
+        node_order: 1,
+        ref_id: id,
+        data: updateInfoDto,
+      });
+      // console.log(resTask);
+      // } catch (error) {
+      //   // console.log('EEE', error);
+      //   return error;
+      // }
+      // console.log('res info 2', result.data);
       return result.data;
     } catch (error) {
       // console.log('err ->', error.response.data.errors);
@@ -562,9 +589,9 @@ export class InfoService {
       if (!query.complete || resObj.data.is_notification === true) {
         let units: any = [];
         if (resObj?.data?.info_area && resObj?.data?.info_area?.length > 0) {
-          console.log('info_area...');
+          // console.log('info_area...');
           units = await this.unitRespArea(updateInfoDto.info_area);
-          console.log('unit noti ::: ', units);
+          // console.log('unit noti ::: ', units);
         }
         notification.create({
           token: updateInfoDto.request_by.token,

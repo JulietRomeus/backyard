@@ -71,7 +71,7 @@ export class PermissionGuard {
       headers: { authorization: headers.authorization },
     });
 
-    // console.log('result', result.data);
+    // console.log('user perm', result.data);
     const data = result.data;
     // console.log('>>>perm', data);
     if (!data)
@@ -91,19 +91,52 @@ export class PermissionGuard {
     } catch {
       throw new UnauthorizedException('authorization role mismatch.');
     }
-    let filter = '';
-    if (data.data_permission[perm.service][perm.route].all) {
-      filter = 'all';
+    let filter;
+    try {
+      if (data.data_permission[perm.service][perm.route].all) {
+        // filter = 'all';
+      }
+      if (data.data_permission[perm.service][perm.route].command_center) {
+        filter = {
+          _or: [
+            {
+              unit_no: {
+                _eq:
+                  data.request_by?.activeUnit?.code ||
+                  data.request_by?.units[0]?.code,
+              },
+            },
+            {
+              unit_no: {
+                _eq: 'bot',
+              },
+            },
+          ],
+        };
+      }
+      if (data.data_permission[perm.service][perm.route].unit_child) {
+        filter = 'unit_child';
+      }
+      if (data.data_permission[perm.service][perm.route].unit) {
+        filter = {
+          unit_no: {
+            _eq:
+              data.request_by?.activeUnit?.code ||
+              data.request_by?.units[0]?.code,
+          },
+        };
+      }
+      if (data.data_permission[perm.service][perm.route].self) {
+        filter = {
+          create_by_id: {
+            _eq: data.request_by?.id,
+          },
+        };
+      }
+    } catch (error) {
+      throw new UnauthorizedException('unauthorization');
     }
-    if (data.data_permission[perm.service][perm.route].unit_child) {
-      filter = 'unit_child';
-    }
-    if (data.data_permission[perm.service][perm.route].unit) {
-      filter = 'unit';
-    }
-    if (data.data_permission[perm.service][perm.route].self) {
-      filter = 'self';
-    }
+
     req.body = {
       request_by: {
         ...data.request_by,

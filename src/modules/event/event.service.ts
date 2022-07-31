@@ -7,6 +7,8 @@ import now from '../../utils/now';
 import task from '../../utils/task';
 import notification from '../../utils/notification';
 import { StatusEnum } from '../../common/status.enum';
+import { RequestByDto } from './../../common/interfaces/requestBy.dto';
+
 const defaultRoute = 'event';
 
 const eventResponse = `event_id
@@ -25,6 +27,7 @@ const eventResponse = `event_id
                   no
                   name
                   color
+                  action
                 }
                 status
                 note
@@ -183,6 +186,10 @@ export class EventService {
     createObj.event_status = {
       id: '2',
     };
+    createObj.unit_no =
+      createEventDto.request_by?.activeUnit?.code ||
+      createEventDto.request_by.units[0].code ||
+      '';
     delete createObj.update_date;
     delete createObj.delete_date;
     try {
@@ -208,8 +215,11 @@ export class EventService {
     }
   }
 
-  async findAll(filter: any) {
+  async findAll({ filter, body }: { filter: any; body: RequestByDto }) {
     let allFilter: any = [{ status: { _eq: 1 } }];
+    if (body.request_by.filter) {
+      allFilter.push(body.request_by.filter);
+    }
     if (filter.event_status) {
       allFilter.push({
         event_status: { no: { _in: [...filter.event_status.split(',')] } },
@@ -242,7 +252,7 @@ export class EventService {
     }
   }
 
-  async findAllorActive(filter: any) {
+  async findAllorActive({ filter, body }: { filter: any; body: RequestByDto }) {
     let allFilter: any = [{ status: { _eq: 1 } }];
     let event_status;
     if (filter.event_status) {
@@ -387,7 +397,7 @@ export class EventService {
 
       const resEvent = result.data;
       task.update({
-        token: updateEventDto.request_by.token,
+        token: token,
         route: defaultRoute,
         node_order: status_no === '3' ? 1 : status_no === '5' ? 2 : 0,
         ref_id: id,

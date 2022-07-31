@@ -58,8 +58,11 @@ export class EventController {
     type: ResponseEventDto,
     isArray: true,
   })
-  async findAll(@Req() req: any, @Query() filter: any): Promise<any> {
-    const response: any = await this.eventService.findAll(filter);
+  async findAll(@Body() body: any, @Query() filter: any): Promise<any> {
+    const response: any = await this.eventService.findAll({
+      filter,
+      body,
+    });
     if (response.data) {
       return {
         status: HttpStatus.OK,

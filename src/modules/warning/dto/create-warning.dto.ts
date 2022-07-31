@@ -10,6 +10,7 @@ export class CreateWarningDto extends RequestByDto {
   create_by: string;
   create_by_id: string;
   create_date: Date;
+  send_unit_no: string;
   warning_status: { id: string };
   note: string;
   warning_area?: {

@@ -56,9 +56,15 @@ export class InfoController {
   //   type: ResponseInfoDto,
   //   isArray: true,
   // })
-  async findAll(@Req() req: any, @Query() filter: any): Promise<any> {
+  async findAll(
+    @Body() body: any,
+    @Query() filter: any,
+  ): Promise<any> {
     // console.log('>>>>>');
-    const response: any = await this.infoService.findAll(filter);
+    const response: any = await this.infoService.findAll({
+      filter,
+      body,
+    });
     if (response.data) {
       return {
         status: HttpStatus.OK,
@@ -245,12 +251,13 @@ export class InfoController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ส่งขออนุมัติข้อมูลข่าวสาร' })
   async submit(@Param('id') id: string, @Body() updateInfoDto: UpdateInfoDto) {
+    console.log('submit');
     const response = await this.infoService.submit(id, updateInfoDto);
 
     if (response.data) {
       return {
         status: HttpStatus.OK,
-        message: 'GET_INFO_SUCCESS',
+        message: 'SUBMIT_INFO_SUCCESS',
         data: response.data,
         error: null,
         timestamp: new Date().toISOString(),
@@ -259,7 +266,7 @@ export class InfoController {
       // console.log('>>>> error');
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'GET_INFO_ERROR',
+        message: 'SUBMIT_INFO_ERROR',
         data: null,
         error: response,
         timestamp: new Date().toISOString(),
