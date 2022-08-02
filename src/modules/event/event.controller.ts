@@ -82,6 +82,35 @@ export class EventController {
     }
   }
 
+  @Get('public')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล event ทั้งหมด' })
+  @ApiOkResponse({
+    description: 'Event object',
+    type: ResponseEventDto,
+    isArray: true,
+  })
+  async public(): Promise<any> {
+    const response: any = await this.eventService.public();
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_ALL_EVENT_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_ALL_EVENT_FAILED',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
   @Get('active')
   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')

@@ -301,6 +301,37 @@ export class InfoService {
     }
   }
 
+  async public() {
+    // console.log('f', filter, 'req', request_by);
+    // console.log(body.request_by.filter);
+    let allFilter: any = [{ status: { _eq: 1 } }];
+    allFilter.push({
+      form_status: { id: { _in: ['5', '6'] } },
+    });
+
+    const query = `query{
+      info(filter:{_and:${JSON.stringify(allFilter).replace(
+        /"([^"]+)":/g,
+        '$1:',
+      )} },sort: ["-create_date"]){
+        ${objResponse}
+      }
+  }
+`;
+    // console.log(query);
+    const variables = {};
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      // console.log('>>>>>', result.data);
+      return result.data;
+    } catch (error) {
+      console.log('err find all info', error.response.data);
+      return error.response.data.errors;
+    }
+  }
+
   async findOne(id: number) {
     // console.log('first', id);
     const query = `query{

@@ -252,6 +252,34 @@ export class EventService {
     }
   }
 
+  async public() {
+    let allFilter: any = [{ status: { _eq: 1 } }];
+
+    allFilter.push({
+      event_status: { no: { _in: ['3', '5','6'] } },
+    });
+
+    // console.log(JSON.stringify(allFilter));
+    const query = `query{
+      event(filter:
+        {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
+       ,sort: ["-create_date"]){
+        ${eventResponse}
+      }
+  }
+`;
+    const variables = {};
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(`/graphql`, { query, variables }),
+      );
+      return result.data;
+    } catch (error) {
+      console.log('-->', error.response.data);
+      return error.response.data.errors;
+    }
+  }
+
   async findAllorActive(filter) {
     let allFilter: any = [{ status: { _eq: 1 } }];
     let event_status;

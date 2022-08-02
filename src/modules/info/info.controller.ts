@@ -56,15 +56,42 @@ export class InfoController {
   //   type: ResponseInfoDto,
   //   isArray: true,
   // })
-  async findAll(
-    @Body() body: any,
-    @Query() filter: any,
-  ): Promise<any> {
+  async findAll(@Body() body: any, @Query() filter: any): Promise<any> {
     // console.log('>>>>>');
     const response: any = await this.infoService.findAll({
       filter,
       body,
     });
+    if (response.data) {
+      return {
+        status: HttpStatus.OK,
+        message: 'GET_ALL_INFO_SUCCESS',
+        data: response.data,
+        error: null,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'GET_ALL_INFO_FAILED',
+        data: null,
+        error: response,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
+  @Get('public')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล INFO ทั้งหมด' })
+  // @ApiOkResponse({
+  //   description: 'INFO object',
+  //   type: ResponseInfoDto,
+  //   isArray: true,
+  // })
+  async public(): Promise<any> {
+    // console.log('>>>>>');
+    const response: any = await this.infoService.public();
     if (response.data) {
       return {
         status: HttpStatus.OK,
