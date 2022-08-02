@@ -28,7 +28,7 @@ export class CreateInfoDto extends RequestByDto {
     nullable: true,
   })
   agency?: {
-    agency_id: number;
+    agency_id: string;
     agency_name: string | null;
   };
 

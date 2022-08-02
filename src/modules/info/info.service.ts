@@ -103,27 +103,27 @@ export class InfoService {
       '';
     createObj.form_status = {
       id:
-        (createInfoDto?.agency?.agency_id === 2 ||
-          createInfoDto?.agency?.agency_id === 3 ||
-          createInfoDto?.agency?.agency_id === 4) &&
+        (createInfoDto?.agency?.agency_id === '2' ||
+          createInfoDto?.agency?.agency_id === '3' ||
+          createInfoDto?.agency?.agency_id === '4') &&
         createInfoDto.critical_flag < 2
           ? '6'
-          : (createInfoDto?.agency?.agency_id === 2 ||
-              createInfoDto?.agency?.agency_id === 3 ||
-              createInfoDto?.agency?.agency_id === 4) &&
+          : (createInfoDto?.agency?.agency_id === '2' ||
+              createInfoDto?.agency?.agency_id === '3' ||
+              createInfoDto?.agency?.agency_id === '4') &&
             createInfoDto.critical_flag >= 2
           ? '5'
           : '1',
     };
     createObj.is_notification =
-      (createInfoDto?.agency?.agency_id === 2 ||
-        createInfoDto?.agency?.agency_id === 3 ||
-        createInfoDto?.agency?.agency_id === 4) &&
+      (createInfoDto?.agency?.agency_id === '2' ||
+        createInfoDto?.agency?.agency_id === '3' ||
+        createInfoDto?.agency?.agency_id === '4') &&
       createInfoDto.critical_flag < 2
         ? false
-        : (createInfoDto?.agency?.agency_id === 2 ||
-            createInfoDto?.agency?.agency_id === 3 ||
-            createInfoDto?.agency?.agency_id === 4) &&
+        : (createInfoDto?.agency?.agency_id === '2' ||
+            createInfoDto?.agency?.agency_id === '3' ||
+            createInfoDto?.agency?.agency_id === '4') &&
           createInfoDto.critical_flag >= 2
         ? true
         : createInfoDto.is_notification;
@@ -134,9 +134,9 @@ export class InfoService {
       const resObj = result.data;
       // ======= TASK CONDITION ========
       if (
-        createInfoDto?.agency?.agency_id !== 2 &&
-        createInfoDto?.agency?.agency_id !== 3 &&
-        createInfoDto?.agency?.agency_id !== 4
+        createInfoDto?.agency?.agency_id !== '2' &&
+        createInfoDto?.agency?.agency_id !== '3' &&
+        createInfoDto?.agency?.agency_id !== '4'
       ) {
         task.create({
           token: createInfoDto.request_by.token,
@@ -149,9 +149,9 @@ export class InfoService {
 
       // ======= NOTIFICATION CONDITION ========
       if (
-        (createInfoDto?.agency?.agency_id === 2 ||
-          createInfoDto?.agency?.agency_id === 3 ||
-          createInfoDto?.agency?.agency_id === 4) &&
+        (createInfoDto?.agency?.agency_id === '2' ||
+          createInfoDto?.agency?.agency_id === '3' ||
+          createInfoDto?.agency?.agency_id === '4') &&
         createInfoDto.critical_flag >= 2
       ) {
         // ======= Unit Area CONDITION ========
