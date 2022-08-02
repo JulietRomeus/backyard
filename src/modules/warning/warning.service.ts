@@ -185,7 +185,7 @@ export class WarningService {
     return uniqueUnit;
   }
   async create(CreateWarningDto: CreateWarningDto) {
-    console.log('>>>>>', CreateWarningDto);
+    // console.log('>>>>>', CreateWarningDto);
     let createObj: any = CreateWarningDto;
     createObj.create_date = now();
     createObj.create_by_id = createObj.request_by.id;

@@ -73,7 +73,7 @@ export class PermissionGuard {
 
     // console.log('user perm', result.data);
     const data = result.data;
-    // console.log('>>>perm', data);
+    // console.log('>>>perm', data.data_permission);
     if (!data)
       throw new UnauthorizedException(
         result.data.error || 'authorization invalid',
@@ -95,29 +95,26 @@ export class PermissionGuard {
     try {
       if (data.data_permission[perm.service][perm.route].all) {
         // filter = 'all';
-      }
-      if (data.data_permission[perm.service][perm.route].command_center) {
+      } else if (
+        data.data_permission[perm.service][perm.route].command_center
+      ) {
         filter = {
           _or: [
             {
               unit_no: {
-                _eq:
+                _in: [
                   data.request_by?.activeUnit?.code ||
-                  data.request_by?.units[0]?.code,
-              },
-            },
-            {
-              unit_no: {
-                _eq: 'bot',
+                    data.request_by?.units[0]?.code,
+                  'bot',
+                ],
               },
             },
           ],
         };
-      }
-      if (data.data_permission[perm.service][perm.route].unit_child) {
+        // console.log('x', filter._or[0].unit_no);
+      } else if (data.data_permission[perm.service][perm.route].unit_child) {
         filter = 'unit_child';
-      }
-      if (data.data_permission[perm.service][perm.route].unit) {
+      } else if (data.data_permission[perm.service][perm.route].unit) {
         filter = {
           unit_no: {
             _eq:
@@ -125,8 +122,7 @@ export class PermissionGuard {
               data.request_by?.units[0]?.code,
           },
         };
-      }
-      if (data.data_permission[perm.service][perm.route].self) {
+      } else if (data.data_permission[perm.service][perm.route].self) {
         filter = {
           create_by_id: {
             _eq: data.request_by?.id,

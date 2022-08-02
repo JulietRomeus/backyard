@@ -7,6 +7,7 @@ type NotiType = {
   type: number;
   ref_id: string;
   category?: string;
+  img_url?: string;
   url?: string;
   roles?: string[];
   units?: string[]; // unit code
@@ -24,6 +25,7 @@ export default async ({
   roles,
   units,
   users,
+  img_url,
 }: NotiType) => {
   try {
     // console.log('=-=-=-=-=-=-=-=-=-=  -=-= -= -= -=- =-= - =', {
@@ -36,8 +38,9 @@ export default async ({
     //   roles: roles,
     //   units: units,
     //   users: users,
+    //   img_url: img_url,
     // });
-    console.log('noti', `${process.env.MAIN_URI || ''}/notification`);
+    // console.log('noti', `${process.env.MAIN_URI || ''}/notification`);
     const resp = await axios.post(
       `${process.env.MAIN_URI || ''}/notification`,
       {
@@ -50,6 +53,7 @@ export default async ({
         roles: roles,
         units: units,
         users: users,
+        img_url: img_url,
       },
       {
         headers: {

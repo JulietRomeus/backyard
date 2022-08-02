@@ -9,5 +9,6 @@ export class FileDto {
   @ApiProperty()
   file_id: string;
   @ApiProperty()
-  file_name: string;
+  file_name: string; 
+  directus_files_id?: { id: string }
 }

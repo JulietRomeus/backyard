@@ -9,6 +9,7 @@ import now from '../../utils/now';
 import task from '../../utils/task';
 import notification from '../../utils/notification';
 import { AnyRecord } from 'dns';
+import { getConfigToken } from '@nestjs/config';
 const defaultRoute = 'info';
 
 const objResponse = `info_id
@@ -105,12 +106,12 @@ export class InfoService {
         (createInfoDto?.agency?.agency_id === 2 ||
           createInfoDto?.agency?.agency_id === 3 ||
           createInfoDto?.agency?.agency_id === 4) &&
-        createInfoDto.critical_flag < 3
+        createInfoDto.critical_flag < 2
           ? '6'
           : (createInfoDto?.agency?.agency_id === 2 ||
               createInfoDto?.agency?.agency_id === 3 ||
               createInfoDto?.agency?.agency_id === 4) &&
-            createInfoDto.critical_flag >= 3
+            createInfoDto.critical_flag >= 2
           ? '5'
           : '1',
     };
@@ -118,12 +119,12 @@ export class InfoService {
       (createInfoDto?.agency?.agency_id === 2 ||
         createInfoDto?.agency?.agency_id === 3 ||
         createInfoDto?.agency?.agency_id === 4) &&
-      createInfoDto.critical_flag < 3
+      createInfoDto.critical_flag < 2
         ? false
         : (createInfoDto?.agency?.agency_id === 2 ||
             createInfoDto?.agency?.agency_id === 3 ||
             createInfoDto?.agency?.agency_id === 4) &&
-          createInfoDto.critical_flag >= 3
+          createInfoDto.critical_flag >= 2
         ? true
         : createInfoDto.is_notification;
     try {
@@ -151,7 +152,7 @@ export class InfoService {
         (createInfoDto?.agency?.agency_id === 2 ||
           createInfoDto?.agency?.agency_id === 3 ||
           createInfoDto?.agency?.agency_id === 4) &&
-        createInfoDto.critical_flag >= 3
+        createInfoDto.critical_flag >= 2
       ) {
         // ======= Unit Area CONDITION ========
         let units: any = [];
@@ -275,6 +276,7 @@ export class InfoService {
         form_status: { id: { _in: [...filter.form_status.split(',')] } },
       });
     }
+    console.log(allFilter);
 
     const query = `query{
       info(filter:{_and:${JSON.stringify(allFilter).replace(
@@ -524,8 +526,10 @@ export class InfoService {
     // console.log('>>>>', id);
     let updateObj: any = updateInfoDto;
     const token = updateInfoDto.request_by.token;
+    const files = updateInfoDto.files;
+    console.log('FILES', files);
     updateObj.approve_date = now();
-    updateObj.form_status = { id: '5' }; //5
+    updateObj.form_status = { id: '2' }; //5
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {
@@ -534,14 +538,18 @@ export class InfoService {
       );
       // console.log('result', result);
       const resObj = result.data;
-
-      task.update({
-        token: updateInfoDto.request_by.token,
-        route: defaultRoute,
-        node_order: 2,
-        ref_id: id,
-        data: updateInfoDto,
-      });
+      // console.log(updateInfoDto.files[0]);
+      try {
+        task.update({
+          token: token,
+          route: defaultRoute,
+          node_order: 2,
+          ref_id: id,
+          data: updateInfoDto,
+        });
+      } catch (error) {
+        console.log('err approve info task', error);
+      }
 
       // console.log('-->', result.data);
       if (
@@ -554,16 +562,25 @@ export class InfoService {
           units = await this.unitRespArea(updateInfoDto.info_area);
         }
 
-        notification.create({
-          token: token,
-          ref_id: id,
-          title: resObj.data.title,
-          message: resObj.data.detail,
-          type: 3,
-          category: 'info',
-          url: `disaster/info/form/${resObj.data.info_id}`,
-          units: units,
-        });
+        console.log('>>>');
+        try {
+          notification.create({
+            token: token,
+            ref_id: id,
+            title: resObj.data.title,
+            message: resObj.data.detail,
+            type: 3,
+            category: 'info',
+            url: `disaster/info/form/${resObj.data.info_id}`,
+            units: units,
+            img_url:
+              files.length > 0
+                ? `${process.env.DIRECTUS_DISASTER_URI}/assets/${files[0]?.directus_files_id?.id}`
+                : undefined,
+          });
+        } catch (error) {
+          console.log('error info aprove noti', error);
+        }
       }
       return resObj;
     } catch (error) {
@@ -575,6 +592,7 @@ export class InfoService {
   async notification(id: string, updateInfoDto: UpdateInfoDto, query: any) {
     // console.log('>>>>', query);
     let updateObj: any = updateInfoDto;
+    const files = updateInfoDto.files;
     updateObj.form_status = { id: '5' }; // 5
     updateObj.is_notification = query.complete ? false : true;
     updateObj.notification_date = now();
@@ -593,16 +611,24 @@ export class InfoService {
           units = await this.unitRespArea(updateInfoDto.info_area);
           // console.log('unit noti ::: ', units);
         }
-        notification.create({
-          token: updateInfoDto.request_by.token,
-          ref_id: id,
-          title: resObj.data.title,
-          message: resObj.data.detail,
-          type: 3,
-          category: 'info',
-          url: `disaster/info/form/${resObj.data.info_id}`,
-          units: units,
-        });
+        try {
+          notification.create({
+            token: updateInfoDto.request_by.token,
+            ref_id: id,
+            title: resObj.data.title,
+            message: resObj.data.detail,
+            type: 3,
+            category: 'info',
+            url: `disaster/info/form/${resObj.data.info_id}`,
+            units: units,
+            img_url:
+              files.length > 0
+                ? `${process.env.DIRECTUS_DISASTER_URI}/assets/${files[0]?.directus_files_id?.id}`
+                : undefined,
+          });
+        } catch (error) {
+          console.log('error', error);
+        }
       }
       // console.log('res info', resObj);
       return resObj;
