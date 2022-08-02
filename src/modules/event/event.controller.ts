@@ -90,8 +90,8 @@ export class EventController {
     type: ResponseEventDto,
     isArray: true,
   })
-  async public(): Promise<any> {
-    const response: any = await this.eventService.public();
+  async public(@Query() filter: any): Promise<any> {
+    const response: any = await this.eventService.public(filter);
     if (response.data) {
       return {
         status: HttpStatus.OK,

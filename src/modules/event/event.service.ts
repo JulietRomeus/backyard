@@ -252,18 +252,21 @@ export class EventService {
     }
   }
 
-  async public() {
+  async public(filter: any) {
     let allFilter: any = [{ status: { _eq: 1 } }];
-
+    let page = 1
     allFilter.push({
-      event_status: { no: { _in: ['3', '5','6'] } },
+      event_status: { no: { _in: ['3', '5', '6'] } },
     });
+    if(filter.page){
+      page = filter.page
+    }
 
     // console.log(JSON.stringify(allFilter));
     const query = `query{
       event(filter:
         {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
-       ,sort: ["-create_date"]){
+       ,page:${page},sort: ["-create_date"]){
         ${eventResponse}
       }
   }

@@ -89,9 +89,9 @@ export class InfoController {
   //   type: ResponseInfoDto,
   //   isArray: true,
   // })
-  async public(): Promise<any> {
+  async public(@Query() filter: any): Promise<any> {
     // console.log('>>>>>');
-    const response: any = await this.infoService.public();
+    const response: any = await this.infoService.public(filter);
     if (response.data) {
       return {
         status: HttpStatus.OK,

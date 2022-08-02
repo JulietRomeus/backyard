@@ -301,19 +301,23 @@ export class InfoService {
     }
   }
 
-  async public() {
+  async public(filter:any) {
     // console.log('f', filter, 'req', request_by);
     // console.log(body.request_by.filter);
     let allFilter: any = [{ status: { _eq: 1 } }];
+    let page = 1
     allFilter.push({
       form_status: { id: { _in: ['5', '6'] } },
     });
-
+    
+    if(filter.page){
+      page = filter.page
+    }
     const query = `query{
       info(filter:{_and:${JSON.stringify(allFilter).replace(
         /"([^"]+)":/g,
         '$1:',
-      )} },sort: ["-create_date"]){
+      )} },page:${page},sort: ["-create_date"]){
         ${objResponse}
       }
   }
