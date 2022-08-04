@@ -209,7 +209,45 @@ export class WarningService {
           token: CreateWarningDto.request_by.token,
           route: defaultRoute,
           ref_id: resObj.data.warning_id,
-          data: { name: CreateWarningDto.title },
+          data: {
+            name: CreateWarningDto.title,
+            perm: [
+              {
+                order: 0,
+                users: [CreateWarningDto.request_by.id],
+                units: [
+                  CreateWarningDto.request_by.activeUnit.code ||
+                    CreateWarningDto.request_by.units[0].code,
+                ],
+              },
+              {
+                order: 1,
+                users: [],
+                units: [
+                  CreateWarningDto.request_by.activeUnit.code ||
+                    CreateWarningDto.request_by.units[0].code,
+                ],
+              },
+              {
+                order: 2,
+                users: [],
+                units: [
+                  CreateWarningDto.request_by.activeUnit.code ||
+                    CreateWarningDto.request_by.units[0].code,
+                ],
+              },
+
+              {
+                order: 3,
+                users: [],
+                units:
+                  (CreateWarningDto.warning_target &&
+                    CreateWarningDto.warning_target.length > 0 &&
+                    CreateWarningDto.warning_target.map((u) => u.unit_no)) ||
+                  [],
+              },
+            ],
+          },
         });
       } catch (error) {
         return error;

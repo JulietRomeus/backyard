@@ -203,7 +203,43 @@ export class EventService {
           token: createEventDto.request_by.token,
           route: defaultRoute,
           ref_id: resEvent.data.event_id,
-          data: { name: createEventDto.event_name },
+          data: {
+            name: createEventDto.event_name,
+            perm: [
+              {
+                order: 0,
+                users: [createEventDto.request_by.id],
+                units: [
+                  createEventDto.request_by.activeUnit.code ||
+                    createEventDto.request_by.units[0].code,
+                ],
+              },
+              {
+                order: 1,
+                users: [],
+                units: [
+                  createEventDto.request_by.activeUnit.code ||
+                    createEventDto.request_by.units[0].code,
+                ],
+              },
+              {
+                order: 2,
+                users: [],
+                units: [
+                  createEventDto.request_by.activeUnit.code ||
+                    createEventDto.request_by.units[0].code,
+                ],
+              },
+              {
+                order: 3,
+                users: [],
+                units: [
+                  createEventDto.request_by.activeUnit.code ||
+                    createEventDto.request_by.units[0].code,
+                ],
+              },
+            ],
+          },
         });
       } catch (error) {
         return error;
@@ -254,12 +290,12 @@ export class EventService {
 
   async public(filter: any) {
     let allFilter: any = [{ status: { _eq: 1 } }];
-    let page = 1
+    let page = 1;
     allFilter.push({
       event_status: { no: { _in: ['3', '5', '6'] } },
     });
-    if(filter.page){
-      page = filter.page
+    if (filter.page) {
+      page = filter.page;
     }
 
     // console.log(JSON.stringify(allFilter));

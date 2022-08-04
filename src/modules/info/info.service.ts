@@ -142,7 +142,28 @@ export class InfoService {
           token: createInfoDto.request_by.token,
           route: defaultRoute,
           ref_id: resObj.data.info_id,
-          data: { name: createInfoDto.title },
+          data: {
+            name: createInfoDto.title,
+            perm: [
+              { order: 0, users: [createInfoDto.request_by.id], units: [] },
+              {
+                order: 1,
+                users: [createInfoDto.request_by.id],
+                units: [
+                  createInfoDto.request_by.activeUnit.code ||
+                    createInfoDto.request_by.units[0].code,
+                ],
+              },
+              {
+                order: 2,
+                users: [],
+                units: [
+                  createInfoDto.request_by.activeUnit.code ||
+                    createInfoDto.request_by.units[0].code,
+                ],
+              },
+            ],
+          },
         });
       }
       // ======= TASK CONDITION ========
@@ -301,17 +322,17 @@ export class InfoService {
     }
   }
 
-  async public(filter:any) {
+  async public(filter: any) {
     // console.log('f', filter, 'req', request_by);
     // console.log(body.request_by.filter);
     let allFilter: any = [{ status: { _eq: 1 } }];
-    let page = 1
+    let page = 1;
     allFilter.push({
       form_status: { id: { _in: ['5', '6'] } },
     });
-    
-    if(filter.page){
-      page = filter.page
+
+    if (filter.page) {
+      page = filter.page;
     }
     const query = `query{
       info(filter:{_and:${JSON.stringify(allFilter).replace(
@@ -562,9 +583,9 @@ export class InfoService {
     let updateObj: any = updateInfoDto;
     const token = updateInfoDto.request_by.token;
     const files = updateInfoDto.files;
-    console.log('FILES', files);
+    // console.log('FILES', files);
     updateObj.approve_date = now();
-    updateObj.form_status = { id: '2' }; //5
+    updateObj.form_status = { id: '5' }; //5
     updateObj.approve_by_id = updateObj.request_by.id;
     updateObj.approve_by = updateObj.request_by.displayname;
     try {

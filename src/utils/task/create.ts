@@ -4,10 +4,12 @@ type TaskType = {
   token: string;
   route: string;
   ref_id: string;
-  data: { name: string; units?: string[] };
+  data: {
+    name: string;
+    perm: { order: number; users: string[]; units: string[] }[];
+  };
 };
 export default async ({ token, route, ref_id, data }: TaskType) => {
-
   try {
     await axios.post(
       `${process.env.GENERAL_URI || ''}/workspace/${
