@@ -13,6 +13,7 @@ const defaultRoute = 'event';
 
 const eventResponse = `event_id
                 event_name
+                unit_no
                 disaster_type {
                     disaster_type_id
                     disaster_type_no
