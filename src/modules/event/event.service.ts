@@ -91,6 +91,50 @@ const eventResponse = `event_id
                 delete_by_id
                 delete_date`;
 
+const eventResMini = `event_id
+  event_name
+  unit_no
+  disaster_type {
+      disaster_type_id
+      disaster_type_no
+      disaster_type_name
+      image{
+        id
+      }
+  }
+  disaster_level
+  event_status{
+    id
+    no
+    name
+    color
+    action
+  }
+  status
+  note
+  expect_start_date
+  expect_end_date
+  start_date
+  end_date
+  create_by
+  create_by_id
+  create_date
+  update_by
+  update_by_id
+  update_date
+  sendback_by
+  sendback_by_id
+  sendback_date
+  approve_by
+  approve_by_id
+  approve_date
+  finish_by
+  finish_by_id
+  finish_date
+  delete_by
+  delete_by_id
+  delete_date`;
+
 @Injectable()
 export class EventService {
   constructor(private readonly httpService: HttpService) {}
