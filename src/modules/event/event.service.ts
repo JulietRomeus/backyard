@@ -348,7 +348,7 @@ export class EventService {
       event(filter:
         {_and: ${JSON.stringify(allFilter).replace(/"([^"]+)":/g, '$1:')}}
        ,page:${page},sort: ["-create_date"]){
-        ${eventResponse}
+        ${eventResMini}
       }
   }
 `;
@@ -400,7 +400,7 @@ export class EventService {
                     {start_date:{_lte:"${filter.end_date}T23:59:59"}},
                     {end_date:{_gte:"${filter.start_date}T00:00:00"}}
                     ]},
-                {event_status:{no:{_eq:"3"}}}
+                {event_status:{no:{_in:["3","5"]}}}
           ]}
         ]},limit:-1){
           ${eventResponse}
@@ -452,8 +452,11 @@ export class EventService {
 `;
     const variables = {};
     try {
+      // const result = await firstValueFrom(
+      //   this.httpService.post(`/graphql`, { query, variables }),
+      // );
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/disaster_type`),
       );
       return result.data;
     } catch (error) {
@@ -474,8 +477,11 @@ export class EventService {
 `;
     const variables = {};
     try {
+      // const result = await firstValueFrom(
+      //   this.httpService.post(`/graphql`, { query, variables }),
+      // );
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/event_status`),
       );
       return result.data;
     } catch (error) {

@@ -325,7 +325,8 @@ export class WarningService {
     const variables = {};
     try {
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        // this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/warning_status`),
       );
       return result.data;
     } catch (error) {
@@ -345,7 +346,8 @@ export class WarningService {
     const variables = {};
     try {
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        // this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/warning_type`),
       );
       return result.data;
     } catch (error) {

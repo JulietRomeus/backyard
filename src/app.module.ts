@@ -7,6 +7,7 @@ import { PermissionGuard } from './guards/permission.guard';
 import { EventModule } from './modules/event/event.module';
 import { InfoModule } from './modules/info/info.module';
 import { WarningModule } from './modules/warning/warning.module';
+import { TrackingModule } from './modules/tracking/tracking.module';
 
 @Module({
   imports: [
@@ -23,6 +24,8 @@ import { WarningModule } from './modules/warning/warning.module';
     InfoModule,
 
     WarningModule,
+
+    TrackingModule,
   ],
   providers: [
     {

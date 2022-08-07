@@ -112,7 +112,7 @@ export class EventController {
   }
 
   @Get('active')
-  @Permission({ route: defaultRoute, action: 'view' })
+  @Permission()
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล event ทั้งหมด' })
   @ApiOkResponse({

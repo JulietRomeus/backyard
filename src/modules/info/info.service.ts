@@ -389,8 +389,11 @@ export class InfoService {
 `;
     const variables = {};
     try {
+      // const result = await firstValueFrom(
+      //   this.httpService.post(`/graphql`, { query, variables }),
+      // );
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/disaster_type`),
       );
       return result.data;
     } catch (error) {
@@ -448,8 +451,11 @@ export class InfoService {
 `;
     const variables = {};
     try {
+      // const result = await firstValueFrom(
+      //   this.httpService.post(`/graphql`, { query, variables }),
+      // );
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/agency`),
       );
       return result.data;
     } catch (error) {
@@ -471,7 +477,8 @@ export class InfoService {
     const variables = {};
     try {
       const result = await firstValueFrom(
-        this.httpService.post(`/graphql`, { query, variables }),
+        // this.httpService.post(`/graphql`, { query, variables }),
+        this.httpService.get(`/items/form_status`),
       );
       return result.data;
     } catch (error) {
