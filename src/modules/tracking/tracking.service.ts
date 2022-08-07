@@ -90,10 +90,12 @@ export class TrackingService {
       const result = await firstValueFrom(
         this.httpService.post(`/graphql`, { query, variables: {} }),
       );
-      return result.data.data.operation_device;
+      if (result?.data?.data?.operation_device) {
+        return result?.data?.data?.operation_device;
+      }
     } catch (error) {
-      console.log('er get op_device', error.response.data.errors);
-      return error.response.data.errors;
+      console.log('er getlist op_device', error);
+      return error?.response?.data?.errors;
     }
   }
 
@@ -106,10 +108,12 @@ export class TrackingService {
           updateTrackingDto,
         ),
       );
-      return result.data.data.operation_device;
+      if (result.data?.data?.operation_device) {
+        return result.data?.data?.operation_device;
+      }
     } catch (error) {
-      console.log('er get op_device', error.response.data.errors);
-      return error.response.data.errors;
+      console.log('er get op_device location', error);
+      return error?.response?.data?.errors;
     }
   }
 
@@ -130,10 +134,10 @@ export class TrackingService {
         this.update(result.data.data[0].op_device_id, updateData);
       }
 
-      return result.data.data;
+      return result?.data?.data;
     } catch (error) {
-      console.log('er get op_device', error.response.data.errors);
-      return error.response.data.errors;
+      console.log('er disconnect location', error);
+      return error?.response?.data?.errors;
     }
   }
 
