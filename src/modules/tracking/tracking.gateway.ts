@@ -149,6 +149,15 @@ export class TrackingGateway
     });
   }
 
+  @SubscribeMessage('send')
+  async chat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ): Promise<any> {
+    console.log('chat...', data);
+    this.server.emit('chat', data);
+  }
+
   // public broadcast(event, message: any) {
   //   console.log('BOARD CAST', event, message);
   //   const broadCastMessage = JSON.stringify(message);
@@ -156,9 +165,4 @@ export class TrackingGateway
   //     c.emit(event, broadCastMessage);
   //   }
   // }
-
-  //   @SubscribeMessage('identity')
-  //   async identity(@MessageBody() data: number): Promise<number> {
-  //     return data;
-  //   }
 }
