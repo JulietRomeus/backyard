@@ -118,6 +118,8 @@ export class TrackingGateway
       update_by_id: data.reference_code,
       update_by: data.name,
       online: true,
+      lat: data.lat,
+      long: data.long,
     };
     // this.trackingService.update(data.op_device_id, updateData);
     try {
@@ -157,6 +159,10 @@ export class TrackingGateway
     console.log('chat...', data);
     this.server.emit('chat', data);
   }
+
+  // private updateTrack ()=>{
+
+  // }
 
   // public broadcast(event, message: any) {
   //   console.log('BOARD CAST', event, message);
