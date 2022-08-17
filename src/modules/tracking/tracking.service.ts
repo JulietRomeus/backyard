@@ -36,7 +36,7 @@ export class TrackingService {
           'DIRECTUS_DISASTER_URI',
         )}/items/operation_device?filter={ "reference_code": { "_in": ${JSON.stringify(
           refCodeList,
-        )} }}`,
+        )} }}&fields=*,operation_id.event_id`,
         {
           headers: {
             ...this.axiosConfig.headers,
@@ -78,15 +78,23 @@ export class TrackingService {
                 },
               },
             );
-            this.trackingGateway.server.emit('tracking', {
-              reference_code: d.reference_code,
-              device_type: 2,
-              detail: 'vehicle',
-              online: true,
-              update_date: d.update_date,
-              lat: d.lat,
-              long: d.long,
-            });
+            // console.log(
+            //   'EMIT',
+            //   `tracking-${d?.operation_id?.event_id || 'none_event'}`,
+            // );
+            this.trackingGateway.server.emit(
+              `tracking-${d?.operation_id?.event_id || 'none_event'}`,
+              {
+                event_id: d?.operation_id?.event_id || 'none_event',
+                reference_code: d.reference_code,
+                device_type: 2,
+                detail: 'vehicle',
+                online: true,
+                update_date: d.update_date,
+                lat: d.lat,
+                long: d.long,
+              },
+            );
             // console.log('>> update', res.data.data);
           } catch (error) {
             console.log(
@@ -237,9 +245,23 @@ export class TrackingService {
     }
   }
 
-  async findAll(): Promise<AxiosResponse> {
+  async findAll(event_id: string): Promise<AxiosResponse> {
     const query = `query{
-      operation_device(filter:{status:{_eq:1}}){
+      operation_device(filter:{
+        
+        status:{_eq:1},
+        online:{_eq:true},
+        _or:[
+          {operation_id:{
+              event_id:{
+                event_id:{_eq:${event_id}}
+              }
+            }
+          },
+          {operation_id:{operation_id:{_null:true}}}
+        ]
+        
+      }){
           op_device_id
           operation_id{
             operation_id

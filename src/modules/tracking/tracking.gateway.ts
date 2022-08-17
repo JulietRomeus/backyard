@@ -143,7 +143,7 @@ export class TrackingGateway
       console.log('er get op_device location', error?.response?.data?.errors);
       return error?.response?.data?.errors;
     }
-    this.server.emit('tracking', {
+    this.server.emit(`tracking-${data.event_id}`, {
       client_id: client.id,
       online: true,
       update_date: subHours(now(), 7),
@@ -156,8 +156,8 @@ export class TrackingGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
   ): Promise<any> {
-    console.log('chat...', data);
-    this.server.emit('chat', data);
+    // console.log('chat...', data);
+    this.server.emit(`chat-${data.event_id}`, data);
   }
 
   // private updateTrack ()=>{

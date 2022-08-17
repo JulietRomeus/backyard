@@ -26,9 +26,9 @@ export class TrackingController {
     return this.trackingService.track(data);
   }
 
-  @Get()
-  findAll() {
-    return this.trackingService.findAll();
+  @Get('event/:event_id')
+  findAll(@Param('event_id') event_id: string) {
+    return this.trackingService.findAll(event_id);
   }
 
   @Get(':id')
