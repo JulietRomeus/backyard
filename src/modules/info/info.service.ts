@@ -90,6 +90,7 @@ export class InfoService {
   async create(createInfoDto: CreateInfoDto) {
     // console.log('.....', createEventDto.agency);
     let createObj: any = createInfoDto;
+    const files = createInfoDto.files;
     createObj.create_date = now();
     createObj.publish_date = createInfoDto.publish_date
       ? createInfoDto.publish_date
@@ -189,6 +190,10 @@ export class InfoService {
           category: 'info',
           url: `disaster/info/form/${resObj.data.info_id}`,
           units: units,
+          img_url:
+          files.length > 0
+            ? `${process.env.DIRECTUS_DISASTER_URI}/assets/${files[0]?.directus_files_id?.id}`
+            : undefined,
         });
         // ======= Unit Area CONDITION ========
       }

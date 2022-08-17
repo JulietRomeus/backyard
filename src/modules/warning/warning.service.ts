@@ -477,6 +477,7 @@ export class WarningService {
   async approve(id: string, updateWarningDto: UpdateWarningDto) {
     // console.log('>>>>', id);
     let updateObj: any = updateWarningDto;
+    const files = updateWarningDto.files;
     const token = updateWarningDto.request_by.token;
     updateObj.approve_date = now();
     updateObj.warning_status = { id: 'pending_acknowledge' }; //pending_acknowledge
@@ -516,6 +517,10 @@ export class WarningService {
         category: 'warning',
         url: `disaster/warning/form/${id}`,
         units: units,
+        img_url:
+          files.length > 0
+            ? `${process.env.DIRECTUS_DISASTER_URI}/assets/${files[0]?.directus_files_id?.id}`
+            : undefined,
       });
       return resWanring;
     } catch (error) {

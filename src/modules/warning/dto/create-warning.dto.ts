@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { FileDto } from 'src/common/interfaces/file.dto';
 import { RequestByDto } from '../../../common/interfaces/requestBy.dto';
 
+
 export class CreateWarningDto extends RequestByDto {
   @ApiProperty({
     example: 'สถานการณ์น้ำท่วม',
@@ -25,4 +26,6 @@ export class CreateWarningDto extends RequestByDto {
     warning_target_id: string;
     unit_no: string;
   }[];
+
+  files?: FileDto[];
 }

@@ -503,6 +503,8 @@ export class EventService {
     let updateObj: UpdateEventDto = updateEventDto;
     const token = updateEventDto.request_by.token;
     const status_no = updateEventDto.event_status.no;
+    const files = updateEventDto.files;
+
     const curStatus =
       updateEventDto.event_status.no === '3'
         ? '3'
@@ -560,6 +562,10 @@ export class EventService {
           category: 'event',
           url: `disaster/event/form/${id}`,
           units: units,
+          img_url:
+            files.length > 0
+              ? `${process.env.DIRECTUS_DISASTER_URI}/assets/${files[0]?.directus_files_id?.id}`
+              : undefined,
         });
       }
 
@@ -577,6 +583,7 @@ export class EventService {
     const status_id = resStatus.data.data[0].id;
     let updateObj: any = updateEventDto;
     const token: any = updateEventDto.request_by.token;
+    const files = updateEventDto.files;
     updateObj.approve_date = now();
     updateObj.event_status = { id: status_id }; //status_id
     updateObj.approve_by_id = updateObj.request_by.id;
@@ -622,6 +629,10 @@ export class EventService {
         category: 'event',
         url: `disaster/event/form/${resEvent.data.event_id}`,
         units: units,
+        img_url:
+          files.length > 0
+            ? `${process.env.DIRECTUS_DISASTER_URI}/assets/${files[0]?.directus_files_id?.id}`
+            : undefined,
       });
 
       // console.log('noti noti noti noti :::', noti);
