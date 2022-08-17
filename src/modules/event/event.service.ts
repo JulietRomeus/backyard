@@ -110,6 +110,15 @@ const eventResMini = `event_id
     color
     action
   }
+  event_area{
+    event_area_id
+    province_name
+    amphoe_name
+    tambon_name
+    mooban_name
+    long
+    lat
+  } 
   status
   note
   expect_start_date
