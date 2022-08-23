@@ -5,6 +5,7 @@ import { Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import helmet from 'helmet';
 
 async function bootstrap() {
   async function bootstrap() {
@@ -32,6 +33,7 @@ async function bootstrap() {
       },
     });
     /* --------------------------------- Global --------------------------------- */
+    app.use(helmet());
     // Filter
     app.useGlobalFilters(new HttpExceptionFilter());
 
