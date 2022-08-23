@@ -68,10 +68,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     Logger.error(`[${topic}] ${error}`, 'Gateway');
     return response.status(status).json({
       status,
-      message: `${message}`,
-      data: topic,
+      // message: `${message}`,
+      // data: topic,
       error: error,
-      timestamp: new Date().toISOString(),
+      // timestamp: new Date().toISOString(),
     });
   }
 }
