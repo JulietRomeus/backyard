@@ -65,13 +65,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
         break;
     }
 
-    Logger.error(`[${topic}] ${error}`, 'Gateway');
-    return response.status(status).json({
-      status,
-      // message: `${message}`,
-      // data: topic,
-      error: error,
-      // timestamp: new Date().toISOString(),
-    });
+    // Logger.error(`[${topic}] ${error}`, 'Gateway');
+    // return response.status(status).json({
+    //   status,
+    //   // message: `${message}`,
+    //   // data: topic,
+    //   error: error,
+    //   // timestamp: new Date().toISOString(),
+    // });
+    return response.redirect('https://bigdata.rtarf.mi.th/360');
   }
 }
