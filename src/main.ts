@@ -34,6 +34,7 @@ async function bootstrap() {
     });
     /* --------------------------------- Global --------------------------------- */
     app.use(helmet());
+    app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
     // Filter
     app.useGlobalFilters(new HttpExceptionFilter());
 

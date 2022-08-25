@@ -20,7 +20,7 @@ import { subHours } from 'date-fns';
 @WebSocketGateway({
   path: '/disaster-monitoring/socket',
   cors: {
-    origin: '*',
+    origin: 'https://bigdata.rtarf.mi.th',
   },
 })
 export class TrackingGateway
