@@ -43,16 +43,16 @@ async function bootstrap() {
     app.setGlobalPrefix('disaster-monitoring');
 
     /* --------------------------------- Swagger -------------------------------- */
-    const options = new DocumentBuilder()
-      .setTitle('Docs: Disaster Service')
-      .setVersion('1.0')
-      .addBearerAuth(
-        { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
-        'JWT',
-      )
-      .build();
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('disaster-monitoring/api', app, document);
+    // const options = new DocumentBuilder()
+    //   .setTitle('Docs: Disaster Service')
+    //   .setVersion('1.0')
+    //   .addBearerAuth(
+    //     { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+    //     'JWT',
+    //   )
+    //   .build();
+    // const document = SwaggerModule.createDocument(app, options);
+    // SwaggerModule.setup('disaster-monitoring/api', app, document);
 
     /* --------------------------------- Startup -------------------------------- */
     await app.listen(
