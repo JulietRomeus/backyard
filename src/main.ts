@@ -16,7 +16,7 @@ async function bootstrap() {
       'http://localhost:3100',
       'http://localhost:9000',
       'https://bigdata.rtarf.maholan.app',
-      'https://bigdata.rtarf.maholan.dev',
+      'https://*.rtarf.maholan.dev',
       'https://bigdata.rtarf.mi.th',
       'https://api1.rtarf.mi.th',
     ];
@@ -40,23 +40,23 @@ async function bootstrap() {
 
     // Pipe
     app.useGlobalPipes(new ValidationPipe());
-    app.setGlobalPrefix('disaster-monitoring');
+    app.setGlobalPrefix('trs-service');
 
     /* --------------------------------- Swagger -------------------------------- */
-    // const options = new DocumentBuilder()
-    //   .setTitle('Docs: Disaster Service')
-    //   .setVersion('1.0')
-    //   .addBearerAuth(
-    //     { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
-    //     'JWT',
-    //   )
-    //   .build();
-    // const document = SwaggerModule.createDocument(app, options);
-    // SwaggerModule.setup('disaster-monitoring/api', app, document);
+    const options = new DocumentBuilder()
+      .setTitle('Docs: Transport Service')
+      .setVersion('1.0')
+      .addBearerAuth(
+        { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+        'JWT',
+      )
+      .build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('trs-service/docs', app, document);
 
     /* --------------------------------- Startup -------------------------------- */
     await app.listen(
-      configService.get<number>('DISASTER_MONITORING_SERVICE_PORT') || 3310,
+      configService.get<number>('PORT') || 3100,
     );
   }
   bootstrap();
