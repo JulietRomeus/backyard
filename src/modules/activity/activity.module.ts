@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TeamService } from './team.service';
-import { TeamController } from './team.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ActivityService } from './activity.service';
+import { ActivityController } from './activity.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -10,18 +9,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     HttpModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        timeout: 5000,
-        baseURL: configService.get('DIRECTUS_DISASTER_URI'),
+        timeout: 100000,
+        baseURL: configService.get('DIRECTUS_LOGISTICS_URI'),
         headers: {
           authorization: `Bearer ${configService.get(
-            'DIRECTUS_DISASTER_ACCESS_TOKEN',
+            'DIRECTUS_LOGISTICS_TOKEN',
           )}`,
         },
       }),
       inject: [ConfigService],
     }),
   ],
-  controllers: [TeamController],
-  providers: [TeamService],
+  controllers: [ActivityController],
+  providers: [ActivityService]
 })
-export class TeamModule {}
+export class ActivityModule {}

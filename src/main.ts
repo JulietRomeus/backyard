@@ -39,8 +39,12 @@ async function bootstrap() {
     app.useGlobalFilters(new HttpExceptionFilter());
 
     // Pipe
-    app.useGlobalPipes(new ValidationPipe());
-    app.setGlobalPrefix('trs-service');
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+      }),
+    );
+    app.setGlobalPrefix('transport');
 
     /* --------------------------------- Swagger -------------------------------- */
     const options = new DocumentBuilder()
@@ -52,12 +56,10 @@ async function bootstrap() {
       )
       .build();
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('trs-service/docs', app, document);
+    SwaggerModule.setup('transport/docs', app, document);
 
     /* --------------------------------- Startup -------------------------------- */
-    await app.listen(
-      configService.get<number>('PORT') || 3100,
-    );
+    await app.listen(configService.get<number>('PORT') || 3100);
   }
   bootstrap();
 }

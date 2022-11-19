@@ -1,13 +1,11 @@
-import { HttpService } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
 import { PermissionGuard } from './guards/permission.guard';
-import { EventModule } from './modules/event/event.module';
-import { InfoModule } from './modules/info/info.module';
 import { WarningModule } from './modules/warning/warning.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
+import { ActivityModule } from './modules/activity/activity.module';
 
 @Module({
   imports: [
@@ -19,13 +17,12 @@ import { TrackingModule } from './modules/tracking/tracking.module';
     }),
 
     // Import Modules
-    EventModule,
-
-    InfoModule,
 
     WarningModule,
 
     TrackingModule,
+
+    ActivityModule,
   ],
   providers: [
     {

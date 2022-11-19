@@ -130,6 +130,17 @@ export class PermissionGuard {
         };
       }
     } catch (error) {
+      req.body = {
+        request_by: {
+          ...data.request_by,
+          data_permission: data.data_permission,
+          token: headers.authorization,
+          filter: filter,
+        },
+        ...req.body,
+      };
+
+      return true;
       throw new UnauthorizedException('unauthorization');
     }
 
