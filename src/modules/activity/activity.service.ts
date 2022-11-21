@@ -52,7 +52,7 @@ export class ActivityService {
       ];
     } else {
       // รายการร้องขอ
-      // console.log('req');
+      console.log('req');
       //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม และ action type = request
       filterObj['action_type'] = { _eq: 'request' };
       filterObj['_or'] = [
@@ -195,16 +195,16 @@ export class ActivityService {
   }
 
   async send(id: string, updateActivityDto: UpdateActivityDto, query: any) {
-    // console.log(updateActivityDto.request_by);
+    console.log(updateActivityDto.request_by);
     if (query.type === 'res') {
-      updateActivityDto.activity_status = 'pending_req_review';
+      updateActivityDto.activity_status = 'pending_res_review';
       updateActivityDto['resp_update_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['resp_update_by_name'] =
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_update_date'] = now();
     } else {
-      updateActivityDto.activity_status = 'pending_res_review';
+      updateActivityDto.activity_status = 'pending_req_review';
       updateActivityDto['req_update_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_update_by_name'] =
@@ -229,14 +229,15 @@ export class ActivityService {
     // console.log(updateActivityDto.request_by);
 
     if (query.type === 'res') {
-      updateActivityDto.activity_status = 'pending_req_approve';
+      console.log('xxxx');
+      updateActivityDto.activity_status = 'pending_res_approve';
       updateActivityDto['resp_review_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['resp_review_by_name'] =
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_review_date'] = now();
     } else {
-      updateActivityDto.activity_status = 'pending_res_approve';
+      updateActivityDto.activity_status = 'pending_req_approve';
       updateActivityDto['req_review_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_review_by_name'] =
@@ -261,14 +262,14 @@ export class ActivityService {
     // console.log(updateActivityDto.request_by);
 
     if (query.type === 'res') {
-      updateActivityDto.activity_status = 'pending_req_approve';
+      updateActivityDto.activity_status = 'pending_res_approve';
       updateActivityDto['resp_approve_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['resp_approve_by_name'] =
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_approve_date'] = now();
     } else {
-      updateActivityDto.activity_status = 'pending_res_approve';
+      updateActivityDto.activity_status = 'pending_req_approve';
       updateActivityDto['req_approvew_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_approve_by_name'] =
@@ -291,21 +292,14 @@ export class ActivityService {
 
   async back(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
-
+    updateActivityDto['sendback_by'] = updateActivityDto?.request_by?.id || '';
+    updateActivityDto['sendback_by_name'] =
+      updateActivityDto?.request_by?.displayname || '';
+    updateActivityDto['sendback_date'] = now();
     if (query.type === 'res') {
-      updateActivityDto.activity_status = 'pending_req_approve';
-      updateActivityDto['resp_approve_by'] =
-        updateActivityDto?.request_by?.id || '';
-      updateActivityDto['resp_approve_by_name'] =
-        updateActivityDto?.request_by?.displayname || '';
-      updateActivityDto['resp_approve_date'] = now();
+      updateActivityDto.activity_status = 'res_edit';
     } else {
-      updateActivityDto.activity_status = 'pending_res_approve';
-      updateActivityDto['req_approvew_by'] =
-        updateActivityDto?.request_by?.id || '';
-      updateActivityDto['req_approve_by_name'] =
-        updateActivityDto?.request_by?.displayname || '';
-      updateActivityDto['req_approve_date'] = now();
+      updateActivityDto.activity_status = 'req_edit';
     }
 
     delete updateActivityDto.request_by;
@@ -327,6 +321,21 @@ export class ActivityService {
     deleteActivityDto['delete_by_name'] =
       deleteActivityDto?.request_by?.displayname || '';
     deleteActivityDto['delete_date'] = now();
+
+    delete deleteActivityDto.request_by;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/trs_activity/${id}`, deleteActivityDto),
+      );
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error delete menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async restore(id: string, deleteActivityDto: DeleteActivityDto) {
+    deleteActivityDto.is_delete = false;
 
     delete deleteActivityDto.request_by;
     try {

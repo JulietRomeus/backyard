@@ -101,7 +101,6 @@ export class ActivityController {
   }
 
   @Delete(':id')
-  @Patch(':id')
   @Permission({ route: route, action: 'delete' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ลบข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
@@ -110,5 +109,16 @@ export class ActivityController {
     @Body() deleteActivityDto: DeleteActivityDto,
   ) {
     return this.activityService.delete(id, deleteActivityDto);
+  }
+
+  @Patch('restore/:id')
+  @Permission({ route: route, action: 'delete' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'คืนค่าข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  restore(
+    @Param('id') id: string,
+    @Body() deleteActivityDto: DeleteActivityDto,
+  ) {
+    return this.activityService.restore(id, deleteActivityDto);
   }
 }

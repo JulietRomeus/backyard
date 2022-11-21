@@ -6,6 +6,7 @@ import { PermissionGuard } from './guards/permission.guard';
 import { WarningModule } from './modules/warning/warning.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
 import { ActivityModule } from './modules/activity/activity.module';
+import { AomModule } from './modules/aom/aom.module';
 
 @Module({
   imports: [
@@ -23,6 +24,8 @@ import { ActivityModule } from './modules/activity/activity.module';
     TrackingModule,
 
     ActivityModule,
+
+    AomModule,
   ],
   providers: [
     {
