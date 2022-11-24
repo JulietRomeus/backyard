@@ -9,7 +9,7 @@ import now from '../../utils/now';
 import e from 'express';
 
 const formFields = `*.*,vehicle_driver.vehicle.*,vehicle_driver.driver.*`;
-const listFields = `*,route.*`;
+const listFields = `*,route.*,activity_status.id,activity_status.name,activity_status.color,activity_type.id,activity_type.name`;
 
 @Injectable()
 export class ActivityService {
@@ -17,7 +17,7 @@ export class ActivityService {
 
   async findAll(body: any, query: any) {
     // console.log('body', body?.request_by || '');
-    // console.log('query', query);
+    console.log('query', query);
     let filterObj = {
       is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
       is_test: { _neq: true }, // filter ข้อมูลที่ยังไม่ใช่ข้อมูลทดสอบ
@@ -26,14 +26,16 @@ export class ActivityService {
 
     if (query.type === 'res') {
       // รายการตอบรับ
-      console.log('res');
+      // console.log('res');
       // filter ในฐานะผู้ตอบรับคำขอ
       filterObj['action_type'] = { _eq: 'request' };
       // filter exclude
-      filterObj['activity_status'] = { _neq: 'draft' };
-      filterObj['activity_status'] = { _neq: 'req_edit' };
-      filterObj['activity_status'] = { _neq: 'pending_req_review' };
-      filterObj['activity_status'] = { _neq: 'pending_req_approve' };
+      filterObj['_and'] = [
+        { activity_status: { _neq: 'draft' } },
+        { activity_status: { _neq: 'req_edit' } },
+        { activity_status: { _neq: 'pending_req_review' } },
+        { activity_status: { _neq: 'pending_req_approve' } },
+      ];
     } else if (query.type === 'cmd') {
       // รายการสั่งการ
       console.log('cmd');
@@ -52,7 +54,7 @@ export class ActivityService {
       ];
     } else {
       // รายการร้องขอ
-      console.log('req');
+      // console.log('req');
       //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม และ action type = request
       filterObj['action_type'] = { _eq: 'request' };
       filterObj['_or'] = [
@@ -125,21 +127,22 @@ export class ActivityService {
     };
 
     const filterString = JSON.stringify(filterObj);
-    console.log('filterObj', filterString);
+    // console.log('filterObj', filterString);
     const getQuery = `trs_activity/${id}?${filterString}&fields=${formFields}`;
     try {
       const result = await firstValueFrom(
         this.httpService.get(`/items/${getQuery}`),
       );
-      // console.log(result);
+      // console.log('----', getQuery);
       if (result.data.data.is_delete === true) {
-        console.log('>>', result.data.data.is_delete);
+        // console.log('>>', result.data.data.is_delete);
         return { is_delete: true };
       } else {
         return result?.data?.data || {};
       }
     } catch (error) {
-      console.log('error get menupage id', error);
+      // console.log('error get activity id', error);
+      // return error;
       return {};
     }
   }
@@ -229,7 +232,7 @@ export class ActivityService {
     // console.log(updateActivityDto.request_by);
 
     if (query.type === 'res') {
-      console.log('xxxx');
+      // console.log('xxxx');
       updateActivityDto.activity_status = 'pending_res_approve';
       updateActivityDto['resp_review_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -270,7 +273,7 @@ export class ActivityService {
       updateActivityDto['resp_approve_date'] = now();
     } else {
       updateActivityDto.activity_status = 'pending_req_approve';
-      updateActivityDto['req_approvew_by'] =
+      updateActivityDto['req_approve_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_approve_by_name'] =
         updateActivityDto?.request_by?.displayname || '';
@@ -346,6 +349,50 @@ export class ActivityService {
     } catch (error) {
       console.log('error delete menupage id', error);
       return error.response.data.errors;
+    }
+  }
+
+  async status(query: any) {
+    // console.log('body', body?.request_by || '');
+    // console.log('query', query);
+    let filterObj = {
+      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+    };
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_activity_status?filter=${filterString}&sort=sort`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log(result.data);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error get status', error);
+      return {};
+    }
+  }
+
+  async type(query: any) {
+    // console.log('body', body?.request_by || '');
+    // console.log('query', query);
+    let filterObj = {
+      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+    };
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_activity_type?filter=${filterString}&sort=sort`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log(result.data);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error get status', error);
+      return {};
     }
   }
 }

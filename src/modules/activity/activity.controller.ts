@@ -36,6 +36,22 @@ export class ActivityController {
     return this.activityService.findAll(body, query);
   }
 
+  @Get('status')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลสถานะกิจกรรมการขนส่งเคลื่อนย้าย' })
+  status(@Query() query: any) {
+    return this.activityService.status(query);
+  }
+
+  @Get('type')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลประเภทกิจกรรมการขนส่งเคลื่อนย้าย' })
+  type(@Query() query: any) {
+    return this.activityService.type(query);
+  }
+
   @Get(':id')
   @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
@@ -65,7 +81,7 @@ export class ActivityController {
   }
 
   @Patch('send/:id')
-  @Permission({ route: route, action: 'create' })
+  @Permission({ route: route, action: 'update' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ส่งขอตรวจสอบข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   send(
@@ -98,6 +114,18 @@ export class ActivityController {
     @Query() query: any,
   ) {
     return this.activityService.approve(id, updateActivityDto, query);
+  }
+
+  @Patch('back/:id')
+  @Permission({ route: route, action: 'approve' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  back(
+    @Param('id') id: string,
+    @Body() updateActivityDto: UpdateActivityDto,
+    @Query() query: any,
+  ) {
+    return this.activityService.back(id, updateActivityDto, query);
   }
 
   @Delete(':id')
