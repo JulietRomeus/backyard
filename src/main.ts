@@ -13,7 +13,7 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const whitelist = [
       'http://192.168.1.*',
-      'http://localhost:3100',
+      'http://localhost:4100',
       'http://localhost:9000',
       'https://bigdata.rtarf.maholan.app',
       'https://*.rtarf.maholan.dev',
