@@ -7,6 +7,8 @@ import { WarningModule } from './modules/warning/warning.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { AomModule } from './modules/aom/aom.module';
+import { VehicleModule } from './modules/vehicle/vehicle.module';
+import { RegisterModule } from './modules/register/register.module';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import { AomModule } from './modules/aom/aom.module';
     ActivityModule,
 
     AomModule,
+
+    VehicleModule,
+
+    RegisterModule,
   ],
   providers: [
     {
