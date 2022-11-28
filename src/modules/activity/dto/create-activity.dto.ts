@@ -60,12 +60,15 @@ export class CreateActivityDto extends RequestByDto {
     id: number;
     order: number;
     name: string;
+    region_code: number;
     province_code: number;
     province_name: string;
     amphoe_code: number;
     amphoe_name: string;
     tambon_code: number;
     tambon_name: string;
+    mooban_code: number;
+    mooban_name: string;
     latitude: number;
     longitude: number;
   }[];
