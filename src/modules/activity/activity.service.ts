@@ -8,7 +8,7 @@ import { HttpService } from '@nestjs/axios';
 import now from '../../utils/now';
 import e from 'express';
 
-const formFields = `*.*,vehicle_driver.vehicle.*,vehicle_driver.driver.*`;
+const formFields = `*.*,vehicle_driver.vehicle.*,vehicle_driver.driver.*,files.files.*,files.files.directus_files_id.*`;
 const listFields = `*,route.*,activity_status.id,activity_status.name,activity_status.color,activity_type.id,activity_type.name`;
 
 @Injectable()

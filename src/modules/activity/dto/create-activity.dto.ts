@@ -31,7 +31,10 @@ export class CreateActivityDto extends RequestByDto {
   @IsNumber()
   'round': number;
   @IsDateString()
-  'activity_date': Date;
+  'activity_start_date': Date;
+
+  @IsDateString()
+  'activity_end_date': Date;
 
   @IsDateString()
   @IsOptional()
@@ -59,6 +62,7 @@ export class CreateActivityDto extends RequestByDto {
   'route': {
     id: number;
     order: number;
+    start_date: Date;
     name: string;
     region_code: number;
     province_code: number;
@@ -79,8 +83,23 @@ export class CreateActivityDto extends RequestByDto {
   'files': {
     id: number;
     name: string;
-    file: string;
-    activity: 1;
+    order: number;
+    create_date: Date;
+    create_by: string;
+    create_by_name: string;
+    files: {
+      id: number;
+      trs_activity_files_id: number;
+      directus_files_id: {
+        id: string;
+        storage: string;
+        filename_disk: string;
+        filename_download: string;
+        title: string;
+        type: string;
+        folder: string;
+      };
+    }[];
   }[];
   'activity_status': string;
   'req_create_date': Date;
