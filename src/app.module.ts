@@ -6,9 +6,13 @@ import { PermissionGuard } from './guards/permission.guard';
 import { WarningModule } from './modules/warning/warning.module';
 import { TrackingModule } from './modules/tracking/tracking.module';
 import { ActivityModule } from './modules/activity/activity.module';
+<<<<<<< HEAD
+import { KhiwqqModule } from './modules/khiwqq/khiwqq.module';
+=======
 import { AomModule } from './modules/aom/aom.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
 import { RegisterModule } from './modules/register/register.module';
+>>>>>>> master
 
 @Module({
   imports: [
@@ -27,11 +31,15 @@ import { RegisterModule } from './modules/register/register.module';
 
     ActivityModule,
 
+<<<<<<< HEAD
+    KhiwqqModule
+=======
     AomModule,
 
     VehicleModule,
 
     RegisterModule,
+>>>>>>> master
   ],
   providers: [
     {
