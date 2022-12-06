@@ -52,6 +52,30 @@ export class ActivityController {
     return this.activityService.type(query);
   }
 
+  @Get('option/vehicle')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะที่ว่างอยู่' })
+  vehicle(@Query() query: any, @Body() body: any) {
+    return this.activityService.vehicle(query, body);
+  }
+
+  @Get('option/vehicle-type')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลประเภทยานพาหนะ' })
+  vehicleType(@Query() query: any, @Body() body: any) {
+    return this.activityService.vehicleType(query, body);
+  }
+
+  @Get('option/driver')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับที่ว่างอยู่' })
+  driver(@Query() query: any, @Body() body: any) {
+    return this.activityService.driver(query, body);
+  }
+
   @Get(':id')
   @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')

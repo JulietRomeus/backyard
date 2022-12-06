@@ -6,9 +6,13 @@ import { DeleteActivityDto } from './dto/delete-activity.dto';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import now from '../../utils/now';
-import e from 'express';
+import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 
-const formFields = `*.*,vehicle_driver.vehicle.*,vehicle_driver.driver.*,files.files.*,files.files.directus_files_id.*`;
+const mainDriverFields = `vehicle_driver.vehicle.main_driver.id,vehicle_driver.vehicle.main_driver.driver_id,vehicle_driver.vehicle.main_driver.driver_name`;
+const vehicleFields = `vehicle_driver.vehicle.id,vehicle_driver.vehicle.vehicle_type,vehicle_driver.vehicle.is_available,vehicle_driver.vehicle.license_plate,${mainDriverFields}`;
+const driverFields = `vehicle_driver.driver.id,vehicle_driver.driver.driver_id,vehicle_driver.driver.driver_name,vehicle_driver.driver.driver_license`;
+const vehicleDriverFields = `vehicle_driver.controller,${vehicleFields},${driverFields}`;
+const formFields = `*.*,${vehicleDriverFields},files.files.*,files.files.directus_files_id.*`;
 const listFields = `*,route.*,activity_status.id,activity_status.name,activity_status.color,activity_type.id,activity_type.name`;
 
 @Injectable()
@@ -17,7 +21,7 @@ export class ActivityService {
 
   async findAll(body: any, query: any) {
     // console.log('body', body?.request_by || '');
-    console.log('query', query);
+    // console.log('query', query);
     let filterObj = {
       is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
       is_test: { _neq: true }, // filter ข้อมูลที่ยังไม่ใช่ข้อมูลทดสอบ
@@ -393,6 +397,93 @@ export class ActivityService {
     } catch (error) {
       console.log('error get status', error);
       return {};
+    }
+  }
+
+  async vehicle(query: any, body: RequestByDto) {
+    // console.log('body', body?.request_by || '');
+    // console.log('query', query);
+    // const resfields = `id,license_plate,vehicle_status.id,vehicle_status.name,main_driver.driver_id,main_driver.driver_name`;
+    const resfields = `id,license_plate,main_driver.id,main_driver.driver_id,main_driver.driver_name`;
+    let filterObj = {
+      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+      is_available: { _eq: true },
+      unit_code: {
+        _eq:
+          body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
+      },
+    };
+    if (query.type) {
+      filterObj['vehicle_type'] = query.type;
+    }
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_vehicle?fields=${resfields}&filter=${filterString}`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log(result.data);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error get vehicle', error);
+      return error;
+    }
+  }
+
+  async vehicleType(query: any, body: RequestByDto) {
+    // console.log('body', body?.request_by || '');
+    // console.log('query', query);
+    // const resfields = `id,license_plate,vehicle_status.id,vehicle_status.name,main_driver.driver_id,main_driver.driver_name`;
+    const resfields = `*`;
+    let filterObj = {
+      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+    };
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_vehicle_type?fields=${resfields}&filter=${filterString}&sort=order`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log(result.data);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error get vehicle', error);
+      return error;
+    }
+  }
+
+  async driver(query: any, body: RequestByDto) {
+    // console.log('body', body?.request_by || '');
+    // console.log('query', query);
+    const resfields = `id,driver_id,driver_name,driver_license`;
+    let filterObj = {
+      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+      is_available: { _eq: true },
+      unit_code: {
+        _eq:
+          body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
+      },
+    };
+    if (query.type) {
+      filterObj['vehicle_type'] = query.type;
+    }
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_driver?fields=${resfields}&filter=${filterString}`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log(result.data);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error get driver', error);
+      return error;
     }
   }
 }
