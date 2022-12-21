@@ -42,7 +42,7 @@ export class ActivityService {
       ];
     } else if (query.type === 'cmd') {
       // รายการสั่งการ
-      console.log('cmd');
+      // console.log('cmd');
       // filter คำสั่งการ
       filterObj['action_type'] = { _eq: 'command' };
       //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม และ action type = command
@@ -202,7 +202,7 @@ export class ActivityService {
   }
 
   async send(id: string, updateActivityDto: UpdateActivityDto, query: any) {
-    console.log(updateActivityDto.request_by);
+    // console.log(updateActivityDto.request_by);
     if (query.type === 'res') {
       updateActivityDto.activity_status = 'pending_res_review';
       updateActivityDto['resp_update_by'] =
@@ -269,20 +269,54 @@ export class ActivityService {
     // console.log(updateActivityDto.request_by);
 
     if (query.type === 'res') {
-      updateActivityDto.activity_status = 'pending_res_approve';
+      updateActivityDto.activity_status = 'approved';
+      updateActivityDto['resp_approve_by'] =
+        updateActivityDto?.request_by?.id || '';
+      updateActivityDto['resp_approve_by_name'] =
+        updateActivityDto?.request_by?.displayname || '';
+      updateActivityDto['resp_approve_date'] = now();
+    } else if (query.type === 'cmd') {
+      updateActivityDto.activity_status = 'approved';
       updateActivityDto['resp_approve_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['resp_approve_by_name'] =
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_approve_date'] = now();
     } else {
-      updateActivityDto.activity_status = 'pending_req_approve';
+      updateActivityDto.activity_status = 'pending_res_draft';
       updateActivityDto['req_approve_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_approve_by_name'] =
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['req_approve_date'] = now();
     }
+
+    delete updateActivityDto.request_by;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/trs_activity/${id}`, updateActivityDto),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error approve menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async disApprove(
+    id: string,
+    updateActivityDto: UpdateActivityDto,
+    query: any,
+  ) {
+    // console.log(updateActivityDto.request_by);
+
+    updateActivityDto.activity_status = 'disapproved';
+    updateActivityDto['resp_approve_by'] =
+      updateActivityDto?.request_by?.id || '';
+    updateActivityDto['resp_approve_by_name'] =
+      updateActivityDto?.request_by?.displayname || '';
+    updateActivityDto['resp_approve_date'] = now();
 
     delete updateActivityDto.request_by;
     try {
@@ -305,6 +339,8 @@ export class ActivityService {
     updateActivityDto['sendback_date'] = now();
     if (query.type === 'res') {
       updateActivityDto.activity_status = 'res_edit';
+    } else if (query.type === 'cmd') {
+      updateActivityDto.activity_status = 'cmd_edit';
     } else {
       updateActivityDto.activity_status = 'req_edit';
     }
@@ -408,11 +444,17 @@ export class ActivityService {
     let filterObj = {
       is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
       is_available: { _eq: true },
-      unit_code: {
+    };
+    if (query.unit) {
+      filterObj['unit_code'] = {
+        _eq: query.unit,
+      };
+    } else {
+      filterObj['unit_code'] = {
         _eq:
           body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
-      },
-    };
+      };
+    }
     if (query.type) {
       filterObj['vehicle_type'] = query.type;
     }
@@ -463,11 +505,17 @@ export class ActivityService {
     let filterObj = {
       is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
       is_available: { _eq: true },
-      unit_code: {
+    };
+    if (query.unit) {
+      filterObj['unit_code'] = {
+        _eq: query.unit,
+      };
+    } else {
+      filterObj['unit_code'] = {
         _eq:
           body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
-      },
-    };
+      };
+    }
     if (query.type) {
       filterObj['vehicle_type'] = query.type;
     }

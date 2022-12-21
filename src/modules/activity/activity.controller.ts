@@ -131,13 +131,27 @@ export class ActivityController {
   @Patch('approve/:id')
   @Permission({ route: route, action: 'approve' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'อนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  @ApiOperation({
+    summary: 'อนุมัติอนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย',
+  })
   approve(
     @Param('id') id: string,
     @Body() updateActivityDto: UpdateActivityDto,
     @Query() query: any,
   ) {
     return this.activityService.approve(id, updateActivityDto, query);
+  }
+
+  @Patch('disapprove/:id')
+  @Permission({ route: route, action: 'approve' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ไม่อนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  disApprove(
+    @Param('id') id: string,
+    @Body() updateActivityDto: UpdateActivityDto,
+    @Query() query: any,
+  ) {
+    return this.activityService.disApprove(id, updateActivityDto, query);
   }
 
   @Patch('back/:id')

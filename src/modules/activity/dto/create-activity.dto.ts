@@ -22,14 +22,15 @@ export class CreateActivityDto extends RequestByDto {
   'detail': string;
   @IsString()
   'unit_request_code': string;
-  @IsString()
   'unit_request_name': string;
+
   @IsString()
   'unit_response_code': string;
-  @IsString()
   'unit_response_name': string;
+
   @IsNumber()
   'round': number;
+
   @IsDateString()
   'activity_start_date': Date;
 
@@ -43,6 +44,8 @@ export class CreateActivityDto extends RequestByDto {
   @IsDateString()
   @IsOptional()
   'finish_date': Date;
+
+  @IsOptional()
   @IsBoolean()
   'is_back': boolean;
 
@@ -56,8 +59,10 @@ export class CreateActivityDto extends RequestByDto {
 
   @IsString()
   'action_type': string;
-  @IsNumber()
-  'activity_type': number;
+
+  @IsObject()
+  'activity_type': { id: number };
+
   @IsArray()
   'route': {
     id: number;
@@ -76,7 +81,31 @@ export class CreateActivityDto extends RequestByDto {
     latitude: number;
     longitude: number;
   }[];
-  'vehicle_driver': [];
+
+  @IsArray()
+  'vehicle_driver': {
+    id: number;
+    sort: number;
+    activity: number;
+    controller: string;
+    vehicle: {
+      id: number;
+      vehicle_type: 1;
+      is_available: boolean;
+      license_plate: string;
+      main_driver: {
+        id: number;
+        driver_id: string;
+        driver_name: string;
+      };
+    };
+    driver: {
+      id: number;
+      driver_id: string;
+      driver_name: string;
+      driver_license: string[];
+    };
+  }[];
 
   @IsArray()
   @IsOptional()
