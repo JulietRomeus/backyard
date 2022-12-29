@@ -64,7 +64,7 @@ export class CreateActivityDto extends RequestByDto {
   'activity_type': { id: number };
 
   @IsArray()
-  'route': {
+  route: {
     id: number;
     order: number;
     start_date: Date;
@@ -83,7 +83,7 @@ export class CreateActivityDto extends RequestByDto {
   }[];
 
   @IsArray()
-  'vehicle_driver': {
+  vehicle_driver: {
     id: number;
     sort: number;
     activity: number;
@@ -105,6 +105,50 @@ export class CreateActivityDto extends RequestByDto {
       driver_name: string;
       driver_license: string[];
     };
+  }[];
+
+  @IsArray()
+  convoy: {
+    route: {
+      id: number;
+      order: number;
+      start_date: Date;
+      name: string;
+      region_code: number;
+      province_code: number;
+      province_name: string;
+      amphoe_code: number;
+      amphoe_name: string;
+      tambon_code: number;
+      tambon_name: string;
+      mooban_code: number;
+      mooban_name: string;
+      latitude: number;
+      longitude: number;
+    }[];
+    vehicle_driver: {
+      id: number;
+      sort: number;
+      activity: number;
+      controller: string;
+      vehicle: {
+        id: number;
+        vehicle_type: 1;
+        is_available: boolean;
+        license_plate: string;
+        main_driver: {
+          id: number;
+          driver_id: string;
+          driver_name: string;
+        };
+      };
+      driver: {
+        id: number;
+        driver_id: string;
+        driver_name: string;
+        driver_license: string[];
+      };
+    }[];
   }[];
 
   @IsArray()

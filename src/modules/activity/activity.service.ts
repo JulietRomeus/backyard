@@ -12,8 +12,14 @@ const mainDriverFields = `vehicle_driver.vehicle.main_driver.id,vehicle_driver.v
 const vehicleFields = `vehicle_driver.vehicle.id,vehicle_driver.vehicle.vehicle_type,vehicle_driver.vehicle.is_available,vehicle_driver.vehicle.license_plate,${mainDriverFields}`;
 const driverFields = `vehicle_driver.driver.id,vehicle_driver.driver.driver_id,vehicle_driver.driver.driver_name,vehicle_driver.driver.driver_license`;
 const vehicleDriverFields = `vehicle_driver.controller,${vehicleFields},${driverFields}`;
-const formFields = `*.*,${vehicleDriverFields},files.files.*,files.files.directus_files_id.*`;
-const listFields = `*,route.*,activity_status.id,activity_status.name,activity_status.color,activity_type.id,activity_type.name`;
+
+const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
+const convoyVehicleFields = `convoy.vehicle_driver.vehicle.id,convoy.vehicle_driver.vehicle.vehicle_type,convoy.vehicle_driver.vehicle.is_available,convoy.vehicle_driver.vehicle.license_plate,${convoyMainDriverFields}`;
+const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.driver_license`;
+const convoyVehicleDriverFields = `convoy.vehicle_driver.controller,${convoyVehicleFields},${convoyDriverFields}`;
+
+const formFields = `*.*,${vehicleDriverFields},${convoyVehicleDriverFields},files.files.*,files.files.directus_files_id.*,convoy.route.*`;
+const listFields = `*,route.*,convoy.*.*,activity_status.id,activity_status.name,activity_status.color,activity_type.id,activity_type.name`;
 
 @Injectable()
 export class ActivityService {

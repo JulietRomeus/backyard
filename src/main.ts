@@ -11,15 +11,8 @@ async function bootstrap() {
   async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
-    const whitelist = [
-      'http://192.168.1.*',
-      'http://localhost:4100',
-      'http://localhost:9000',
-      'https://bigdata.rtarf.maholan.app',
-      'https://*.rtarf.maholan.dev',
-      'https://bigdata.rtarf.mi.th',
-      'https://api1.rtarf.mi.th',
-    ];
+    const whitelist = configService.get<string>('whitelist');
+
     app.enableCors({
       origin: (origin, callback) => {
         // console.log('ORIGIN', origin);
