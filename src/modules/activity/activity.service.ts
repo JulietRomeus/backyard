@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
+import { RequestActivityDto } from './dto/request-activity.dto';
 import { DeleteActivityDto } from './dto/delete-activity.dto';
 
 import { firstValueFrom } from 'rxjs';
@@ -238,11 +239,60 @@ export class ActivityService {
     }
   }
 
-  async review(id: string, updateActivityDto: UpdateActivityDto, query: any) {
+  async request(
+    id: string,
+    requestActivityDto: RequestActivityDto,
+    query: any,
+  ) {
     // console.log(updateActivityDto.request_by);
 
+    const unitResponse = requestActivityDto?.unit_response?.map((u) => {
+      return {
+        ...u,
+        activity: id,
+        status: 'pending_res_draft',
+        unit_code:
+          requestActivityDto?.request_by?.activeUnit?.code ||
+          requestActivityDto?.request_by?.units[0].code ||
+          '',
+        create_by_name: requestActivityDto?.request_by?.displayname || '',
+        create_by: requestActivityDto?.request_by?.id || '',
+        create_date: now(),
+      };
+    });
+    // console.log(unitResponse);
+
+    try {
+      const result = await firstValueFrom(
+        this.httpService.post(
+          `/items/trs_activity_unit_response`,
+          unitResponse,
+        ),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error send menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async review(id: string, updateActivityDto: UpdateActivityDto, query: any) {
+    // console.log(updateActivityDto.request_by);
+    const userUnit =
+      updateActivityDto?.request_by?.activeUnit?.code ||
+      updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
       // console.log('xxxx');
+      updateActivityDto.unit_response.map((u) => {
+        // console.log('u..', u.unit_code, userUnit);
+        if (u.unit_code === userUnit) {
+          u.status = 'pending_res_approve';
+          u.review_by = updateActivityDto?.request_by?.id || '';
+          u.review_by_name = updateActivityDto?.request_by?.displayname || '';
+          u.review_date = now();
+        }
+      });
       updateActivityDto.activity_status = 'pending_res_approve';
       updateActivityDto['resp_review_by'] =
         updateActivityDto?.request_by?.id || '';

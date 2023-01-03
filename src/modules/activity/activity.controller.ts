@@ -11,6 +11,7 @@ import {
 import { ActivityService } from './activity.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
+import { RequestActivityDto } from './dto/request-activity.dto';
 import { DeleteActivityDto } from './dto/delete-activity.dto';
 
 import {
@@ -114,6 +115,19 @@ export class ActivityController {
     @Query() query: any,
   ) {
     return this.activityService.send(id, updateActivityDto, query);
+  }
+
+
+  @Patch('request/:id')
+  @Permission({ route: route, action: 'update' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ขอสนับสนุนรถหน่วยอื่นเพิ่มเติม' })
+  request(
+    @Param('id') id: string,
+    @Body() requestActivityDto: RequestActivityDto,
+    @Query() query: any,
+  ) {
+    return this.activityService.request(id, requestActivityDto, query);
   }
 
   @Patch('review/:id')

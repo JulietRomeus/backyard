@@ -153,7 +153,7 @@ export class CreateActivityDto extends RequestByDto {
 
   @IsArray()
   @IsOptional()
-  'files': {
+  files: {
     id: number;
     name: string;
     order: number;
@@ -174,6 +174,32 @@ export class CreateActivityDto extends RequestByDto {
       };
     }[];
   }[];
+
+  @IsArray()
+  unit_response: {
+    id: number;
+    is_delete: boolean;
+    is_manager: boolean;
+    activity: number;
+    update_by: string;
+    update_by_name: string;
+    review_by: string;
+    review_by_name: string;
+    approve_by: string;
+    approve_by_name: string;
+    update_date: Date;
+    review_date: Date;
+    approve_date: Date;
+    sendback_by: string;
+    sendback_by_name: string;
+    sendback_comment: string;
+    sendback_date: Date;
+    unit_code: string;
+    req_unit_code: string;
+    status: string;
+    detail: string;
+  }[];
+
   'activity_status': string;
   'req_create_date': Date;
   'req_create_by': string;
