@@ -181,7 +181,18 @@ export class ActivityService {
 
   async update(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
+    const userUnit =
+      updateActivityDto?.request_by?.activeUnit?.code ||
+      updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
+      updateActivityDto.unit_response.map((u) => {
+        // console.log('u..', u.unit_code, userUnit);
+        if (u.unit_code === userUnit) {
+          u.update_by = updateActivityDto?.request_by?.id || '';
+          u.update_by_name = updateActivityDto?.request_by?.displayname || '';
+          u.update_date = now();
+        }
+      });
       updateActivityDto['resp_update_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['resp_update_by_name'] =
@@ -210,7 +221,19 @@ export class ActivityService {
 
   async send(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
+    const userUnit =
+      updateActivityDto?.request_by?.activeUnit?.code ||
+      updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
+      updateActivityDto.unit_response.map((u) => {
+        // console.log('u..', u.unit_code, userUnit);
+        if (u.unit_code === userUnit) {
+          u.status = 'pending_res_review';
+          u.update_by = updateActivityDto?.request_by?.id || '';
+          u.update_by_name = updateActivityDto?.request_by?.displayname || '';
+          u.update_date = now();
+        }
+      });
       updateActivityDto.activity_status = 'pending_res_review';
       updateActivityDto['resp_update_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -323,8 +346,19 @@ export class ActivityService {
 
   async approve(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
-
+    const userUnit =
+      updateActivityDto?.request_by?.activeUnit?.code ||
+      updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
+      updateActivityDto.unit_response.map((u) => {
+        // console.log('u..', u.unit_code, userUnit);
+        if (u.unit_code === userUnit) {
+          u.status = 'approved';
+          u.approve_by = updateActivityDto?.request_by?.id || '';
+          u.approve_by_name = updateActivityDto?.request_by?.displayname || '';
+          u.approve_date = now();
+        }
+      });
       updateActivityDto.activity_status = 'approved';
       updateActivityDto['resp_approve_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -366,13 +400,27 @@ export class ActivityService {
     query: any,
   ) {
     // console.log(updateActivityDto.request_by);
-
-    updateActivityDto.activity_status = 'disapproved';
-    updateActivityDto['resp_approve_by'] =
-      updateActivityDto?.request_by?.id || '';
-    updateActivityDto['resp_approve_by_name'] =
-      updateActivityDto?.request_by?.displayname || '';
-    updateActivityDto['resp_approve_date'] = now();
+    const userUnit =
+      updateActivityDto?.request_by?.activeUnit?.code ||
+      updateActivityDto?.request_by?.units[0].code;
+    if (query.type === 'res') {
+      updateActivityDto.unit_response.map((u) => {
+        // console.log('u..', u.unit_code, userUnit);
+        if (u.unit_code === userUnit) {
+          u.status = 'disapproved';
+          u.approve_by = updateActivityDto?.request_by?.id || '';
+          u.approve_by_name = updateActivityDto?.request_by?.displayname || '';
+          u.approve_date = now();
+        }
+      });
+    } else {
+      updateActivityDto.activity_status = 'disapproved';
+      updateActivityDto['resp_approve_by'] =
+        updateActivityDto?.request_by?.id || '';
+      updateActivityDto['resp_approve_by_name'] =
+        updateActivityDto?.request_by?.displayname || '';
+      updateActivityDto['resp_approve_date'] = now();
+    }
 
     delete updateActivityDto.request_by;
     try {
@@ -393,7 +441,19 @@ export class ActivityService {
     updateActivityDto['sendback_by_name'] =
       updateActivityDto?.request_by?.displayname || '';
     updateActivityDto['sendback_date'] = now();
+    const userUnit =
+      updateActivityDto?.request_by?.activeUnit?.code ||
+      updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
+      updateActivityDto.unit_response.map((u) => {
+        // console.log('u..', u.unit_code, userUnit);
+        if (u.unit_code === userUnit) {
+          u.status = 'res_edit';
+          u.sendback_by = updateActivityDto?.request_by?.id || '';
+          u.sendback_by_name = updateActivityDto?.request_by?.displayname || '';
+          u.sendback_date = now();
+        }
+      });
       updateActivityDto.activity_status = 'res_edit';
     } else if (query.type === 'cmd') {
       updateActivityDto.activity_status = 'cmd_edit';
