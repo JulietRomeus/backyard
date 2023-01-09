@@ -187,7 +187,7 @@ export class ActivityService {
     if (query.type === 'res') {
       updateActivityDto.unit_response.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
-        if (u.unit_code === userUnit) {
+        if (u.unit_no === userUnit) {
           u.update_by = updateActivityDto?.request_by?.id || '';
           u.update_by_name = updateActivityDto?.request_by?.displayname || '';
           u.update_date = now();
@@ -227,7 +227,7 @@ export class ActivityService {
     if (query.type === 'res') {
       updateActivityDto.unit_response.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
-        if (u.unit_code === userUnit) {
+        if (u.unit_no === userUnit) {
           u.status = 'pending_res_review';
           u.update_by = updateActivityDto?.request_by?.id || '';
           u.update_by_name = updateActivityDto?.request_by?.displayname || '';
@@ -241,6 +241,7 @@ export class ActivityService {
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_update_date'] = now();
     } else {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'pending_req_review';
       updateActivityDto['req_update_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -274,7 +275,7 @@ export class ActivityService {
         ...u,
         activity: id,
         status: 'pending_res_draft',
-        unit_code:
+        req_unit_code:
           requestActivityDto?.request_by?.activeUnit?.code ||
           requestActivityDto?.request_by?.units[0].code ||
           '',
@@ -309,7 +310,7 @@ export class ActivityService {
       // console.log('xxxx');
       updateActivityDto.unit_response.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
-        if (u.unit_code === userUnit) {
+        if (u.unit_no === userUnit) {
           u.status = 'pending_res_approve';
           u.review_by = updateActivityDto?.request_by?.id || '';
           u.review_by_name = updateActivityDto?.request_by?.displayname || '';
@@ -323,6 +324,7 @@ export class ActivityService {
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_review_date'] = now();
     } else {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'pending_req_approve';
       updateActivityDto['req_review_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -352,7 +354,7 @@ export class ActivityService {
     if (query.type === 'res') {
       updateActivityDto.unit_response.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
-        if (u.unit_code === userUnit) {
+        if (u.unit_no === userUnit) {
           u.status = 'approved';
           u.approve_by = updateActivityDto?.request_by?.id || '';
           u.approve_by_name = updateActivityDto?.request_by?.displayname || '';
@@ -366,6 +368,7 @@ export class ActivityService {
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_approve_date'] = now();
     } else if (query.type === 'cmd') {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'approved';
       updateActivityDto['resp_approve_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -373,6 +376,7 @@ export class ActivityService {
         updateActivityDto?.request_by?.displayname || '';
       updateActivityDto['resp_approve_date'] = now();
     } else {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'pending_res_draft';
       updateActivityDto['req_approve_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -406,7 +410,7 @@ export class ActivityService {
     if (query.type === 'res') {
       updateActivityDto.unit_response.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
-        if (u.unit_code === userUnit) {
+        if (u.unit_no === userUnit) {
           u.status = 'disapproved';
           u.approve_by = updateActivityDto?.request_by?.id || '';
           u.approve_by_name = updateActivityDto?.request_by?.displayname || '';
@@ -414,6 +418,7 @@ export class ActivityService {
         }
       });
     } else {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'disapproved';
       updateActivityDto['resp_approve_by'] =
         updateActivityDto?.request_by?.id || '';
@@ -447,17 +452,20 @@ export class ActivityService {
     if (query.type === 'res') {
       updateActivityDto.unit_response.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
-        if (u.unit_code === userUnit) {
+        if (u.unit_no === userUnit) {
           u.status = 'res_edit';
           u.sendback_by = updateActivityDto?.request_by?.id || '';
           u.sendback_by_name = updateActivityDto?.request_by?.displayname || '';
           u.sendback_date = now();
+          u.sendback_comment = updateActivityDto.sendback_comment;
         }
       });
       updateActivityDto.activity_status = 'res_edit';
     } else if (query.type === 'cmd') {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'cmd_edit';
     } else {
+      delete updateActivityDto.unit_response;
       updateActivityDto.activity_status = 'req_edit';
     }
 
