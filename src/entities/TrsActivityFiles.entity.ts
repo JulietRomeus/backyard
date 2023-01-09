@@ -34,7 +34,7 @@ export class trsActivityFiles {
 
   @ManyToOne(
     () => trsActivity,
-    (trs_activity) => trs_activity.trs_activity_files,
+    (trs_activity) => trs_activity.files,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])

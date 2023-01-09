@@ -206,31 +206,31 @@ export class trsActivity {
     () => trsActivityConvoy,
     (trs_activity_convoy) => trs_activity_convoy.activity
   )
-  trs_activity_convoys: trsActivityConvoy[];
+  convoy: trsActivityConvoy[];
 
   @OneToMany(
     () => trsActivityFiles,
     (trs_activity_files) => trs_activity_files.activity
   )
-  trs_activity_files: trsActivityFiles[];
+  files: trsActivityFiles[];
 
   @OneToMany(
     () => trsActivityRoute,
     (trs_activity_route) => trs_activity_route.activity
   )
-  trs_activity_routes: trsActivityRoute[];
+  route: trsActivityRoute[];
 
   @OneToMany(
     () => trsActivityUnitResponse,
     (trs_activity_unit_response) => trs_activity_unit_response.activity
   )
-  trs_activity_unit_responses: trsActivityUnitResponse[];
+  unit_response: trsActivityUnitResponse[];
 
   @OneToMany(
     () => trsActivityVehicleDriver,
     (trs_activity_vehicle_driver) => trs_activity_vehicle_driver.activity
   )
-  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
+  vehicle_driver: trsActivityVehicleDriver[];
 
   @OneToMany(() => trsHelpChat, (trs_help_chat) => trs_help_chat.activity)
   trs_help_chats: trsHelpChat[];
@@ -238,23 +238,23 @@ export class trsActivity {
   @OneToMany(() => trsVehicle, (trs_vehicle) => trs_vehicle.activity)
   trs_vehicles: trsVehicle[];
 
-  @RelationId((trs_activity: trsActivity) => trs_activity.activity_status)
-  activity_status2: string | null;
+  // @RelationId((trs_activity: trsActivity) => trs_activity.activity_status)
+  // activity_status_id: string | null;
 
-  @RelationId(
-    (trs_activity: trsActivity) => trs_activity.accident_activity_form
-  )
-  accident_activity_form2: number | null;
+  // @RelationId(
+  //   (trs_activity: trsActivity) => trs_activity.accident_activity_form
+  // )
+  // accident_activity_form_id: number | null;
 
-  @RelationId((trs_activity: trsActivity) => trs_activity.while_activity_form)
-  while_activity_form2: number | null;
+  // @RelationId((trs_activity: trsActivity) => trs_activity.while_activity_form)
+  // while_activity_form_id: number | null;
 
-  @RelationId((trs_activity: trsActivity) => trs_activity.after_activity_form)
-  after_activity_form2: number | null;
+  // @RelationId((trs_activity: trsActivity) => trs_activity.after_activity_form)
+  // after_activity_form_id: number | null;
 
-  @RelationId((trs_activity: trsActivity) => trs_activity.activity_type)
-  activity_type2: number | null;
+  // @RelationId((trs_activity: trsActivity) => trs_activity.activity_type)
+  // activity_type_id: number | null;
 
-  @RelationId((trs_activity: trsActivity) => trs_activity.before_activity_form)
-  before_activity_form2: number | null;
+  // @RelationId((trs_activity: trsActivity) => trs_activity.before_activity_form)
+  // before_activity_form_id: number | null;
 }

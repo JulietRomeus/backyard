@@ -32,7 +32,7 @@ export class trsActivityConvoy {
 
   @ManyToOne(
     () => trsActivity,
-    (trs_activity) => trs_activity.trs_activity_convoys,
+    (trs_activity) => trs_activity.convoy,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
