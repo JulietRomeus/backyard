@@ -84,7 +84,7 @@ export class trsActivityUnitResponse {
 
   @ManyToOne(
     () => trsActivity,
-    (trs_activity) => trs_activity.trs_activity_unit_responses,
+    (trs_activity) => trs_activity.unit_response,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])

@@ -37,7 +37,7 @@ export class trsActivityVehicleDriver {
 
   @ManyToOne(
     () => trsActivity,
-    (trs_activity) => trs_activity.trs_activity_vehicle_drivers,
+    (trs_activity) => trs_activity.vehicle_driver,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])

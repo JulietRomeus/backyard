@@ -37,6 +37,14 @@ export class ActivityController {
     return this.activityService.findAll(body, query);
   }
 
+  @Get('orm')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  findAllORM(@Body() body: any, @Query() query: any) {
+    return this.activityService.findAllORM(body, query);
+  }
+
   @Get('status')
   @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
