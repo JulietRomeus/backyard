@@ -13,11 +13,14 @@ import {
   trsActivityType,
   trsVehicleType,
   trsVehicleStatus,
-  trsDriver
+  trsDriver,
+  trsVehicle
 } from '../../entities'
 import { Repository, Brackets, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { 
+  getSelectFromDirectusFields
+} from 'src/utils/genQuery';
 const mainDriverFields = `vehicle_driver.vehicle.main_driver.id,vehicle_driver.vehicle.main_driver.driver_id,vehicle_driver.vehicle.main_driver.driver_name`;
 const vehicleFields = `vehicle_driver.vehicle.id,vehicle_driver.vehicle.vehicle_type,vehicle_driver.vehicle.is_available,vehicle_driver.vehicle.license_plate,${mainDriverFields}`;
 const driverFields = `vehicle_driver.driver.id,vehicle_driver.driver.driver_id,vehicle_driver.driver.driver_name,vehicle_driver.driver.driver_license`;
@@ -44,8 +47,9 @@ export class ActivityService {
     @InjectRepository(trsVehicleStatus, 'MSSQL_CONNECTION')
     private trsVehicleStatusRepo : Repository<trsVehicleStatus>,
     @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
-    private trsDriverRepo : Repository<trsDriver>
-    
+    private trsDriverRepo : Repository<trsDriver>,
+    @InjectRepository(trsVehicle, 'MSSQL_CONNECTION')
+    private trsVehicleRepo : Repository<trsVehicle>   
     ) {}
 
   async findAll(body: any, query: any) {
@@ -682,45 +686,71 @@ export class ActivityService {
 
 
 
+  // async vehicle(query: any, body: RequestByDto) {
+  //   // console.log('body', body?.request_by || '');
+  //   // console.log('query', query);
+  //   // const resfields = `id,license_plate,vehicle_status.id,vehicle_status.name,main_driver.driver_id,main_driver.driver_name`;
+  //   const resfields = `id,license_plate,main_driver.id,main_driver.driver_id,main_driver.driver_name`;
+  //   let filterObj = {
+  //     is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //     is_available: { _eq: true },
+  //   };
+  //   if (query.unit) {
+  //     filterObj['unit_code'] = {
+  //       _eq: query.unit,
+  //     };
+  //   } else {
+  //     filterObj['unit_code'] = {
+  //       _eq:
+  //         body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
+  //     };
+  //   }
+  //   if (query.type) {
+  //     filterObj['vehicle_type'] = query.type;
+  //   }
+
+  //   const filterString = JSON.stringify(filterObj);
+  //   // console.log('filterObj', filterString);
+  //   const getQuery = `trs_vehicle?fields=${resfields}&filter=${filterString}`;
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     // console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get vehicle', error);
+  //     return error;
+  //   }
+  // }
+
   async vehicle(query: any, body: RequestByDto) {
-    // console.log('body', body?.request_by || '');
-    // console.log('query', query);
-    // const resfields = `id,license_plate,vehicle_status.id,vehicle_status.name,main_driver.driver_id,main_driver.driver_name`;
     const resfields = `id,license_plate,main_driver.id,main_driver.driver_id,main_driver.driver_name`;
+    // const selectedFields = resfields.split(',')
+
     let filterObj = {
-      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
-      is_available: { _eq: true },
+      is_delete: false , // filter ข้อมูลที่ยังไม่ถูกลบ
+      is_available:true,
     };
     if (query.unit) {
-      filterObj['unit_code'] = {
-        _eq: query.unit,
-      };
+      filterObj['unit_code'] = query.unit
     } else {
-      filterObj['unit_code'] = {
-        _eq:
-          body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
-      };
+      filterObj['unit_code'] = body?.request_by?.activeUnit?.code || body.request_by.units[0].code
     }
     if (query.type) {
       filterObj['vehicle_type'] = query.type;
     }
+    
+    console.log(getSelectFromDirectusFields(resfields))
+    return await this.trsVehicleRepo.find({
+      select:getSelectFromDirectusFields(resfields),
+      where:filterObj,
+      relations:{
+        main_driver:true
+      }
+    })
 
-    const filterString = JSON.stringify(filterObj);
-    // console.log('filterObj', filterString);
-    const getQuery = `trs_vehicle?fields=${resfields}&filter=${filterString}`;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      // console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get vehicle', error);
-      return error;
-    }
   }
-
-  
 
   // async vehicleType(query: any, body: RequestByDto) {
   //   // console.log('body', body?.request_by || '');
