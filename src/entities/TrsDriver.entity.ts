@@ -5,6 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Transform } from 'class-transformer';
+
 import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
@@ -25,8 +27,20 @@ export class trsDriver {
   @Column("nvarchar", { name: "driver_name", nullable: true, length: 255 })
   driver_name: string | null;
 
-  @Column("nvarchar", { name: "driver_license", nullable: true })
-  driver_license: string | null;
+  @Column("nvarchar", { name: "driver_license", nullable: true,
+  transformer: {
+    to(value) {
+      // Transform 'invoiceNumber'
+      return value
+    },
+    from(value) {
+      // Do nothing
+      return JSON.parse(value);
+    }
+  },
+ })
+  driver_license: string[] | null;
+  
 
   @Column("nvarchar", { name: "unit_code", nullable: true, length: 255 })
   unit_code: string | null;

@@ -12,9 +12,10 @@ import {
   trsActivity,
   trsActivityType,
   trsVehicleType,
-  trsVehicleStatus
+  trsVehicleStatus,
+  trsDriver
 } from '../../entities'
-import { Repository, Brackets } from 'typeorm';
+import { Repository, Brackets, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 const mainDriverFields = `vehicle_driver.vehicle.main_driver.id,vehicle_driver.vehicle.main_driver.driver_id,vehicle_driver.vehicle.main_driver.driver_name`;
@@ -41,7 +42,10 @@ export class ActivityService {
     @InjectRepository(trsVehicleType, 'MSSQL_CONNECTION')
     private trsVehicleTypeRepo : Repository<trsVehicleType>,
     @InjectRepository(trsVehicleStatus, 'MSSQL_CONNECTION')
-    private trsVehicleStatusRepo : Repository<trsVehicleStatus>
+    private trsVehicleStatusRepo : Repository<trsVehicleStatus>,
+    @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
+    private trsDriverRepo : Repository<trsDriver>
+    
     ) {}
 
   async findAll(body: any, query: any) {
@@ -753,40 +757,89 @@ export class ActivityService {
 
   }
 
-  async driver(query: any, body: RequestByDto) {
-    // console.log('body', body?.request_by || '');
-    // console.log('query', query);
-    const resfields = `id,driver_id,driver_name,driver_license`;
+  // async driver(query: any, body: RequestByDto) {
+  //   // console.log('body', body?.request_by || '');
+  //   // console.log('query', query);
+  //   const resfields = `id,driver_id,driver_name,driver_license`;
+  //   let filterObj = {
+  //     is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //     is_available: { _eq: true },
+  //   };
+  //   if (query.unit) {
+  //     filterObj['unit_code'] = {
+  //       _eq: query.unit,
+  //     };
+  //   } else {
+  //     filterObj['unit_code'] = {
+  //       _eq:
+  //         body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
+  //     };
+  //   }
+  //   if (query.type) {
+  //     filterObj['vehicle_type'] = query.type;
+  //   }
+
+  //   const filterString = JSON.stringify(filterObj);
+  //   // console.log('filterObj', filterString);
+  //   const getQuery = `trs_driver?fields=${resfields}&filter=${filterString}`;
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     // console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get driver', error);
+  //     return error;
+  //   }
+  // }
+
+  
+
+  async driver(query: any, body: RequestByDto):Promise<trsDriver[]> {
+    // 1. use createQueryBuilder
+    // let queryBuilder = this.trsDriverRepo.createQueryBuilder('d')
+    // // .leftJoinAndSelect('d.driver_license','driver_license')
+    // .select(['d.id','d.driver_id','d.driver_name','d.driver_license'])
+    // .where('d.is_delete != :is_delete', { is_delete:true })
+    // if (query.unit) {
+    //   queryBuilder = queryBuilder
+    //   .andWhere('d.unit_code = :unit_code', { unit_code:query.unit })
+    // }
+    // else {
+    //   queryBuilder = queryBuilder
+    //   .andWhere('d.unit_code = :unit_code', { unit_code: body?.request_by?.activeUnit?.code || body.request_by.units[0].code })
+    // }
+    // if (query.type) {
+    //   queryBuilder = queryBuilder
+    //   .andWhere('d.vehicle_type = :vehicle_type', { vehicle_type:query.type })
+    // }
+    // queryBuilder = queryBuilder
+    // .andWhere('d.is_available = :is_available', { is_available:true })
+    // return await queryBuilder.getMany()
+
+
+    //2. use Repo
     let filterObj = {
-      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
-      is_available: { _eq: true },
+      is_delete: false, // filter ข้อมูลที่ยังไม่ถูกลบ
+      is_available: true
     };
     if (query.unit) {
-      filterObj['unit_code'] = {
-        _eq: query.unit,
-      };
-    } else {
-      filterObj['unit_code'] = {
-        _eq:
-          body?.request_by?.activeUnit?.code || body.request_by.units[0].code,
-      };
+      filterObj['unit_code'] = query.unit
+    } 
+    else {
+      filterObj['unit_code'] = body?.request_by?.activeUnit?.code || body.request_by.units[0].code
     }
     if (query.type) {
       filterObj['vehicle_type'] = query.type;
     }
+    return await this.trsDriverRepo.find({
+      select:['id','driver_id','driver_name','driver_license'],
+      where:filterObj
 
-    const filterString = JSON.stringify(filterObj);
-    // console.log('filterObj', filterString);
-    const getQuery = `trs_driver?fields=${resfields}&filter=${filterString}`;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      // console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get driver', error);
-      return error;
-    }
+    })
+
   }
+
+
 }
