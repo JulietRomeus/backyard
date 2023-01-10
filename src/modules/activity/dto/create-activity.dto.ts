@@ -109,6 +109,11 @@ export class CreateActivityDto extends RequestByDto {
 
   @IsArray()
   convoy: {
+    order: number;
+    controller: string;
+    name: string;
+    color: string;
+    detail:string;
     route: {
       id: number;
       order: number;
@@ -131,6 +136,7 @@ export class CreateActivityDto extends RequestByDto {
       sort: number;
       activity: number;
       controller: string;
+      unit_code: string;
       vehicle: {
         id: number;
         vehicle_type: 1;
@@ -194,7 +200,8 @@ export class CreateActivityDto extends RequestByDto {
     sendback_by_name: string;
     sendback_comment: string;
     sendback_date: Date;
-    unit_code: string;
+    unit_no: string;
+    unit_name: string;
     req_unit_code: string;
     status: string;
     detail: string;
