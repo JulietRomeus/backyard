@@ -9,7 +9,10 @@ import { HttpService } from '@nestjs/axios';
 import now from '../../utils/now';
 import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import {
-  trsActivity
+  trsActivity,
+  trsActivityType,
+  trsVehicleType,
+  trsVehicleStatus
 } from '../../entities'
 import { Repository, Brackets } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,7 +36,12 @@ export class ActivityService {
     private readonly httpService: HttpService,
     @InjectRepository(trsActivity, 'MSSQL_CONNECTION')
     private trsActivityRepo : Repository<trsActivity>,
-    
+    @InjectRepository(trsActivityType, 'MSSQL_CONNECTION')
+    private trsActivityTypeRepo : Repository<trsActivityType>,
+    @InjectRepository(trsVehicleType, 'MSSQL_CONNECTION')
+    private trsVehicleTypeRepo : Repository<trsVehicleType>,
+    @InjectRepository(trsVehicleStatus, 'MSSQL_CONNECTION')
+    private trsVehicleStatusRepo : Repository<trsVehicleStatus>
     ) {}
 
   async findAll(body: any, query: any) {
@@ -609,49 +617,66 @@ export class ActivityService {
     }
   }
 
-  async status(query: any) {
-    // console.log('body', body?.request_by || '');
-    // console.log('query', query);
-    let filterObj = {
-      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
-    };
+  // async status(query: any) {
+  //   // console.log('body', body?.request_by || '');
+  //   // console.log('query', query);
+  //   let filterObj = {
+  //     is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //   };
 
-    const filterString = JSON.stringify(filterObj);
-    // console.log('filterObj', filterString);
-    const getQuery = `trs_activity_status?filter=${filterString}&sort=sort`;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      // console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get status', error);
-      return {};
-    }
+  //   const filterString = JSON.stringify(filterObj);
+  //   // console.log('filterObj', filterString);
+  //   const getQuery = `trs_activity_status?filter=${filterString}&sort=sort`;
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     // console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get status', error);
+  //     return {};
+  //   }
+  // }
+  
+  async status(q:any){
+    return this.trsVehicleStatusRepo.find({
+      where:{
+        is_delete:false
+      }
+    })
+
   }
 
-  async type(query: any) {
-    // console.log('body', body?.request_by || '');
-    // console.log('query', query);
-    let filterObj = {
-      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
-    };
+  // async type(query: any) {
+  //   // console.log('body', body?.request_by || '');
+  //   // console.log('query', query);
+  //   let filterObj = {
+  //     is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //   };
 
-    const filterString = JSON.stringify(filterObj);
-    // console.log('filterObj', filterString);
-    const getQuery = `trs_activity_type?filter=${filterString}&sort=sort`;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      // console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get status', error);
-      return {};
-    }
+  //   const filterString = JSON.stringify(filterObj);
+  //   // console.log('filterObj', filterString);
+  //   const getQuery = `trs_activity_type?filter=${filterString}&sort=sort`;
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     // console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get status', error);
+  //     return {};
+  //   }
+  // }
+
+  async type(query:any){
+    const queryBuilder = this.trsActivityTypeRepo.createQueryBuilder('t')
+    .where('t.is_delete != :is_delete',{is_delete:true})
+    return await queryBuilder.getMany()
   }
+
+
 
   async vehicle(query: any, body: RequestByDto) {
     // console.log('body', body?.request_by || '');
@@ -691,28 +716,41 @@ export class ActivityService {
     }
   }
 
-  async vehicleType(query: any, body: RequestByDto) {
-    // console.log('body', body?.request_by || '');
-    // console.log('query', query);
-    // const resfields = `id,license_plate,vehicle_status.id,vehicle_status.name,main_driver.driver_id,main_driver.driver_name`;
-    const resfields = `*`;
-    let filterObj = {
-      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
-    };
+  
 
-    const filterString = JSON.stringify(filterObj);
-    // console.log('filterObj', filterString);
-    const getQuery = `trs_vehicle_type?fields=${resfields}&filter=${filterString}&sort=order`;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      // console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get vehicle', error);
-      return error;
-    }
+  // async vehicleType(query: any, body: RequestByDto) {
+  //   // console.log('body', body?.request_by || '');
+  //   // console.log('query', query);
+  //   // const resfields = `id,license_plate,vehicle_status.id,vehicle_status.name,main_driver.driver_id,main_driver.driver_name`;
+  //   const resfields = `*`;
+  //   let filterObj = {
+  //     is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //   };
+
+  //   const filterString = JSON.stringify(filterObj);
+  //   // console.log('filterObj', filterString);
+  //   const getQuery = `trs_vehicle_type?fields=${resfields}&filter=${filterString}&sort=order`;
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     // console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get vehicle', error);
+  //     return error;
+  //   }
+  // }
+
+  async vehicleType(query: any, body: RequestByDto){
+    // const queryBuilder = this.trsVehicleTypeRepo.createQueryBuilder('vt')
+    // .where('vt.is_delete != :is_delete',{is_delete:true})
+    return await this.trsVehicleTypeRepo.find({
+      where:{
+        is_delete:false
+      }
+    })
+
   }
 
   async driver(query: any, body: RequestByDto) {
