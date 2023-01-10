@@ -16,10 +16,13 @@ import {
   trsDriver,
   trsVehicle
 } from '../../entities'
-import { Repository, Brackets, Not } from 'typeorm';
+import { Repository, Brackets, Not, And } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { 
-  getSelectFromDirectusFields
+  mapDirectusFieldsToTypeORM,
+  mapDirectusQueryToTypeORM,
+  genMultiRelations,
+  mapGraph
 } from 'src/utils/genQuery';
 const mainDriverFields = `vehicle_driver.vehicle.main_driver.id,vehicle_driver.vehicle.main_driver.driver_id,vehicle_driver.vehicle.main_driver.driver_name`;
 const vehicleFields = `vehicle_driver.vehicle.id,vehicle_driver.vehicle.vehicle_type,vehicle_driver.vehicle.is_available,vehicle_driver.vehicle.license_plate,${mainDriverFields}`;
@@ -199,15 +202,7 @@ export class ActivityService {
     }
 
     // .andWhere(`ta.${query.type === 'res' ? 'unit_response_code' : 'unit_request_code'} = :unit_no`, { unit_no: body?.request_by?.activeUnit?.code ||body?.request_by?.units[0]?.code ||'' })
-    
     queryBuilder = queryBuilder.orderBy('ta.req_create_date', "DESC")
-    
-    
-    // .leftJoinAndSelect('ta.trs_activity_vehicle_drivers','trs_activity_vehicle_drivers')
-
-    // console.log(queryBuilder.getSql())
-
-
     return await queryBuilder.getMany()
 
   }
@@ -266,6 +261,85 @@ export class ActivityService {
       return {};
     }
   }
+
+  // async findOne(id: string, body: any, query: any) {
+
+  //   // let filterObj = {
+  //   //   is_delete: false, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //   //   is_test: false,
+  //   // }
+  //   // filterObj[
+  //   //   query.type === 'res' ? 'unit_response_code' : 'unit_request_code'
+  //   // ] = body?.request_by?.activeUnit?.code ||body?.request_by?.units[0]?.code ||'',
+  //   let filterObj = {
+  //     is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //     is_test: { _neq: true }, // filter ข้อมูลที่ยังไม่ใช่ข้อมูลทดสอบ
+  //     //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม
+  //     _or: [
+  //       {
+  //         _and: [
+  //           { activity_status: { _neq: 'draft' } },
+  //           { is_delete: { _neq: true } },
+  //           { is_test: { _neq: true } },
+  //         ],
+  //       },
+  //       {
+  //         _and: [
+  //           { activity_status: { _eq: 'draft' } },
+  //           { req_create_by: body?.request_by?.id || '' },
+  //         ],
+  //       },
+  //     ],
+  //     //   { roles: { role_id: { id: { _in: rolesIdArr } } } },
+  //   };
+  //   // filter type = res(ตอบรับ) ให้ unit_response_code = unit ของ user หรือ unit_request_code = unit ของ user
+  //   filterObj[
+  //     query.type === 'res' ? 'unit_response_code' : 'unit_request_code'
+  //   ] = {
+  //     _eq:
+  //       body?.request_by?.activeUnit?.code ||
+  //       body?.request_by?.units[0]?.code ||
+  //       '',
+  //   };
+
+  //   filterObj['id'] = {_eq:id}
+
+
+  //   // console.log(JSON.stringify(filterObj))
+
+
+
+  // const where =mapDirectusQueryToTypeORM({filter:filterObj})
+  // console.log(  this.trsActivityRepo.metadata.propertiesMap
+  //   )
+
+  //   // let queryBuilder = this.trsActivityRepo.createQueryBuilder('ta')
+  //   // .leftJoinAndSelect('ta.convoy','convoy')
+  //   // .leftJoinAndSelect('ta.vehicle_driver','driver')
+
+  //   // console.log(mapGraph(formFields.split(','),queryBuilder,trsActivity))
+  //   // console.log(genMultiRelations(formFields))
+
+  //   // const data = queryBuilder.where("id = :id", {id: id}).getOne();
+
+  // // this.trsActivityRepo.metadata
+
+  // return this.trsActivityRepo.findOne({
+  //   where:{
+  //     id:parseInt(id)
+  //   },
+  //   relations:{
+  //     vehicle_driver:{driver:true},
+  //     convoy:true,
+  //     files:true
+  //     // vehicle_driver: { driver: { driver_license: true } },
+  //     // convoy: { route: true },
+  //     // files: { files: { directus_files_id: true } }
+  //   },
+  //   // select:mapDirectusFieldsToTypeORM(formFields)
+  // })
+
+  // }
 
   async create(createActivityDto: CreateActivityDto) {
     createActivityDto.activity_status = 'draft';
@@ -741,9 +815,9 @@ export class ActivityService {
       filterObj['vehicle_type'] = query.type;
     }
     
-    console.log(getSelectFromDirectusFields(resfields))
+    // console.log(mapDirectusFieldsToTypeORM(resfields))
     return await this.trsVehicleRepo.find({
-      select:getSelectFromDirectusFields(resfields),
+      select:mapDirectusFieldsToTypeORM(resfields),
       where:filterObj,
       relations:{
         main_driver:true
