@@ -113,6 +113,7 @@ export class CreateActivityDto extends RequestByDto {
     controller: string;
     name: string;
     color: string;
+    detail:string;
     route: {
       id: number;
       order: number;
