@@ -100,7 +100,7 @@ export class trsRegisDetail {
   @Column("datetime", { name: "delete_date", nullable: true })
   delete_date: Date | null;
 
-  @ManyToOne(() => trsRegis, (trs_regis) => trs_regis.trs_regis_details, {
+  @ManyToOne(() => trsRegis, (trs_regis) => trs_regis.trs_regis_detail_no, {
     onDelete: "SET NULL",
   })
   @JoinColumn([{ name: "trs_regis_no", referencedColumnName: "id" }])

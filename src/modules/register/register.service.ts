@@ -3,11 +3,17 @@ import { CreateRegisterDto } from './dto/create-register.dto';
 import { UpdateRegisterDto } from './dto/update-register.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-
+import {trsRegis,trsRegisStatusform,trsRegisDetail,trsRegisStatus} from '../../entities'
+import { Repository, Brackets, Not } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import now from '../../utils/now';
 const listFields = `*,trs_regis_statusform_no.*,trs_regis_status_no.*`;
 @Injectable()
 export class RegisterService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService,
+    @InjectRepository(trsRegis, 'MSSQL_CONNECTION')
+    private trsRegisRepo : Repository<trsRegisStatus>
+    ) {}
 
   async findAll(query: any) {
     //console.log('body', body?.request_by || '');
@@ -34,6 +40,7 @@ export class RegisterService {
   }
   
 
+
   async findOne(id: any) {
     //console.log('body', body?.request_by || '');
     //console.log('query', query);
@@ -58,14 +65,46 @@ export class RegisterService {
     }
   }
 
+  async gettype(id: any) {
 
-  create(createRegisterDto: CreateRegisterDto) {
-    return 'This action adds a new register';
   }
 
 
-  update(id: number, updateRegisterDto: UpdateRegisterDto) {
-    return `This action updates a #${id} register`;
+  async create(CreateRegisterDto: any) {
+
+     console.log(CreateRegisterDto)
+    let timeNow = now();
+    let user = CreateRegisterDto.request_by
+    let dataObj = CreateRegisterDto
+    dataObj.create_by = CreateRegisterDto
+    dataObj['create_by_id'] = user.id;
+    dataObj['create_by'] = user.displayname;
+    dataObj['create_date'] = timeNow;
+    dataObj['update_by_id'] = user.id;
+    dataObj['update_by'] = user.displayname;
+    dataObj['update_date'] = timeNow;
+    const finalItems = this.trsRegisRepo.create(dataObj)
+    const dbRes = await this.trsRegisRepo.insert(finalItems);
+    return await this.findOne(dbRes.identifiers[0].id)
+  }
+
+
+  async update(id: number, updateRegisterDto: any): Promise<any> {
+    console.log('updateRegisterDto',updateRegisterDto)
+    let timeNow = now();
+    let user = updateRegisterDto.request_by
+    let dataObj = updateRegisterDto
+    // dataObj['update_by_id'] = user.id;
+    delete dataObj.request_by
+    delete dataObj.id
+    dataObj['update_date'] = timeNow;
+   // dataObj['update_by'] = user.displayname;
+
+    const finalItems = dataObj
+
+    console.log('finalItems',finalItems)
+    const dbRes = await this.trsRegisRepo.update(id, finalItems);
+    return await this.findOne(id)
   }
 
   remove(id: number) {

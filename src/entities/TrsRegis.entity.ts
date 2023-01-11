@@ -110,6 +110,30 @@ export class trsRegis {
   @Column("nvarchar", { name: "purchase_from", nullable: true, length: 255 })
   purchase_from: string | null;
 
+  @Column("nvarchar", { name: "vehicle_class_name", nullable: true, length: 255 })
+  vehicle_class_name: string | null;
+
+  @Column("int", { name: "purchase_price", nullable: true})
+  purchase_price: number | null;
+
+  @Column("int", { name: "actual_price", nullable: true })
+  actual_price: number | null;
+
+  @Column("nvarchar", { name: "purchase_no", nullable: true, length: 255 })
+  purchase_no: string | null;
+  @Column("nvarchar", { name: "deliver_date", nullable: true, length: 255 })
+  deliver_date: string | null;
+  @Column("nvarchar", { name: "purchase_detail", nullable: true, length: 255 })
+  purchase_detail: string | null;
+  @Column("nvarchar", { name: "process_by_name", nullable: true, length: 255 })
+  process_by_name: string | null;
+  @Column("nvarchar", { name: "named_register", nullable: true, length: 255 })
+  named_register: string | null;
+  @Column("nvarchar", { name: "road", nullable: true, length: 255 })
+  road: string | null;
+  @Column("nvarchar", { name: "regis_detail", nullable: true, length: 255 })
+  regis_detail: string | null;
+
   @ManyToOne(
     () => trsRegisStatusform,
     (trs_regis_statusform) => trs_regis_statusform.trs_regis,
@@ -130,7 +154,7 @@ export class trsRegis {
     () => trsRegisDetail,
     (trs_regis_detail) => trs_regis_detail.trs_regis_no
   )
-  trs_regis_details: trsRegisDetail[];
+  trs_regis_detail_no: trsRegisDetail[];
 
   @RelationId((trs_regis: trsRegis) => trs_regis.trs_regis_statusform_no)
   trs_regis_statusform_no2: string | null;

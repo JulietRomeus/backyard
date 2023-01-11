@@ -18,8 +18,10 @@ export class RegisterController {
   constructor(private readonly registerService: RegisterService) {}
 
   @Post()
-  create(@Body() createRegisterDto: CreateRegisterDto) {
+  create(@Body() createRegisterDto: any) {
+    console.log('this.registerService.create(createRegisterDto)',createRegisterDto)
     return this.registerService.create(createRegisterDto);
+    
   }
 
   @Get()
@@ -41,7 +43,8 @@ export class RegisterController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRegisterDto: UpdateRegisterDto) {
+  update(@Param('id') id: string, @Body() updateRegisterDto: any) {
+    console.log(updateRegisterDto)
     return this.registerService.update(+id, updateRegisterDto);
   }
 
