@@ -812,10 +812,12 @@ export class ActivityService {
       filterObj['unit_code'] = body?.request_by?.activeUnit?.code || body.request_by.units[0].code
     }
     if (query.type) {
-      filterObj['vehicle_type'] = query.type;
+      filterObj['vehicle_type'] = parseInt(query.type);
     }
     
     // console.log(mapDirectusFieldsToTypeORM(resfields))
+    // console.log(filterObj)
+
     return await this.trsVehicleRepo.find({
       select:mapDirectusFieldsToTypeORM(resfields),
       where:filterObj,
