@@ -23,7 +23,9 @@ import { directusFields } from "./DirectusFields.entity";
 import { trsActivity } from "./TrsActivity.entity";
 import { directusActivity } from "./DirectusActivity.entity";
 import { trsActivityFiles } from "./TrsActivityFiles.entity";
+import { trsDrivingLicenseType } from "./TrsDrivingLicenseType.entity";
 import { directusFolders } from "./DirectusFolders.entity";
+import { trsDriverLicenseList } from "./TrsDriverLicenseList.entity";
 import { directusFiles } from "./DirectusFiles.entity";
 import { trsVehicleType } from "./TrsVehicleType.entity";
 import { trsVehicleStatus } from "./TrsVehicleStatus.entity";
@@ -95,7 +97,9 @@ export {
   trsActivity,
   directusActivity,
   trsActivityFiles,
+  trsDrivingLicenseType,
   directusFolders,
+  trsDriverLicenseList,
   directusFiles,
   trsVehicleType,
   trsVehicleStatus,
@@ -168,7 +172,9 @@ export default [
   trsActivity,
   directusActivity,
   trsActivityFiles,
+  trsDrivingLicenseType,
   directusFolders,
+  trsDriverLicenseList,
   directusFiles,
   trsVehicleType,
   trsVehicleStatus,

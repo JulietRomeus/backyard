@@ -86,8 +86,8 @@ export class ActivityController {
   }
 
   @Get(':id')
-  @Permission({ route: route, action: 'view' })
-  @ApiBearerAuth('JWT')
+  // @Permission({ route: route, action: 'view' })
+  // @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   findOne(@Param('id') id: string, @Body() body: any, @Query() query: any) {
     return this.activityService.findOne(id, body, query);

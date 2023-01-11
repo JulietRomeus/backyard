@@ -11,6 +11,7 @@ import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
 import { trsVehicle } from "./TrsVehicle.entity";
+import { trsDriverLicenseList } from "./TrsDriverLicenseList.entity";
 
 @Index("PK__trs_driv__3213E83FE61B5A1A", ["id"], { unique: true })
 @Entity("trs_driver", { schema: "dbo" })
@@ -71,6 +72,12 @@ export class trsDriver {
     (trs_driver_files_1) => trs_driver_files_1.trs_driver
   )
   trs_driver_files_s: trsDriverFiles_1[];
+
+  @OneToMany(
+    () => trsDriverLicenseList,
+    (trs_driver_license_list) => trs_driver_license_list.driver
+  )
+  trs_driver_license_lists: trsDriverLicenseList[];
 
   @OneToMany(() => trsVehicle, (trs_vehicle) => trs_vehicle.main_driver)
   trs_vehicles: trsVehicle[];
