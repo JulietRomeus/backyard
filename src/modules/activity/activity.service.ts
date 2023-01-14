@@ -18,7 +18,7 @@ import {
 } from '../../entities'
 import { Repository, Brackets, Not, And } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { 
+import {
   mapDirectusFieldsToTypeORM,
   mapDirectusQueryToTypeORM,
   genMultiRelations,
@@ -42,18 +42,18 @@ export class ActivityService {
   constructor(
     private readonly httpService: HttpService,
     @InjectRepository(trsActivity, 'MSSQL_CONNECTION')
-    private trsActivityRepo : Repository<trsActivity>,
+    private trsActivityRepo: Repository<trsActivity>,
     @InjectRepository(trsActivityType, 'MSSQL_CONNECTION')
-    private trsActivityTypeRepo : Repository<trsActivityType>,
+    private trsActivityTypeRepo: Repository<trsActivityType>,
     @InjectRepository(trsVehicleType, 'MSSQL_CONNECTION')
-    private trsVehicleTypeRepo : Repository<trsVehicleType>,
+    private trsVehicleTypeRepo: Repository<trsVehicleType>,
     @InjectRepository(trsVehicleStatus, 'MSSQL_CONNECTION')
-    private trsVehicleStatusRepo : Repository<trsVehicleStatus>,
+    private trsVehicleStatusRepo: Repository<trsVehicleStatus>,
     @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
-    private trsDriverRepo : Repository<trsDriver>,
+    private trsDriverRepo: Repository<trsDriver>,
     @InjectRepository(trsVehicle, 'MSSQL_CONNECTION')
-    private trsVehicleRepo : Repository<trsVehicle>   
-    ) {}
+    private trsVehicleRepo: Repository<trsVehicle>
+  ) { }
 
   async findAll(body: any, query: any) {
     // console.log('body', body?.request_by || '');
@@ -135,25 +135,25 @@ export class ActivityService {
 
   async findAllORM(body: any, query: any) {
     const actionTypeDict = {
-      req:'requests',
-      cmd:'command',
+      req: 'requests',
+      cmd: 'command',
 
     }
 
     let queryBuilder = this.trsActivityRepo.createQueryBuilder('ta')
-    .leftJoinAndSelect('ta.route','route')
-    .leftJoinAndSelect('ta.convoy','convoy')
-    .leftJoinAndSelect('ta.unit_response','unit_response')
-    .leftJoinAndSelect('ta.vehicle_driver','vehicle_driver')
-    .leftJoinAndSelect('ta.activity_type','activity_type')
-    .leftJoinAndSelect('ta.files','files')
-    .leftJoinAndSelect('ta.activity_status','activity_status')
-    //Must select primary key!
-    // .select(['ta.id','ta.comment','activity_status.color'])
-    .where('ta.is_test != :is_test', { is_test:true })
-    .andWhere('ta.is_delete != :is_delete', { is_delete:true })
-    .andWhere('ta.activity_type = :activity_type', { activity_type:1 })
-    .andWhere(`ta.action_type = :action_type`, { action_type:query.type === 'cmd' ?'command':'request' })
+      .leftJoinAndSelect('ta.route', 'route')
+      .leftJoinAndSelect('ta.convoy', 'convoy')
+      .leftJoinAndSelect('ta.unit_response', 'unit_response')
+      .leftJoinAndSelect('ta.vehicle_driver', 'vehicle_driver')
+      .leftJoinAndSelect('ta.activity_type', 'activity_type')
+      .leftJoinAndSelect('ta.files', 'files')
+      .leftJoinAndSelect('ta.activity_status', 'activity_status')
+      //Must select primary key!
+      // .select(['ta.id','ta.comment','activity_status.color'])
+      .where('ta.is_test != :is_test', { is_test: true })
+      .andWhere('ta.is_delete != :is_delete', { is_delete: true })
+      .andWhere('ta.activity_type = :activity_type', { activity_type: 1 })
+      .andWhere(`ta.action_type = :action_type`, { action_type: query.type === 'cmd' ? 'command' : 'request' })
 
     if (query.type === 'res') {
       // รายการตอบรับ
@@ -162,11 +162,11 @@ export class ActivityService {
       // filterObj['action_type'] = { _eq: 'request' };
       // filter exclude
       queryBuilder = queryBuilder
-      .andWhere('ta.activity_status != :draft',{draft:'draft'})
-      .andWhere('ta.activity_status != :req_edit',{req_edit:'req_edit'})
-      .andWhere('ta.activity_status != :pending_req_review',{pending_req_review:'pending_req_review'})
-      .andWhere('ta.activity_status != :pending_req_approve',{pending_req_approve:'pending_req_approve'})
-    } 
+        .andWhere('ta.activity_status != :draft', { draft: 'draft' })
+        .andWhere('ta.activity_status != :req_edit', { req_edit: 'req_edit' })
+        .andWhere('ta.activity_status != :pending_req_review', { pending_req_review: 'pending_req_review' })
+        .andWhere('ta.activity_status != :pending_req_approve', { pending_req_approve: 'pending_req_approve' })
+    }
     else if (query.type === 'cmd') {
       // รายการสั่งการ
       // console.log('cmd');
@@ -174,31 +174,31 @@ export class ActivityService {
       // filterObj['action_type'] = { _eq: 'command' };
       //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม และ action type = command
       queryBuilder = queryBuilder
-      .andWhere(
-        new Brackets((qb)=>
-        qb.where('activity_status != :draft',{draft:'draft'})
-        .orWhere(new Brackets((qbb)=>
-        qbb.where('activity_status = :draft',{draft:'draft'})
-        .andWhere('action_type = :request',{request:'request'})
-        .andWhere('req_create_by = :req_create_by',{req_create_by: body?.request_by?.id || ''})
+        .andWhere(
+          new Brackets((qb) =>
+            qb.where('activity_status != :draft', { draft: 'draft' })
+              .orWhere(new Brackets((qbb) =>
+                qbb.where('activity_status = :draft', { draft: 'draft' })
+                  .andWhere('action_type = :request', { request: 'request' })
+                  .andWhere('req_create_by = :req_create_by', { req_create_by: body?.request_by?.id || '' })
+              )
+              )
+          )
         )
-        )
-        )
-      )
     }
-    else{
+    else {
       queryBuilder = queryBuilder
-      .andWhere(
-        new Brackets((qb)=>
-        qb.where('activity_status != :draft',{draft:'draft'})
-        .orWhere(new Brackets((qbb)=>
-        qbb.where('activity_status = :draft',{draft:'draft'})
-        .andWhere('action_type = :command',{command:'command'})
-        .andWhere('req_create_by = :req_create_by',{req_create_by: body?.request_by?.id || ''})
+        .andWhere(
+          new Brackets((qb) =>
+            qb.where('activity_status != :draft', { draft: 'draft' })
+              .orWhere(new Brackets((qbb) =>
+                qbb.where('activity_status = :draft', { draft: 'draft' })
+                  .andWhere('action_type = :command', { command: 'command' })
+                  .andWhere('req_create_by = :req_create_by', { req_create_by: body?.request_by?.id || '' })
+              )
+              )
+          )
         )
-        )
-        )
-      )
     }
 
     // .andWhere(`ta.${query.type === 'res' ? 'unit_response_code' : 'unit_request_code'} = :unit_no`, { unit_no: body?.request_by?.activeUnit?.code ||body?.request_by?.units[0]?.code ||'' })
@@ -720,11 +720,11 @@ export class ActivityService {
   //     return {};
   //   }
   // }
-  
-  async status(q:any){
+
+  async status(q: any) {
     return this.trsVehicleStatusRepo.find({
-      where:{
-        is_delete:false
+      where: {
+        is_delete: false
       }
     })
 
@@ -752,9 +752,9 @@ export class ActivityService {
   //   }
   // }
 
-  async type(query:any){
+  async type(query: any) {
     const queryBuilder = this.trsActivityTypeRepo.createQueryBuilder('t')
-    .where('t.is_delete != :is_delete',{is_delete:true})
+      .where('t.is_delete != :is_delete', { is_delete: true })
     return await queryBuilder.getMany()
   }
 
@@ -803,8 +803,8 @@ export class ActivityService {
     // const selectedFields = resfields.split(',')
 
     let filterObj = {
-      is_delete: false , // filter ข้อมูลที่ยังไม่ถูกลบ
-      is_available:true,
+      is_delete: false, // filter ข้อมูลที่ยังไม่ถูกลบ
+      is_available: true,
     };
     if (query.unit) {
       filterObj['unit_code'] = query.unit
@@ -814,15 +814,15 @@ export class ActivityService {
     if (query.type) {
       filterObj['vehicle_type'] = parseInt(query.type);
     }
-    
+
     // console.log(mapDirectusFieldsToTypeORM(resfields))
     // console.log(filterObj)
 
     return await this.trsVehicleRepo.find({
-      select:mapDirectusFieldsToTypeORM(resfields),
-      where:filterObj,
-      relations:{
-        main_driver:true
+      select: mapDirectusFieldsToTypeORM(resfields),
+      where: filterObj,
+      relations: {
+        main_driver: true
       }
     })
 
@@ -852,12 +852,12 @@ export class ActivityService {
   //   }
   // }
 
-  async vehicleType(query: any, body: RequestByDto){
+  async vehicleType(query: any, body: RequestByDto) {
     // const queryBuilder = this.trsVehicleTypeRepo.createQueryBuilder('vt')
     // .where('vt.is_delete != :is_delete',{is_delete:true})
     return await this.trsVehicleTypeRepo.find({
-      where:{
-        is_delete:false
+      where: {
+        is_delete: false
       }
     })
 
@@ -900,9 +900,9 @@ export class ActivityService {
   //   }
   // }
 
-  
 
-  async driver(query: any, body: RequestByDto):Promise<trsDriver[]> {
+
+  async driver(query: any, body: RequestByDto): Promise<trsDriver[]> {
     // 1. use createQueryBuilder
     // let queryBuilder = this.trsDriverRepo.createQueryBuilder('d')
     // // .leftJoinAndSelect('d.driver_license','driver_license')
@@ -932,7 +932,7 @@ export class ActivityService {
     };
     if (query.unit) {
       filterObj['unit_code'] = query.unit
-    } 
+    }
     else {
       filterObj['unit_code'] = body?.request_by?.activeUnit?.code || body.request_by.units[0].code
     }
@@ -940,8 +940,8 @@ export class ActivityService {
       filterObj['vehicle_type'] = query.type;
     }
     return await this.trsDriverRepo.find({
-      select:['id','driver_id','driver_name','driver_license'],
-      where:filterObj
+      select: ['id', 'driver_id', 'driver_name', 'driver_license'],
+      where: filterObj
 
     })
 

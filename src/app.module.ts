@@ -8,6 +8,7 @@ import { TrackingModule } from './modules/tracking/tracking.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
 import { RegisterModule } from './modules/register/register.module';
+import { DriverModule } from './modules/driver/driver.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities';
 @Module({
@@ -30,6 +31,9 @@ import Entities from './entities';
     VehicleModule,
 
     RegisterModule,
+
+    DriverModule,
+
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION',
       imports: [ConfigModule],
