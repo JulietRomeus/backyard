@@ -10,74 +10,55 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
+import { HttpException,HttpStatus } from '@nestjs/common';
 import now from '../../utils/now';
-
+import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
 @Injectable()
 export class DriverService {
 
   constructor(
     @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
-    private trsDriverRepo : Repository<trsDriver>,
+    private trsDriverRepo: Repository<trsDriver>,
     @InjectRepository(trsDriverLicenseList, 'MSSQL_CONNECTION')
-    private trsDriverLicenseListRepo : Repository<trsDriverLicenseList>,
+    private trsDriverLicenseListRepo: Repository<trsDriverLicenseList>,
     @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
-    private trsDrivingLicenseTypeRepo : Repository<trsDrivingLicenseType>,
-  ){
+    private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
+  ) {
 
   }
 
   async create(createDriverDto: any) {
-    // console.log(createDriverDto)
-
+    const actionType = ACTIONTYPE.CREATE
     let timeNow = now();
     let user = createDriverDto.request_by
     let dataObj = createDriverDto
-    dataObj['create_by_id'] = user.id;
-    dataObj['create_by'] = user.displayname;
-    dataObj['create_date'] = timeNow;
-    dataObj['update_by_id'] = user.id;
-    dataObj['update_by'] = user.displayname;
-    dataObj['update_date'] = timeNow;
-    // dataObj['is_delete'] = false
-    dataObj['is_active'] = true
+    dataObj = stamp(dataObj, createDriverDto, actionType)
+    const trs_driver_license_lists:trsDriverLicenseList[] = dataObj.trs_driver_license_lists.map(rec => {
+      let tempDataObj = new trsDriverLicenseList()
+      stamp(tempDataObj, createDriverDto, actionType)
+      Object.keys(rec).map(keys => {
+        tempDataObj[keys] = rec[keys] || null
+      })
+      tempDataObj.is_active=true
 
-    delete dataObj.request_by
-
-    const dbRes = await this.trsDriverRepo.insert(dataObj)
-    const id = dbRes?.identifiers[0].id
-    dataObj.trs_driver_license_lists.map(rec=>{
-      let dataObj ={
-        ...rec,
-        driver_id:parseInt(id),
-        // is_delete:false,
-        is_active:true
-      }
-      dataObj['create_by_id'] = user.id;
-      dataObj['create_by'] = user.displayname;
-      dataObj['create_date'] = timeNow;
-      dataObj['update_by_id'] = user.id;
-      dataObj['update_by'] = user.displayname;
-      dataObj['update_date'] = timeNow;
-      dataObj['is_active'] = true
-      this.trsDriverLicenseListRepo.insert(dataObj)
-
+      return tempDataObj
     })
-    
-    return await this.findOne(id);
+    delete dataObj.request_by
+    const createObj = new trsDriver()
+    Object.keys(createDriverDto).map(keys => {
+      console.log(keys,'->',dataObj[keys])
+      createObj[keys] = dataObj[keys] || null
+    })
+    createObj.is_active=true
+    createObj.trs_driver_license_lists = trs_driver_license_lists
+    const dbRes = await this.trsDriverRepo.save(createObj)
+    return genPayload(dbRes,null,actionType)
   }
 
   async findAll() {
-    return await this.trsDriverRepo.find({
-      where:{
-        // is_delete:false,
-        is_active:true
-      },
-      relations:{
-        trs_driver_license_lists:{
-          license:true
-        }
-      }
-    });
+    return await this.trsDriverRepo.createQueryBuilder('d')
+      .leftJoinAndSelect('d.trs_driver_license_lists', 'tdll', 'tdll.is_active = 1')
+      .getMany()
   }
 
   async findAllLicense() {
@@ -85,63 +66,118 @@ export class DriverService {
   }
 
   async findOne(id: number) {
-    return await this.trsDriverRepo.findOne({
-      where:{
-        id:id,
-        // is_delete:false
-        is_active:true
-      },
-      relations:{
-        trs_driver_license_lists:{
-          license:true
-        }
-      }
-    })
+    return await this.trsDriverRepo.createQueryBuilder('d')
+    .leftJoinAndSelect('d.trs_driver_license_lists', 'tdll', 'tdll.is_active = 1')
+    .where('d.id =:id', { id: id }).getOne()
   }
 
   async update(id: number, updateDriverDto: any) {
-    console.log(updateDriverDto)
-
-
+    if (!updateDriverDto?.id && !id)    throw new HttpException(`Driver id ${id} not found.`, HttpStatus.FORBIDDEN)
+    const actionType = ACTIONTYPE.UPDATE
     let timeNow = now();
     let user = updateDriverDto.request_by
     let dataObj = updateDriverDto
-    dataObj['create_by_id'] = user.id;
-    dataObj['create_by'] = user.displayname;
-    dataObj['create_date'] = timeNow;
-    dataObj['update_by_id'] = user.id;
-    dataObj['update_by'] = user.displayname;
-    dataObj['update_date'] = timeNow;
-    dataObj['is_delete'] = false
-
-    delete dataObj.request_by
-    
-    const dbRes = await this.trsDriverRepo.update(id,dataObj)
-    dataObj.trs_driver_license_lists.map(rec=>{
-      let dataObj ={
+    const stampedObject = dataObj.trs_driver_license_lists.map((rec) => {
+      let tempDataObj = {
         ...rec,
-        driver_id:id,
-        is_delete:false,
-        is_active:true
+        driver_id: id,
+        is_delete: false,
+        is_active: true
       }
-      dataObj['create_by_id'] = user.id;
-      dataObj['create_by'] = user.displayname;
-      dataObj['create_date'] = timeNow;
-      dataObj['update_by_id'] = user.id;
-      dataObj['update_by'] = user.displayname;
-      dataObj['update_date'] = timeNow;
-      dataObj['is_delete'] = false
-      dataObj['is_active'] = true
-      dataObj.id?this.trsDriverLicenseListRepo.update(dataObj.id,dataObj):this.trsDriverLicenseListRepo.insert(dataObj)
 
+      tempDataObj = stamp(tempDataObj, updateDriverDto, actionType)
+      const tempId = tempDataObj?.id
+      delete tempDataObj.id
+      return tempDataObj
     })
+    const datas = new trsDriver()
+    console.log(dataObj)
+    Object.keys(dataObj).map(keys => {
+      datas[keys] = dataObj[keys] || null
+    })
+    datas.id = id
+    datas.unit_code = dataObj.unit_code
+    datas.trs_driver_license_lists = stampedObject
 
-    return `This action updates a #${id} driver`;
+    const dbRes = await this.trsDriverRepo.save(datas)
+    const data = await this.findOne(id)
+
+    return genPayload(data,null,actionType);
   }
+
+
+
 
   async remove(id: number) {
-    return await this.trsDriverRepo.update(id,{
-      is_delete:true
+    const actionType = ACTIONTYPE.DELETE
+    await this.trsDriverRepo.update(id, {
+      is_active: false
     });
+    return genPayload({},null,actionType)
   }
 }
+
+
+
+
+  // async update_x(id: number, updateDriverDto: any) {
+  //   console.log(updateDriverDto)
+  //   let templicenseIds = []
+  //   let timeNow = now();
+  //   let user = updateDriverDto.request_by
+  //   let dataObj = updateDriverDto
+  // dataObj = stamp(dataObj, updateDriverDto, 'create')
+
+
+  //   delete dataObj.request_by
+  //   // delete dataObj.id
+  //   const stampedObject = dataObj.trs_driver_license_lists.map(async (rec) => {
+  //     let dataObj = {
+  //       ...rec,
+  //       driver_id: id,
+  //       is_delete: false,
+  //       is_active: true
+  //     }
+  //     dataObj['create_by_id'] = user.id;
+  //     dataObj['create_by'] = user.displayname;
+  //     dataObj['create_date'] = timeNow;
+  //     dataObj['update_by_id'] = user.id;
+  //     dataObj['update_by'] = user.displayname;
+  //     dataObj['update_date'] = timeNow;
+  //     dataObj['is_delete'] = false
+  //     dataObj['is_active'] = true
+  //     const tempId = dataObj?.id
+  //     delete dataObj.id
+  //     // return dataObj
+  //     let dbRes: any = await (tempId ? this.trsDriverLicenseListRepo.update(tempId, dataObj) : this.trsDriverLicenseListRepo.insert({ ...dataObj, driver_id: id }))
+  //     templicenseIds.push(dbRes.id)
+  //     console.log(dbRes?.identifiers ? dbRes?.identifiers[0]?.id : tempId)
+  //     templicenseIds.push(dbRes?.identifiers ? dbRes?.identifiers[0]?.id : tempId)
+
+  //   })
+
+  //   // this.trsDriverLicenseListRepo.upsert(stampedObject,'id',)
+
+  //   // delete dataObj.trs_driver_license_lists
+  //   // console.log(stampedObject)
+  //   // const datas = new trsDriver()
+  //   // datas = {
+  //   //   ...dataObj,
+  //   //   trs_driver_license_lists:stampedObject
+  //   // }
+  //   // datas.id=id
+  //   // datas.unit_code
+  //   // datas.trs_driver_license_lists=stampedObject
+  //   // const dbRes = await this.trsDriverRepo.save(datas)
+  //   // console.log(dbRes)
+  //   const rawReturn = await this.findOne(id)
+
+  //   const toDelete = rawReturn.trs_driver_license_lists.filter(r => !templicenseIds.includes(r.id))
+
+  //   toDelete.map(async (rr) => {
+  //     await this.trsDriverLicenseListRepo.update(rr.id, { is_active: false })
+
+  //   })
+
+  //   return await this.findOne(id);
+  // }
