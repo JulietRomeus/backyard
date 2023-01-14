@@ -19,8 +19,8 @@ export class trsDriver {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("int", { name: "sort", nullable: true })
-  sort: number | null;
+  // @Column("int", { name: "sort", nullable: true })
+  // sort: number | null;
 
   @Column("nvarchar", { name: "driver_id", nullable: true, length: 255 })
   driver_id: string | null;
@@ -52,8 +52,17 @@ export class trsDriver {
   @Column("bit", { name: "is_delete", nullable: true, default: () => "'0'" })
   is_delete: boolean | null;
 
+
+  @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
+  is_active: boolean | null;
+
   @Column("bit", { name: "is_available", nullable: true, default: () => "'1'" })
   is_available: boolean | null;
+
+  @Column("datetime2", { name: "create_date", nullable: true })
+  create_date: Date | null;
+  @Column("datetime2", { name: "update_date", nullable: true })
+  update_date: Date | null;
 
   @OneToMany(
     () => trsActivityVehicleDriver,
@@ -75,7 +84,8 @@ export class trsDriver {
 
   @OneToMany(
     () => trsDriverLicenseList,
-    (trs_driver_license_list) => trs_driver_license_list.driver
+    (trs_driver_license_list) => trs_driver_license_list.driver,
+    { cascade: true}
   )
   trs_driver_license_lists: trsDriverLicenseList[];
 
