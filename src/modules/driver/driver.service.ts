@@ -46,7 +46,7 @@ export class DriverService {
     delete dataObj.request_by
     const createObj = new trsDriver()
     Object.keys(createDriverDto).map(keys => {
-      console.log(keys,'->',dataObj[keys])
+      // console.log(keys,'->',dataObj[keys])
       createObj[keys] = dataObj[keys] || null
     })
     createObj.is_active=true
@@ -79,7 +79,7 @@ export class DriverService {
     let dataObj = updateDriverDto
     const stampedObject = dataObj.trs_driver_license_lists.map((rec) => {
       let tempDataObj = new trsDriverLicenseList()
-      stamp(tempDataObj, updateDriverDto, actionType)
+      stamp(tempDataObj, updateDriverDto, ACTIONTYPE.CREATE)
       Object.keys(rec).map(keys => {
         tempDataObj[keys] = rec[keys] || null
       })
@@ -88,7 +88,7 @@ export class DriverService {
       return tempDataObj
     })
     const updateObj = new trsDriver()
-    console.log(dataObj)
+    // console.log(dataObj)
     Object.keys(dataObj).map(keys => {
       updateObj[keys] = dataObj[keys] || null
     })
