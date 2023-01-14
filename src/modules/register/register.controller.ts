@@ -32,8 +32,7 @@ export class RegisterController {
     return this.registerService.findAll(query);
   }
 
-
-
+ 
   @Get(':id')
   //@Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
@@ -42,14 +41,27 @@ export class RegisterController {
     return this.registerService.findOne(id);
   }
 
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRegisterDto: any) {
     console.log(updateRegisterDto)
     return this.registerService.update(+id, updateRegisterDto);
   }
 
+  @Patch('send/:id')
+  send(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
+  {
+    return this.registerService.send(id, updateRegisterDto, query);
+  }
+
+  @Patch('approve/:id')
+  approve(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
+  {
+    return this.registerService.approve(id, updateRegisterDto, query);
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.registerService.remove(+id);
+  remove(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any){
+    return this.registerService.remove(id, updateRegisterDto, query);
   }
 }

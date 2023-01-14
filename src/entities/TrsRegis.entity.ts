@@ -110,7 +110,7 @@ export class trsRegis {
   @Column("nvarchar", { name: "purchase_from", nullable: true, length: 255 })
   purchase_from: string | null;
 
-  @Column("int", { name: "purchase_price", nullable: true})
+  @Column("int", { name: "purchase_price", nullable: true })
   purchase_price: number | null;
 
   @Column("int", { name: "actual_price", nullable: true })
@@ -134,23 +134,12 @@ export class trsRegis {
   @Column("nvarchar", { name: "road", nullable: true, length: 255 })
   road: string | null;
 
-  @Column("nvarchar", { name: "regis_detail", nullable: true, length: 255 })
-  regis_detail: string | null;
-
   @Column("nvarchar", {
     name: "vehicle_class_name",
     nullable: true,
     length: 255,
   })
   vehicle_class_name: string | null;
-
-  @ManyToOne(
-    () => trsRegisStatus,
-    (trs_regis_status) => trs_regis_status.trs_regis,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "trs_regis_status_no", referencedColumnName: "id" }])
-  trs_regis_status_no: trsRegisStatus;
 
   @ManyToOne(
     () => trsRegisStatusform,
@@ -160,15 +149,17 @@ export class trsRegis {
   @JoinColumn([{ name: "trs_regis_statusform_no", referencedColumnName: "id" }])
   trs_regis_statusform_no: trsRegisStatusform;
 
+  @ManyToOne(
+    () => trsRegisStatus,
+    (trs_regis_status) => trs_regis_status.trs_regis,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "trs_regis_status_no", referencedColumnName: "id" }])
+  trs_regis_status_no: trsRegisStatus;
+
   @OneToMany(
     () => trsRegisDetail,
     (trs_regis_detail) => trs_regis_detail.trs_regis_no
   )
-  trs_regis_detail_no: trsRegisDetail[];
-
-  @RelationId((trs_regis: trsRegis) => trs_regis.trs_regis_status_no)
-  trs_regis_status_no2: number | null;
-
-  @RelationId((trs_regis: trsRegis) => trs_regis.trs_regis_statusform_no)
-  trs_regis_statusform_no2: string | null;
+  trs_regis_details: trsRegisDetail[];
 }
