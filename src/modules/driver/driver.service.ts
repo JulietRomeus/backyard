@@ -78,28 +78,25 @@ export class DriverService {
     let user = updateDriverDto.request_by
     let dataObj = updateDriverDto
     const stampedObject = dataObj.trs_driver_license_lists.map((rec) => {
-      let tempDataObj = {
-        ...rec,
-        driver_id: id,
-        is_delete: false,
-        is_active: true
-      }
+      let tempDataObj = new trsDriverLicenseList()
+      stamp(tempDataObj, updateDriverDto, actionType)
+      Object.keys(rec).map(keys => {
+        tempDataObj[keys] = rec[keys] || null
+      })
+      tempDataObj.is_active=true
 
-      tempDataObj = stamp(tempDataObj, updateDriverDto, actionType)
-      const tempId = tempDataObj?.id
-      delete tempDataObj.id
       return tempDataObj
     })
-    const datas = new trsDriver()
+    const updateObj = new trsDriver()
     console.log(dataObj)
     Object.keys(dataObj).map(keys => {
-      datas[keys] = dataObj[keys] || null
+      updateObj[keys] = dataObj[keys] || null
     })
-    datas.id = id
-    datas.unit_code = dataObj.unit_code
-    datas.trs_driver_license_lists = stampedObject
+    updateObj.id = id
+    updateObj.unit_code = dataObj.unit_code
+    updateObj.trs_driver_license_lists = stampedObject
 
-    const dbRes = await this.trsDriverRepo.save(datas)
+    const dbRes = await this.trsDriverRepo.save(updateObj)
     const data = await this.findOne(id)
 
     return genPayload(data,null,actionType);
