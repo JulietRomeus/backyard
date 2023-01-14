@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import now from './now'
-export default function genPayload(data:any,error:any){
-
-    
-    return {
-        status: !error?200:500,
-        message: !error?'GET_SUECESS':'GET_FAIL',
-        data: data,
-        error: error,
-        timestamp: now(),
-      }
-=======
 import now from "./now";
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -85,5 +72,4 @@ export class ForbiddenException extends HttpException {
 
     }
 
->>>>>>> master
 }

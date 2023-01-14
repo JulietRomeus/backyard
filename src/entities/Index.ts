@@ -6,7 +6,6 @@ import { trsRegisVehicleImg } from "./TrsRegisVehicleImg.entity";
 import { trsRegisStatusform } from "./TrsRegisStatusform.entity";
 import { trsActivityType } from "./TrsActivityType.entity";
 import { directusPanels } from "./DirectusPanels.entity";
-import { trsSubRegisVehicle } from "./TrsSubRegisVehicle.entity";
 import { directusNotifications } from "./DirectusNotifications.entity";
 import { trsActivityFilesFiles } from "./TrsActivityFilesFiles.entity";
 import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
@@ -15,7 +14,6 @@ import { directusShares } from "./DirectusShares.entity";
 import { directusCollections } from "./DirectusCollections.entity";
 import { trsRegisDetail } from "./TrsRegisDetail.entity";
 import { directusRoles } from "./DirectusRoles.entity";
-import { trsSubRegis } from "./TrsSubRegis.entity";
 import { directusFlows } from "./DirectusFlows.entity";
 import { directusUsers } from "./DirectusUsers.entity";
 import { directusOperations } from "./DirectusOperations.entity";
@@ -80,7 +78,6 @@ export {
   trsRegisStatusform,
   trsActivityType,
   directusPanels,
-  trsSubRegisVehicle,
   directusNotifications,
   trsActivityFilesFiles,
   trsActivityConvoy,
@@ -89,7 +86,6 @@ export {
   directusCollections,
   trsRegisDetail,
   directusRoles,
-  trsSubRegis,
   directusFlows,
   directusUsers,
   directusOperations,
@@ -155,7 +151,6 @@ export default [
   trsRegisStatusform,
   trsActivityType,
   directusPanels,
-  trsSubRegisVehicle,
   directusNotifications,
   trsActivityFilesFiles,
   trsActivityConvoy,
@@ -164,7 +159,6 @@ export default [
   directusCollections,
   trsRegisDetail,
   directusRoles,
-  trsSubRegis,
   directusFlows,
   directusUsers,
   directusOperations,

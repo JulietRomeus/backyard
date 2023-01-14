@@ -9,66 +9,13 @@ import {
   RelationId,
 } from "typeorm";
 import { trsRegis } from "./TrsRegis.entity";
-import { trsSubRegis } from "./TrsSubRegis.entity";
+
 
 @Index("PK__trs_regi__3213E83FD869F9F9", ["id"], { unique: true })
 @Entity("trs_regis_detail", { schema: "dbo" })
 export class trsRegisDetail {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
-
-  @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
-  is_active: boolean | null;
-
-  @Column("int", { name: "vehicle_type", nullable: true })
-  vehicle_type: number | null;
-
-  @Column("int", { name: "vehicle_brand", nullable: true })
-  vehicle_brand: number | null;
-
-  @Column("int", { name: "vehicle_brand_model", nullable: true })
-  vehicle_brand_model: number | null;
-
-  @Column("varchar", {
-    name: "type_fuel_consumption",
-    nullable: true,
-    length: 100,
-  })
-  type_fuel_consumption: string | null;
-
-  @Column("varchar", { name: "purchased_method", nullable: true, length: 300 })
-  purchased_method: string | null;
-
-  @Column("varchar", { name: "purchased_from", nullable: true, length: 300 })
-  purchased_from: string | null;
-
-  @Column("int", { name: "purchased_price", nullable: true })
-  purchased_price: number | null;
-
-  @Column("varchar", { name: "purpose", nullable: true, length: 300 })
-  purpose: string | null;
-
-  @Column("datetime", { name: "deliver_datetime", nullable: true })
-  deliver_datetime: Date | null;
-
-  @Column("varchar", { name: "deliver_location", nullable: true, length: 300 })
-  deliver_location: string | null;
-
-  @Column("int", { name: "approved_budget", nullable: true })
-  approved_budget: number | null;
-
-  @Column("varchar", { name: "remark", nullable: true, length: 300 })
-  remark: string | null;
-
-  @Column("varchar", {
-    name: "defined_mil_vehicle_type",
-    nullable: true,
-    length: 100,
-  })
-  defined_mil_vehicle_type: string | null;
-
-  @Column("int", { name: "sub_registry_vehicle", nullable: true })
-  sub_registry_vehicle: number | null;
 
   @Column("int", { name: "amount", nullable: true })
   amount: number | null;
@@ -100,20 +47,21 @@ export class trsRegisDetail {
   @Column("datetime", { name: "delete_date", nullable: true })
   delete_date: Date | null;
 
-  @ManyToOne(() => trsRegis, (trs_regis) => trs_regis.trs_regis_detail_no, {
+  @Column("nvarchar", { name: "engine_no", nullable: true, length: 255 })
+  engine_no: string | null;
+
+  @Column("nvarchar", { name: "fuel_capacity_no", nullable: true, length: 255 })
+  fuel_capacity_no: string | null;
+
+  @Column("nvarchar", { name: "mil_regis_no", nullable: true, length: 255 })
+  mil_regis_no: string | null;
+
+  @Column("nvarchar", { name: "car_regis_no", nullable: true, length: 255 })
+  car_regis_no: string | null;
+
+  @ManyToOne(() => trsRegis, (trs_regis) => trs_regis.trs_regis_details, {
     onDelete: "SET NULL",
   })
   @JoinColumn([{ name: "trs_regis_no", referencedColumnName: "id" }])
   trs_regis_no: trsRegis;
-
-  @OneToMany(
-    () => trsSubRegis,
-    (trs_sub_regis) => trs_sub_regis.trs_regis_detail_no
-  )
-  trs_sub_regis: trsSubRegis[];
-
-  @RelationId(
-    (trs_regis_detail: trsRegisDetail) => trs_regis_detail.trs_regis_no
-  )
-  trs_regis_no2: number | null;
 }
