@@ -187,6 +187,30 @@ export class RegisterService {
     return await this.findOne(id);
   }
 
+  async review(id: number, updateRegisterDto: any, query: any): Promise<any> {
+    console.log('updateRegisterDto', updateRegisterDto);
+    console.log('query', query);
+    let timeNow = now();
+    let user = updateRegisterDto.request_by;
+    let dataObj = updateRegisterDto;
+    // dataObj['update_by_id'] = user.id;
+    delete dataObj.request_by;
+    delete dataObj.id;
+    dataObj['update_date'] = timeNow;
+    dataObj['update_by'] = user.displayname;
+    const finalItems = dataObj;
+    finalItems.trs_regis_statusform_no.id = 'pending_approve';
+    console.log('finalItems', finalItems);
+    dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
+      this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
+    );
+
+    delete dataObj.trs_regis_detail_no;
+    const dbRes = await this.trsRegisRepo.update(id, finalItems);
+    console.log('dbRes', dbRes);
+    return await this.findOne(id);
+  }
+
   async approve(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
     console.log('query', query);

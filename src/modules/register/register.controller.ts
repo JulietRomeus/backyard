@@ -54,6 +54,13 @@ export class RegisterController {
     return this.registerService.send(id, updateRegisterDto, query);
   }
 
+  @Patch('review/:id')
+  review(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
+  {
+    return this.registerService.review(id, updateRegisterDto, query);
+  }
+
+
   @Patch('approve/:id')
   approve(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
   {
