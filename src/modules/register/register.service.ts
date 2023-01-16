@@ -50,7 +50,6 @@ export class RegisterService {
     }
   }
 
- 
   // async findAllActive(): Promise<mobResourceRequirement[]> {
   //   return await this.mobResourceRequirementRepository.find(
   //     {
@@ -74,14 +73,13 @@ export class RegisterService {
     };
 
     const filterString = JSON.stringify(filterObj);
-    console.log('filterObj', filterString);
+    // console.log('filterObj', filterString);
     const getQuery = `trs_regis/${id}?filter=${filterString}&fields=${listFields}`;
-    console.log(this.httpService.get(`/items/${getQuery}`));
     try {
       const result = await firstValueFrom(
         this.httpService.get(`/items/${getQuery}`),
       );
-      console.log(result.data);
+      // console.log(result.data);
       return result?.data?.data || [];
     } catch (error) {
       console.log('error get status', error);
@@ -90,7 +88,7 @@ export class RegisterService {
   }
 
   async create(CreateRegisterDto: any) {
-    console.log(CreateRegisterDto);
+    // console.log('CreateRegisterDto', CreateRegisterDto);
     let timeNow = now();
     let user = CreateRegisterDto.request_by;
     let dataObj = CreateRegisterDto;
@@ -102,8 +100,30 @@ export class RegisterService {
     dataObj['update_by'] = user.displayname;
     dataObj['update_date'] = timeNow;
     const finalItems = this.trsRegisRepo.create(dataObj);
-    const dbRes = await this.trsRegisRepo.insert(finalItems);
-    return await this.findOne(dbRes.identifiers[0].id);
+    console.log('finalItems', finalItems);
+    //------creatsubitem---------//
+    let subItems = new trsRegis();
+    Object.keys(dataObj).map((keys) => {
+      subItems[keys] = dataObj[keys] || null;
+    });
+    console.log('subItems', subItems);
+    console.log('dataObj.trs_regis_detail_no', dataObj.trs_regis_detail_no);
+    const trs_regis_detail_no = dataObj.trs_regis_detail_no.map(
+      (rec: trsRegisDetail) => {
+        let temDetail = new trsRegisDetail();
+
+        Object.keys(rec).map((keys) => {
+          temDetail[keys] = rec[keys] || null;
+        });
+        return temDetail;
+      },
+    );
+    subItems.trs_regis_detail_no = trs_regis_detail_no;
+    console.log(trs_regis_detail_no);
+
+    const dbRes = await this.trsRegisRepo.save(subItems);
+    console.log('dbRes', dbRes);
+    return await this.findOne(dbRes.id);
   }
 
   async update(id: number, updateRegisterDto: any): Promise<any> {
@@ -113,16 +133,32 @@ export class RegisterService {
     let dataObj = updateRegisterDto;
     // dataObj['update_by_id'] = user.id;
     delete dataObj.request_by;
-    delete dataObj.id;
+    // delete dataObj.id;
     dataObj['update_date'] = timeNow;
     dataObj['update_by'] = user.displayname;
-    const finalItems = dataObj;
+    let finalItems = new trsRegis();
+
+    Object.keys(dataObj).map((keys) => {
+      finalItems[keys] = dataObj[keys] || null;
+    });
     console.log('finalItems', finalItems);
-    dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
-      this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
+    console.log('dataObj.trs_regis_detail_no', dataObj.trs_regis_detail_no);
+    const trs_regis_detail_no = dataObj.trs_regis_detail_no.map(
+      (rec: trsRegisDetail) => {
+        let temDetail = new trsRegisDetail();
+
+        Object.keys(rec).map((keys) => {
+          temDetail[keys] = rec[keys] || null;
+        });
+        return temDetail;
+        // regis_no: id
+        // this.trsRegisDetailRepo.save({ ...d, regis_no: id })
+      },
     );
-    delete dataObj.trs_regis_detail_no;
-    const dbRes = await this.trsRegisRepo.update(id, finalItems);
+    // delete dataObj.trs_regis_detail_no;
+    finalItems.trs_regis_detail_no = trs_regis_detail_no;
+    console.log(trs_regis_detail_no);
+    const dbRes = await this.trsRegisRepo.save(finalItems);
 
     return await this.findOne(id);
   }

@@ -17,6 +17,38 @@ export class trsRegisDetail {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
+  @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
+  is_active: boolean | null;
+
+  @Column("int", { name: "vehicle_type", nullable: true })
+  vehicle_type: number | null;
+
+  @Column("int", { name: "vehicle_brand", nullable: true })
+  vehicle_brand: number | null;
+
+  @Column("int", { name: "vehicle_brand_model", nullable: true })
+  vehicle_brand_model: number | null;
+
+  @Column("varchar", {
+    name: "type_fuel_consumption",
+    nullable: true,
+    length: 100,
+  })
+  type_fuel_consumption: string | null;
+
+  @Column("int", { name: "approved_budget", nullable: true })
+  approved_budget: number | null;
+
+  @Column("varchar", { name: "remark", nullable: true, length: 300 })
+  remark: string | null;
+
+  @Column("varchar", {
+    name: "defined_mil_vehicle_type",
+    nullable: true,
+    length: 100,
+  })
+  defined_mil_vehicle_type: string | null;
+
   @Column("int", { name: "amount", nullable: true })
   amount: number | null;
 
@@ -59,7 +91,7 @@ export class trsRegisDetail {
   @Column("nvarchar", { name: "car_regis_no", nullable: true, length: 255 })
   car_regis_no: string | null;
 
-  @ManyToOne(() => trsRegis, (trs_regis) => trs_regis.trs_regis_details, {
+  @ManyToOne(() => trsRegis, (trs_regis) => trs_regis.trs_regis_detail_no, {
     onDelete: "SET NULL",
   })
   @JoinColumn([{ name: "trs_regis_no", referencedColumnName: "id" }])

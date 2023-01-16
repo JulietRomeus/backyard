@@ -159,7 +159,8 @@ export class trsRegis {
 
   @OneToMany(
     () => trsRegisDetail,
-    (trs_regis_detail) => trs_regis_detail.trs_regis_no
+    (trs_regis_detail) => trs_regis_detail.trs_regis_no,
+    {cascade:true}
   )
-  trs_regis_details: trsRegisDetail[];
+  trs_regis_detail_no: trsRegisDetail[];
 }
