@@ -71,4 +71,7 @@ export class RegisterController {
   remove(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any){
     return this.registerService.remove(id, updateRegisterDto, query);
   }
+//----------------getobstacle-------------------//
+
+
 }
