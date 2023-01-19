@@ -1,3 +1,4 @@
+import { FacilityModule } from './modules/facility/facility.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -36,6 +37,8 @@ import Entities from './entities';
     DriverModule,
     
     ObstacleModule,
+
+    FacilityModule,
 
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION',

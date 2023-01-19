@@ -68,6 +68,7 @@ import { trsResourceReport } from "./TrsResourceReport.entity";
 import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsResourceReportFiles } from "./TrsResourceReportFiles.entity";
 import { trsDriver } from "./TrsDriver.entity";
+import { trsFacility } from "./TrsFacility.entitly";
 
 export {
   trsDriverFiles,
@@ -140,6 +141,7 @@ export {
   trsActivityVehicleDriver,
   trsResourceReportFiles,
   trsDriver,
+  trsFacility
 };
 
 export default [
@@ -213,4 +215,5 @@ export default [
   trsActivityVehicleDriver,
   trsResourceReportFiles,
   trsDriver,
+  trsFacility
 ];
