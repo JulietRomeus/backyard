@@ -396,7 +396,7 @@ export class ActivityService {
     }
   }
 
-  async cancle_request(id: string) {
+  async cancel_request(id: string) {
     // console.log(updateActivityDto.request_by);
     // console.log(unitResponse);
 

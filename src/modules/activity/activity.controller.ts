@@ -142,7 +142,7 @@ export class ActivityController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ขอสนับสนุนรถหน่วยอื่นเพิ่มเติม' })
   cancelReq(@Param('id') id: string) {
-    return this.activityService.cancle_request(id);
+    return this.activityService.cancel_request(id);
   }
 
   @Patch('review/:id')
