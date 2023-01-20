@@ -31,6 +31,12 @@ export class CreateActivityDto extends RequestByDto {
   @IsNumber()
   'round': number;
 
+  @IsBoolean()
+  'cmd_focus': boolean;
+
+  @IsNumber()
+  'priority': number;
+
   @IsDateString()
   'activity_start_date': Date;
 
@@ -62,6 +68,43 @@ export class CreateActivityDto extends RequestByDto {
 
   @IsObject()
   'activity_type': { id: number };
+
+  @IsString()
+  @IsOptional()
+  req_type?: string;
+  @IsString()
+  @IsOptional()
+  gov_order?: string;
+  @IsString()
+  @IsOptional()
+  p_name?: string;
+  @IsString()
+  @IsOptional()
+  p_unit?: string;
+  @IsString()
+  @IsOptional()
+  p_pos?: string;
+  @IsNumber()
+  @IsOptional()
+  staff_carry?: number;
+  @IsString()
+  @IsOptional()
+  thing_carry?: string;
+  @IsNumber()
+  @IsOptional()
+  total_carry?: number;
+  @IsNumber()
+  @IsOptional()
+  weight?: number;
+  @IsString()
+  @IsOptional()
+  driver_rep_to?: string;
+  @IsString()
+  @IsOptional()
+  purpose?: string;
+  @IsString()
+  @IsOptional()
+  note?: string;
 
   @IsArray()
   route: {
@@ -113,7 +156,7 @@ export class CreateActivityDto extends RequestByDto {
     controller: string;
     name: string;
     color: string;
-    detail:string;
+    detail: string;
     route: {
       id: number;
       order: number;
@@ -182,6 +225,7 @@ export class CreateActivityDto extends RequestByDto {
   }[];
 
   @IsArray()
+  @IsOptional()
   unit_response: {
     id: number;
     is_delete: boolean;

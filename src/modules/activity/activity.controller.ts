@@ -125,7 +125,6 @@ export class ActivityController {
     return this.activityService.send(id, updateActivityDto, query);
   }
 
-
   @Patch('request/:id')
   @Permission({ route: route, action: 'update' })
   @ApiBearerAuth('JWT')
@@ -136,6 +135,14 @@ export class ActivityController {
     @Query() query: any,
   ) {
     return this.activityService.request(id, requestActivityDto, query);
+  }
+
+  @Delete('request/:id')
+  @Permission({ route: route, action: 'update' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ขอสนับสนุนรถหน่วยอื่นเพิ่มเติม' })
+  cancelReq(@Param('id') id: string) {
+    return this.activityService.cancle_request(id);
   }
 
   @Patch('review/:id')
