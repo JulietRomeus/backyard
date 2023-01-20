@@ -27,9 +27,9 @@ export class RegisterService {
     private trsRegisStatusRepo: Repository<trsRegisStatus>,
   ) {}
 
-  async findAll(query: any) {
+  async findAll() {
     //console.log('body', body?.request_by || '');
-    console.log('query', query);
+    // console.log('query', query);
     let filterObj = {
       is_active: { _eq: 1 }, // filter ข้อมูลที่ยังไม่ถูกลบ
     };
@@ -49,6 +49,14 @@ export class RegisterService {
       return {};
     }
   }
+
+  // async findAll() {
+  //   return await this.trsRegisRepo.createQueryBuilder('d')
+  //     .leftJoinAndSelect('d.trs_regis_detail_no', 'tdll', 'tdll.is_active = 1')
+  //     .getMany()
+   
+    
+  // }
 
   // async findAllActive(): Promise<mobResourceRequirement[]> {
   //   return await this.mobResourceRequirementRepository.find(
@@ -103,16 +111,16 @@ export class RegisterService {
     console.log('finalItems', finalItems);
     //------creatsubitem---------//
     let subItems = new trsRegis();
-    Object.keys(dataObj).map((keys) => {
+    Object.keys(dataObj)?.map((keys) => {
       subItems[keys] = dataObj[keys] || null;
     });
     console.log('subItems', subItems);
     console.log('dataObj.trs_regis_detail_no', dataObj.trs_regis_detail_no);
-    const trs_regis_detail_no = dataObj.trs_regis_detail_no.map(
+    const trs_regis_detail_no = dataObj.trs_regis_detail_no?.map(
       (rec: trsRegisDetail) => {
         let temDetail = new trsRegisDetail();
 
-        Object.keys(rec).map((keys) => {
+        Object.keys(rec)?.map((keys) => {
           temDetail[keys] = rec[keys] || null;
         });
         return temDetail;
