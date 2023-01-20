@@ -19,6 +19,7 @@ export class PermissionGuard {
 
   async canActivate(context: ExecutionContext) {
     // check is guard provide roles metatada
+    // return true
     const perm = this.reflector.get<permType>(
       'permission',
       context.getHandler(),

@@ -1,3 +1,4 @@
+import { FacilityModule } from './modules/facility/facility.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -8,6 +9,8 @@ import { TrackingModule } from './modules/tracking/tracking.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { VehicleModule } from './modules/vehicle/vehicle.module';
 import { RegisterModule } from './modules/register/register.module';
+import { DriverModule } from './modules/driver/driver.module';
+import { ObstacleModule } from './modules/obstacle/obstacle.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities';
 @Module({
@@ -30,6 +33,13 @@ import Entities from './entities';
     VehicleModule,
 
     RegisterModule,
+
+    DriverModule,
+    
+    ObstacleModule,
+
+    FacilityModule,
+
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION',
       imports: [ConfigModule],

@@ -5,10 +5,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Transform } from 'class-transformer';
+
 import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
 import { trsVehicle } from "./TrsVehicle.entity";
+import { trsDriverLicenseList } from "./TrsDriverLicenseList.entity";
 
 @Index("PK__trs_driv__3213E83FE61B5A1A", ["id"], { unique: true })
 @Entity("trs_driver", { schema: "dbo" })
@@ -16,8 +19,8 @@ export class trsDriver {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("int", { name: "sort", nullable: true })
-  sort: number | null;
+  // @Column("int", { name: "sort", nullable: true })
+  // sort: number | null;
 
   @Column("nvarchar", { name: "driver_id", nullable: true, length: 255 })
   driver_id: string | null;
@@ -25,8 +28,20 @@ export class trsDriver {
   @Column("nvarchar", { name: "driver_name", nullable: true, length: 255 })
   driver_name: string | null;
 
-  @Column("nvarchar", { name: "driver_license", nullable: true })
-  driver_license: string | null;
+  @Column("nvarchar", { name: "driver_license", nullable: true,
+  transformer: {
+    to(value) {
+      // Transform 'invoiceNumber'
+      return value
+    },
+    from(value) {
+      // Do nothing
+      return JSON.parse(value);
+    }
+  },
+ })
+  driver_license: string[] | null;
+  
 
   @Column("nvarchar", { name: "unit_code", nullable: true, length: 255 })
   unit_code: string | null;
@@ -37,8 +52,17 @@ export class trsDriver {
   @Column("bit", { name: "is_delete", nullable: true, default: () => "'0'" })
   is_delete: boolean | null;
 
+
+  @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
+  is_active: boolean | null;
+
   @Column("bit", { name: "is_available", nullable: true, default: () => "'1'" })
   is_available: boolean | null;
+
+  @Column("datetime2", { name: "create_date", nullable: true })
+  create_date: Date | null;
+  @Column("datetime2", { name: "update_date", nullable: true })
+  update_date: Date | null;
 
   @OneToMany(
     () => trsActivityVehicleDriver,
@@ -57,6 +81,13 @@ export class trsDriver {
     (trs_driver_files_1) => trs_driver_files_1.trs_driver
   )
   trs_driver_files_s: trsDriverFiles_1[];
+
+  @OneToMany(
+    () => trsDriverLicenseList,
+    (trs_driver_license_list) => trs_driver_license_list.driver,
+    { cascade: true}
+  )
+  trs_driver_license_lists: trsDriverLicenseList[];
 
   @OneToMany(() => trsVehicle, (trs_vehicle) => trs_vehicle.main_driver)
   trs_vehicles: trsVehicle[];

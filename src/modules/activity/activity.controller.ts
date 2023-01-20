@@ -37,13 +37,13 @@ export class ActivityController {
     return this.activityService.findAll(body, query);
   }
 
-  @Get('orm')
-  @Permission({ route: route, action: 'view' })
-  @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
-  findAllORM(@Body() body: any, @Query() query: any) {
-    return this.activityService.findAllORM(body, query);
-  }
+  // @Get('orm')
+  // @Permission({ route: route, action: 'view' })
+  // @ApiBearerAuth('JWT')
+  // @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  // findAllORM(@Body() body: any, @Query() query: any) {
+  //   return this.activityService.findAllORM(body, query);
+  // }
 
   @Get('status')
   @Permission({ route: route, action: 'view' })
@@ -86,8 +86,8 @@ export class ActivityController {
   }
 
   @Get(':id')
-  @Permission({ route: route, action: 'view' })
-  @ApiBearerAuth('JWT')
+  // @Permission({ route: route, action: 'view' })
+  // @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   findOne(@Param('id') id: string, @Body() body: any, @Query() query: any) {
     return this.activityService.findOne(id, body, query);

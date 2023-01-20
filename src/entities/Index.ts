@@ -6,7 +6,6 @@ import { trsRegisVehicleImg } from "./TrsRegisVehicleImg.entity";
 import { trsRegisStatusform } from "./TrsRegisStatusform.entity";
 import { trsActivityType } from "./TrsActivityType.entity";
 import { directusPanels } from "./DirectusPanels.entity";
-import { trsSubRegisVehicle } from "./TrsSubRegisVehicle.entity";
 import { directusNotifications } from "./DirectusNotifications.entity";
 import { trsActivityFilesFiles } from "./TrsActivityFilesFiles.entity";
 import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
@@ -15,7 +14,6 @@ import { directusShares } from "./DirectusShares.entity";
 import { directusCollections } from "./DirectusCollections.entity";
 import { trsRegisDetail } from "./TrsRegisDetail.entity";
 import { directusRoles } from "./DirectusRoles.entity";
-import { trsSubRegis } from "./TrsSubRegis.entity";
 import { directusFlows } from "./DirectusFlows.entity";
 import { directusUsers } from "./DirectusUsers.entity";
 import { directusOperations } from "./DirectusOperations.entity";
@@ -23,7 +21,9 @@ import { directusFields } from "./DirectusFields.entity";
 import { trsActivity } from "./TrsActivity.entity";
 import { directusActivity } from "./DirectusActivity.entity";
 import { trsActivityFiles } from "./TrsActivityFiles.entity";
+import { trsDrivingLicenseType } from "./TrsDrivingLicenseType.entity";
 import { directusFolders } from "./DirectusFolders.entity";
+import { trsDriverLicenseList } from "./TrsDriverLicenseList.entity";
 import { directusFiles } from "./DirectusFiles.entity";
 import { trsVehicleType } from "./TrsVehicleType.entity";
 import { trsVehicleStatus } from "./TrsVehicleStatus.entity";
@@ -68,6 +68,7 @@ import { trsResourceReport } from "./TrsResourceReport.entity";
 import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsResourceReportFiles } from "./TrsResourceReportFiles.entity";
 import { trsDriver } from "./TrsDriver.entity";
+import { trsFacility } from "./TrsFacility.entitly";
 
 export {
   trsDriverFiles,
@@ -78,7 +79,6 @@ export {
   trsRegisStatusform,
   trsActivityType,
   directusPanels,
-  trsSubRegisVehicle,
   directusNotifications,
   trsActivityFilesFiles,
   trsActivityConvoy,
@@ -87,7 +87,6 @@ export {
   directusCollections,
   trsRegisDetail,
   directusRoles,
-  trsSubRegis,
   directusFlows,
   directusUsers,
   directusOperations,
@@ -95,7 +94,9 @@ export {
   trsActivity,
   directusActivity,
   trsActivityFiles,
+  trsDrivingLicenseType,
   directusFolders,
+  trsDriverLicenseList,
   directusFiles,
   trsVehicleType,
   trsVehicleStatus,
@@ -140,6 +141,7 @@ export {
   trsActivityVehicleDriver,
   trsResourceReportFiles,
   trsDriver,
+  trsFacility
 };
 
 export default [
@@ -151,7 +153,6 @@ export default [
   trsRegisStatusform,
   trsActivityType,
   directusPanels,
-  trsSubRegisVehicle,
   directusNotifications,
   trsActivityFilesFiles,
   trsActivityConvoy,
@@ -160,7 +161,6 @@ export default [
   directusCollections,
   trsRegisDetail,
   directusRoles,
-  trsSubRegis,
   directusFlows,
   directusUsers,
   directusOperations,
@@ -168,7 +168,9 @@ export default [
   trsActivity,
   directusActivity,
   trsActivityFiles,
+  trsDrivingLicenseType,
   directusFolders,
+  trsDriverLicenseList,
   directusFiles,
   trsVehicleType,
   trsVehicleStatus,
@@ -213,4 +215,5 @@ export default [
   trsActivityVehicleDriver,
   trsResourceReportFiles,
   trsDriver,
+  trsFacility
 ];

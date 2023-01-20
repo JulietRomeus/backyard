@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { trsRegisStatusform } from "./TrsRegisStatusform.entity";
 import { trsRegisStatus } from "./TrsRegisStatus.entity";
+import { trsRegisStatusform } from "./TrsRegisStatusform.entity";
 import { trsRegisDetail } from "./TrsRegisDetail.entity";
 
 @Index("PK__trs_regi__3213E83F65252CE3", ["id"], { unique: true })
@@ -21,7 +21,7 @@ export class trsRegis {
   @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
   is_active: boolean | null;
 
-  @Column("varchar", { name: "purpose", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "purpose", nullable: true, length: 300 })
   purpose: string | null;
 
   @Column("varchar", { name: "accept_by_name", nullable: true, length: 100 })
@@ -110,6 +110,37 @@ export class trsRegis {
   @Column("nvarchar", { name: "purchase_from", nullable: true, length: 255 })
   purchase_from: string | null;
 
+  @Column("int", { name: "purchase_price", nullable: true })
+  purchase_price: number | null;
+
+  @Column("int", { name: "actual_price", nullable: true })
+  actual_price: number | null;
+
+  @Column("nvarchar", { name: "purchase_no", nullable: true, length: 255 })
+  purchase_no: string | null;
+
+  @Column("date", { name: "deliver_date", nullable: true })
+  deliver_date: Date | null;
+
+  @Column("nvarchar", { name: "purchase_detail", nullable: true, length: 255 })
+  purchase_detail: string | null;
+
+  @Column("nvarchar", { name: "process_by_name", nullable: true, length: 255 })
+  process_by_name: string | null;
+
+  @Column("nvarchar", { name: "named_register", nullable: true, length: 255 })
+  named_register: string | null;
+
+  @Column("nvarchar", { name: "road", nullable: true, length: 255 })
+  road: string | null;
+
+  @Column("nvarchar", {
+    name: "vehicle_class_name",
+    nullable: true,
+    length: 255,
+  })
+  vehicle_class_name: string | null;
+
   @ManyToOne(
     () => trsRegisStatusform,
     (trs_regis_statusform) => trs_regis_statusform.trs_regis,
@@ -128,13 +159,8 @@ export class trsRegis {
 
   @OneToMany(
     () => trsRegisDetail,
-    (trs_regis_detail) => trs_regis_detail.trs_regis_no
+    (trs_regis_detail) => trs_regis_detail.trs_regis_no,
+    {cascade:true}
   )
-  trs_regis_details: trsRegisDetail[];
-
-  @RelationId((trs_regis: trsRegis) => trs_regis.trs_regis_statusform_no)
-  trs_regis_statusform_no2: string | null;
-
-  @RelationId((trs_regis: trsRegis) => trs_regis.trs_regis_status_no)
-  trs_regis_status_no2: number | null;
+  trs_regis_detail_no: trsRegisDetail[];
 }

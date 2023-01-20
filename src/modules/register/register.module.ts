@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { RegisterService } from './register.service';
 import { RegisterController } from './register.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import Entities from '../../entities'
+
 @Module({
   imports: [
     HttpModule.registerAsync({
@@ -18,6 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+    TypeOrmModule.forFeature([...Entities],'MSSQL_CONNECTION')
   ],
   controllers: [RegisterController],
   providers: [RegisterService]
