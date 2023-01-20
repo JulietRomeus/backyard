@@ -1,3 +1,4 @@
+
 import { trsFacility } from '../../entities'
 import { Injectable } from '@nestjs/common';
 import { CreateFacilityDto } from './dto/create-facility.dto';
@@ -19,88 +20,76 @@ export class FacilityService {
   ) {
 
   }
-
-  // async create(createDriverDto: any) {
-  //   const actionType = ACTIONTYPE.CREATE
-  //   let timeNow = now();
-  //   let user = createDriverDto.request_by
-  //   let dataObj = createDriverDto
-  //   dataObj = stamp(dataObj, createDriverDto, actionType)
-  //   const trs_driver_license_lists:trsDriverLicenseList[] = dataObj.trs_driver_license_lists.map(rec => {
-  //     let tempDataObj = new trsDriverLicenseList()
-  //     stamp(tempDataObj, createDriverDto, actionType)
-  //     Object.keys(rec).map(keys => {
-  //       tempDataObj[keys] = rec[keys] || null
-  //     })
-  //     tempDataObj.is_active=true
-
-  //     return tempDataObj
-  //   })
-  //   delete dataObj.request_by
-  //   const createObj = new trsDriver()
-  //   Object.keys(createDriverDto).map(keys => {
-  //     // console.log(keys,'->',dataObj[keys])
-  //     createObj[keys] = dataObj[keys] || null
-  //   })
-  //   createObj.is_active=true
-  //   createObj.trs_driver_license_lists = trs_driver_license_lists
-  //   const dbRes = await this.trsDriverRepo.save(createObj)
-  //   return genPayload(dbRes,null,actionType)
-  // }
-
-  async findAll() {
-    return await this.trsFacilityRepo.query('select * from Logistics.dbo.trs_facility where is_active =1');
+  async create(CreateFacilityDto: any) {
+    console.log('CreateRegisterDto', CreateFacilityDto);
+    let timeNow = now();
+    let user = CreateFacilityDto.request_by;
+    let dataObj = CreateFacilityDto;
+    dataObj.create_by = CreateFacilityDto;
+    dataObj['create_by_id'] = user.id;
+    dataObj['create_by'] = user.displayname;
+    dataObj['create_date'] = timeNow;
+    dataObj['update_by_id'] = user.id;
+    dataObj['update_by'] = user.displayname;
+    dataObj['update_date'] = timeNow;
+    const finalItems = this.trsFacilityRepo.create(dataObj);
+    console.log('finalItems', finalItems);
+    //------creatsubitem---------//
+  
+    const dbRes = await this.trsFacilityRepo.save(finalItems);
+    console.log('dbRes', dbRes);
+    return dbRes
   }
 
 
-//   async findOne(id: number) {
-//     return await this.trsDriverRepo.createQueryBuilder('d')
-//     .leftJoinAndSelect('d.trs_driver_license_lists', 'tdll', 'tdll.is_active = 1')
-//     .where('d.id =:id', { id: id }).getOne()
-//   }
+  async findAll() {
+    return await this.trsFacilityRepo.find({where:{is_active:true}});
+  }
 
-//   async update(id: number, updateDriverDto: any) {
-//     if (!updateDriverDto?.id && !id)    throw new HttpException(`Driver id ${id} not found.`, HttpStatus.FORBIDDEN)
-//     const actionType = ACTIONTYPE.UPDATE
-//     let timeNow = now();
-//     let user = updateDriverDto.request_by
-//     let dataObj = updateDriverDto
-//     const stampedObject = dataObj.trs_driver_license_lists.map((rec) => {
-//       let tempDataObj = new trsDriverLicenseList()
-//       stamp(tempDataObj, updateDriverDto, ACTIONTYPE.CREATE)
-//       Object.keys(rec).map(keys => {
-//         tempDataObj[keys] = rec[keys] || null
-//       })
-//       tempDataObj.is_active=true
 
-//       return tempDataObj
-//     })
-//     const updateObj = new trsDriver()
-//     // console.log(dataObj)
-//     Object.keys(dataObj).map(keys => {
-//       updateObj[keys] = dataObj[keys] || null
-//     })
-//     updateObj.id = id
-//     updateObj.unit_code = dataObj.unit_code
-//     updateObj.trs_driver_license_lists = stampedObject
+  async findOne(id: any) {
+    return await this.trsFacilityRepo.createQueryBuilder('d')
+    .where('d.id =:id', { id: id }).getOne()
+  }
 
-//     const dbRes = await this.trsDriverRepo.save(updateObj)
-//     const data = await this.findOne(id)
+  async update(id: number, UpdateFacilityDto: any): Promise<any> {
+    console.log('updateRegisterDto', UpdateFacilityDto);
+    // console.log('query', query);
+    let timeNow = now();
+    let user = UpdateFacilityDto.request_by;
+    let dataObj = UpdateFacilityDto;
+    // dataObj['update_by_id'] = user.id;
+    delete dataObj.request_by;
+    delete dataObj.id;
+    dataObj['update_date'] = timeNow;
+    dataObj['update_by'] = user.displayname;
+    const finalItems = dataObj;
+    console.log('finalItems', finalItems);
 
-//     return genPayload(data,null,actionType);
-//   }
+    const dbRes = await this.trsFacilityRepo.update(id, finalItems);
+    console.log('dbRes', dbRes);
+    return await this.findOne(id);
+  }
 
 
 
 
-//   async remove(id: number) {
-//     const actionType = ACTIONTYPE.DELETE
-//     await this.trsDriverRepo.update(id, {
-//       is_active: false
-//     });
-//     return genPayload({},null,actionType)
-//   }
-// }
+async remove(id: number, UpdateFacilityDto: any, query: any): Promise<any> {
+  console.log('updateRegisterDto', UpdateFacilityDto);
+  let timeNow = now();
+  let user = UpdateFacilityDto.request_by;
+  let dataObj = UpdateFacilityDto;
+  dataObj['update_by_id'] = user.id;
+  delete dataObj.request_by;
+  delete dataObj.id;
+  dataObj['update_date'] = timeNow;
+  dataObj['update_by'] = user.displayname;
+  const finalItems = dataObj;
+  finalItems.is_active = 0;
+  const dbRes = await this.trsFacilityRepo.update(id, finalItems);
+  console.log(dbRes)
+}
+
 
 
 

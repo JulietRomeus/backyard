@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Query} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Permission } from 'src/decorators/permission.decorator';
 import { FacilityService } from './facility.service';
@@ -11,10 +11,11 @@ import { UpdateFacilityDto } from './dto/update-facility.dto';
 export class FacilityController {
   constructor(private readonly facilityService: FacilityService) {}
 
-  // @Post()
-  // create(@Body() createDriverDto: any) {
-  //   return this.driverService.create(createDriverDto);
-  // }
+  @Post()
+  create(@Body() CreateFacilityDto: any) {
+    console.log('CreateFacilityDto',CreateFacilityDto)
+    return this.facilityService.create(CreateFacilityDto);
+  }
 
   @Get()
   // @Permission({ route: route, action: 'view' })
@@ -32,18 +33,21 @@ export class FacilityController {
   //   return this.driverService.findAllLicense();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.driverService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: any) {
+    return this.facilityService.findOne(id);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateDriverDto: any) {
-  //   return this.driverService.update(+id, updateDriverDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateFacilityDto: any) {
+    console.log('updateFacilityDto',updateFacilityDto)
+    return this.facilityService.update(+id, updateFacilityDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.driverService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: any, @Body() UpdateFacilityDto: any,@Query() query: any){
+    console.log('id',id)
+    console.log('UpdateFacilityDto',UpdateFacilityDto)
+    return this.facilityService.remove(id, UpdateFacilityDto, query);
+  }
 }
