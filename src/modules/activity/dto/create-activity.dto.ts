@@ -173,6 +173,7 @@ export class CreateActivityDto extends RequestByDto {
       mooban_name: string;
       latitude: number;
       longitude: number;
+      polyline: string;
     }[];
     vehicle_driver: {
       id: number;
