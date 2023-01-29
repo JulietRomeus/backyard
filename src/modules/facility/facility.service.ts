@@ -36,7 +36,7 @@ export class FacilityService {
     console.log('finalItems', finalItems);
     //------creatsubitem---------//
   
-    const dbRes = await this.trsFacilityRepo.save(finalItems);
+    const dbRes = await this.trsFacilityRepo?.save(finalItems);
     console.log('dbRes', dbRes);
     return dbRes
   }

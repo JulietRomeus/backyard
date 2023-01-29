@@ -52,7 +52,7 @@ export class DriverService {
     createObj.is_active=true
     createObj.trs_driver_license_lists = trs_driver_license_lists
     const dbRes = await this.trsDriverRepo.save(createObj)
-    return genPayload(dbRes,null,actionType)
+    return dbRes
   }
 
   async findAll() {

@@ -9,7 +9,7 @@ export class trsFacility {
   @Column("nvarchar", { name: "facility_name", nullable: true, length: 100 })
   facility_name: string | null;
 
-  @Column("nvarchar", { name: "facility_type", nullable: true, length: 100 })
+  @Column("int", { name: "facility_type" })
   facility_type: string | null;
 
   @Column("float", { name: "lat", nullable: true, precision: 53 })
