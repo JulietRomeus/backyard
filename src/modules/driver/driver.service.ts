@@ -28,6 +28,7 @@ export class DriverService {
   }
 
   async create(createDriverDto: any) {
+    console.log('createDriverDto',createDriverDto)
     const actionType = ACTIONTYPE.CREATE
     let timeNow = now();
     let user = createDriverDto.request_by
@@ -59,6 +60,7 @@ export class DriverService {
     return await this.trsDriverRepo.createQueryBuilder('d')
       .leftJoinAndSelect('d.trs_driver_license_lists', 'tdll', 'tdll.is_active = 1')
       .getMany()
+      
   }
 
   async findAllLicense() {
@@ -66,12 +68,14 @@ export class DriverService {
   }
 
   async findOne(id: number) {
+   
     return await this.trsDriverRepo.createQueryBuilder('d')
     .leftJoinAndSelect('d.trs_driver_license_lists', 'tdll', 'tdll.is_active = 1')
     .where('d.id =:id', { id: id }).getOne()
   }
 
   async update(id: number, updateDriverDto: any) {
+    console.log(updateDriverDto)
     if (!updateDriverDto?.id && !id)    throw new HttpException(`Driver id ${id} not found.`, HttpStatus.FORBIDDEN)
     const actionType = ACTIONTYPE.UPDATE
     let timeNow = now();
