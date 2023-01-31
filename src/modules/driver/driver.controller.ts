@@ -14,7 +14,7 @@ import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
 import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
 // import actio
-const route = 'driver';
+// const route = 'driver';
 
 @Controller('driver')
 export class DriverController {
@@ -22,6 +22,7 @@ export class DriverController {
 
   @Post()
   async create(@Body() createDriverDto: any) {
+    console.log('createDriverDto',createDriverDto)
     const data = await this.driverService.create(createDriverDto);
     return genPayload(data, null, ACTIONTYPE.CREATE);
   }
@@ -49,6 +50,7 @@ export class DriverController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDriverDto: any) {
+    console.log('updateDriverDto',updateDriverDto)
     return this.driverService.update(+id, updateDriverDto);
   }
 

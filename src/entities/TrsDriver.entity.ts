@@ -46,14 +46,14 @@ export class trsDriver {
   @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
   is_active: boolean | null;
 
-  @Column("datetime2", { name: "create_date", nullable: true })
+  @Column("datetime", { name: "create_date", nullable: true })
   create_date: Date | null;
 
-  @Column("datetime2", { name: "update_date", nullable: true })
+  @Column("datetime", { name: "update_date", nullable: true })
   update_date: Date | null;
 
-  @Column("nvarchar", { name: "ooo", nullable: true, length: 3000 })
-  ooo: string | null;
+  // @Column("nvarchar", { name: "ooo", nullable: true, length: 3000 })
+  // ooo: string | null;
 
   @Column("nvarchar", { name: "firstname", nullable: true, length: 255 })
   firstname: string | null;
@@ -139,7 +139,8 @@ export class trsDriver {
 
   @OneToMany(
     () => trsDriverLicenseList,
-    (trs_driver_license_list) => trs_driver_license_list.driver
+    (trs_driver_license_list) => trs_driver_license_list.driver,
+    {cascade:true}
   )
   trs_driver_license_lists: trsDriverLicenseList[];
 
