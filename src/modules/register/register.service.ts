@@ -27,36 +27,42 @@ export class RegisterService {
     private trsRegisStatusRepo: Repository<trsRegisStatus>,
   ) {}
 
-  async findAll() {
-    //console.log('body', body?.request_by || '');
-    // console.log('query', query);
-    let filterObj = {
-      is_active: { _eq: 1 }, // filter ข้อมูลที่ยังไม่ถูกลบ
-    };
-
-    const filterString = JSON.stringify(filterObj);
-    console.log('filterObj', filterString);
-    const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
-    console.log(this.httpService.get(`/items/${getQuery}`));
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get status', error);
-      return {};
-    }
-  }
-
   // async findAll() {
-  //   return await this.trsRegisRepo.createQueryBuilder('d')
-  //     .leftJoinAndSelect('d.trs_regis_detail_no', 'tdll', 'tdll.is_active = 1')
-  //     .getMany()
-   
-    
+  //   //console.log('body', body?.request_by || '');
+  //   // console.log('query', query);
+  //   let filterObj = {
+  //     is_active: { _eq: 1 }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //   };
+
+  //   const filterString = JSON.stringify(filterObj);
+  //   console.log('filterObj', filterString);
+  //   const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
+  //   console.log(this.httpService.get(`/items/${getQuery}`));
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get status', error);
+  //     return {};
+  //   }
   // }
+
+  async findAll() {
+    return await this.trsRegisRepo
+      .createQueryBuilder('d')
+      .where('d.is_active = 1')
+      .leftJoinAndSelect('d.trs_regis_detail_no', 'tdll', 'tdll.is_active = 1')
+      .leftJoinAndSelect('d.trs_regis_status_no', 'trsn', 'trsn.is_active=1')
+      .leftJoinAndSelect(
+        'd.trs_regis_statusform_no',
+        'trsfn',
+        'trsfn.is_active=1',
+      )
+      .getMany();
+  }
 
   // async findAllActive(): Promise<mobResourceRequirement[]> {
   //   return await this.mobResourceRequirementRepository.find(
@@ -73,28 +79,35 @@ export class RegisterService {
   //   )
   // }
 
+  // async findOne(id: any) {
+  //   //console.log('body', body?.request_by || '');
+  //   //console.log('query', query);
+  //   let filterObj = {
+  //     is_active: { _eq: 1 }, // filter ข้อมูลที่ยังไม่ถูกลบ
+  //   };
+
+  //   const filterString = JSON.stringify(filterObj);
+  //   // console.log('filterObj', filterString);
+  //   const getQuery = `trs_regis/${id}?filter=${filterString}&fields=${listFields}`;
+  //   try {
+  //     const result = await firstValueFrom(
+  //       this.httpService.get(`/items/${getQuery}`),
+  //     );
+  //     // console.log(result.data);
+  //     return result?.data?.data || [];
+  //   } catch (error) {
+  //     console.log('error get status', error);
+  //     return {};
+  //   }
+  // }
+
   async findOne(id: any) {
-    //console.log('body', body?.request_by || '');
-    //console.log('query', query);
-    let filterObj = {
-      is_active: { _eq: 1 }, // filter ข้อมูลที่ยังไม่ถูกลบ
-    };
-
-    const filterString = JSON.stringify(filterObj);
-    // console.log('filterObj', filterString);
-    const getQuery = `trs_regis/${id}?filter=${filterString}&fields=${listFields}`;
-    try {
-      const result = await firstValueFrom(
-        this.httpService.get(`/items/${getQuery}`),
-      );
-      // console.log(result.data);
-      return result?.data?.data || [];
-    } catch (error) {
-      console.log('error get status', error);
-      return {};
-    }
+    return this.trsRegisRepo
+      .createQueryBuilder('d')
+      .where('d.id =:id', { id: id })
+      .getOne();
   }
-
+  
   async create(CreateRegisterDto: any) {
     // console.log('CreateRegisterDto', CreateRegisterDto);
     let timeNow = now();

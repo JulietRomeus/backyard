@@ -13,6 +13,7 @@ import { directusSettings } from "./DirectusSettings.entity";
 import { trsActivityFilesFiles } from "./TrsActivityFilesFiles.entity";
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
+import { trsDriver } from "./TrsDriver.entity";
 
 @Index("directus_files_pkey", ["id"], { unique: true })
 @Entity("directus_files", { schema: "dbo" })
@@ -137,4 +138,8 @@ export class directusFiles {
 
   @RelationId((directus_files: directusFiles) => directus_files.modified_by)
   modified_by2: string | null;
+
+
+
+
 }

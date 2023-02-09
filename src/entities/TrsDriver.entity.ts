@@ -3,15 +3,18 @@ import {
   Entity,
   Index,
   OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Transform } from 'class-transformer';
-
+import { directusFiles } from "./DirectusFiles.entity";
 import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
 import { trsVehicle } from "./TrsVehicle.entity";
 import { trsDriverLicenseList } from "./TrsDriverLicenseList.entity";
+import { trsDriverStatus } from "./TrsDriverStatus.entity";
 
 @Index("PK__trs_driv__3213E83FE61B5A1A", ["id"], { unique: true })
 @Entity("trs_driver", { schema: "dbo" })
@@ -39,9 +42,6 @@ export class trsDriver {
 
   @Column("bit", { name: "is_delete", nullable: true, default: () => "'0'" })
   is_delete: boolean | null;
-
-  @Column("bit", { name: "is_available", nullable: true, default: () => "'1'" })
-  is_available: boolean | null;
 
   @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
   is_active: boolean | null;
@@ -119,6 +119,9 @@ export class trsDriver {
   @Column("nvarchar", { name: "driver_name", nullable: true, length: 255 })
   driver_name: string | null;
 
+  @Column("nvarchar", { name: "file", nullable: true, length: 255 })
+  file: string | null;
+  
   @OneToMany(
     () => trsActivityVehicleDriver,
     (trs_activity_vehicle_driver) => trs_activity_vehicle_driver.driver
@@ -146,4 +149,13 @@ export class trsDriver {
 
   @OneToMany(() => trsVehicle, (trs_vehicle) => trs_vehicle.main_driver)
   trs_vehicles: trsVehicle[];
+
+  @ManyToOne(
+    () => trsDriverStatus,
+    (trs_driver_status) => trs_driver_status.trs_drivers,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "driver_status", referencedColumnName: "id" }])
+  driver_status: trsDriverStatus;
+
 }

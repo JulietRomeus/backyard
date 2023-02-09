@@ -67,7 +67,12 @@ export class DriverService {
         'tdll',
         'tdll.is_active = 1',
       )
+      .leftJoinAndSelect(
+        'd.driver_status',
+        'tds'
+      )
       .getMany();
+      
   }
 
   async findAllLicense() {

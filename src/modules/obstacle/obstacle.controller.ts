@@ -11,39 +11,40 @@ import { UpdateObstacleDto } from './dto/update-obstacle.dto';
 export class ObstacleController {
   constructor(private readonly obstacleService: ObstacleService) {}
 
-  // @Post()
-  // create(@Body() createDriverDto: any) {
-  //   return this.driverService.create(createDriverDto);
-  // }
+  @Post()
+  create(@Body() createDriverDto: any) {
+    console.log('createDriverDto',createDriverDto)
+    return this.obstacleService.create(createDriverDto);
+  }
 
-  @Get()
+  @Get('dis')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
-  findAll() {
-    return this.obstacleService.findAll();
+  findAlldis() {
+    return this.obstacleService.findAlldis();
   }
 
-  // @Get('option/license')
-  // // @Permission({ route: route, action: 'view' })
-  // @ApiBearerAuth('JWT')
-  // @ApiOperation({ summary: 'ดึงข้อมูลใบขับขี่ทั้งหมด' })
-  // findAllLicense() {
-  //   return this.driverService.findAllLicense();
-  // }
+  @Get('j')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  findAllj() {
+    return this.obstacleService.findAllj();
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.driverService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: any) {
+    return this.obstacleService.findOne(id);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateDriverDto: any) {
-  //   return this.driverService.update(+id, updateDriverDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() UpdateObstacleDto: any) {
+    return this.obstacleService.update(+id, UpdateObstacleDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.driverService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: any) {
+    return this.obstacleService.remove(id);
+  }
 }
