@@ -26,7 +26,7 @@ import {
 } from 'src/utils/genQuery';
 const mainDriverFields = `vehicle_driver.vehicle.main_driver.id,vehicle_driver.vehicle.main_driver.driver_id,vehicle_driver.vehicle.main_driver.driver_name`;
 const vehicleFields = `vehicle_driver.vehicle.id,vehicle_driver.vehicle.vehicle_type,vehicle_driver.vehicle.is_available,vehicle_driver.vehicle.license_plate,${mainDriverFields}`;
-const driverFields = `vehicle_driver.driver.id,vehicle_driver.driver.driver_id,vehicle_driver.driver.driver_name,vehicle_driver.driver.driver_license`;
+const driverFields = `vehicle_driver.driver.id,vehicle_driver.driver.driver_id,vehicle_driver.driver.driver_name,vehicle_driver.driver.driver_license,vehicle_driver.driver.firstname,vehicle_driver.driver.lastname`;
 const vehicleDriverFields = `vehicle_driver.unit_code,vehicle_driver.unit_name,vehicle_driver.controller,${vehicleFields},${driverFields}`;
 
 const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
@@ -216,6 +216,63 @@ export class ActivityService {
 
   async findOne(id: string, body: any, query: any) {
     // console.log('body', body?.request_by || '');
+    // console.log('BODY,,,,,', body.request_by.data_permission);
+    // console.log('query', query);
+    let filterObj = {
+      is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+      is_test: { _neq: true }, // filter ข้อมูลที่ยังไม่ใช่ข้อมูลทดสอบ
+      //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม
+      _or: [
+        {
+          _and: [
+            { activity_status: { _neq: 'draft' } },
+            { is_delete: { _neq: true } },
+            { is_test: { _neq: true } },
+          ],
+        },
+        {
+          _and: [
+            { activity_status: { _eq: 'draft' } },
+            { req_create_by: body?.request_by?.id || '' },
+          ],
+        },
+      ],
+      //   { roles: { role_id: { id: { _in: rolesIdArr } } } },
+    };
+    // filter type = res(ตอบรับ) ให้ unit_response_code = unit ของ user หรือ unit_request_code = unit ของ user
+    filterObj[
+      query.type === 'res' ? 'unit_response_code' : 'unit_request_code'
+    ] = {
+      _eq:
+        body?.request_by?.activeUnit?.code ||
+        body?.request_by?.units[0]?.code ||
+        '',
+    };
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_activity/${id}?${filterString}&fields=${formFields}`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log('----', getQuery);
+      if (result.data.data.is_delete === true) {
+        // console.log('>>', result.data.data.is_delete);
+        return { is_delete: true };
+      } else {
+        return result?.data?.data || {};
+      }
+    } catch (error) {
+      // console.log('error get activity id', error);
+      // return error;
+      return {};
+    }
+  }
+
+  async mission(id: string, body: any, query: any) {
+    // console.log('body', body?.request_by || '');
+    // console.log('BODY,,,,,', body.request_by.data_permission);
     // console.log('query', query);
     let filterObj = {
       is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
@@ -817,7 +874,7 @@ export class ActivityService {
   // }
 
   async vehicle(query: any, body: RequestByDto) {
-    const resfields = `id,license_plate,main_driver.id,main_driver.driver_id,main_driver.driver_name`;
+    const resfields = `id,license_plate,main_driver.id,main_driver.driver_id,main_driver.driver_name,main_driver.firstname,main_driver.lastname`;
     // const selectedFields = resfields.split(',')
 
     let filterObj = {
@@ -954,7 +1011,14 @@ export class ActivityService {
       filterObj['vehicle_type'] = query.type;
     }
     return await this.trsDriverRepo.find({
-      select: ['id', 'driver_id', 'driver_name', 'driver_license'],
+      select: [
+        'id',
+        'driver_id',
+        'driver_name',
+        'driver_license',
+        'firstname',
+        'lastname',
+      ],
       where: filterObj,
     });
   }

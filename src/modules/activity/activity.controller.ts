@@ -85,8 +85,17 @@ export class ActivityController {
     return this.activityService.driver(query, body);
   }
 
+  @Get('mission/:id')
+  @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  mission(@Param('id') id: string, @Body() body: any, @Query() query: any) {
+    return this.activityService.findOne(id, body, query);
+  }
+
+
   @Get(':id')
-  // @Permission({ route: route, action: 'view' })
+  @Permission({ route: route, action: 'view' })
   // @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   findOne(@Param('id') id: string, @Body() body: any, @Query() query: any) {
