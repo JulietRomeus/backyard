@@ -1,18 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Permission } from 'src/decorators/permission.decorator';
 import { DriverService } from './driver.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
-const route = 'driver'
+import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
+// import actio
+// const route = 'driver';
 
 @Controller('driver')
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
   @Post()
-  create(@Body() createDriverDto: any) {
-    return this.driverService.create(createDriverDto);
+  async create(@Body() createDriverDto: any) {
+    console.log('createDriverDto',createDriverDto)
+    const data = await this.driverService.create(createDriverDto);
+    return genPayload(data, null, ACTIONTYPE.CREATE);
   }
 
   @Get()
@@ -38,6 +50,7 @@ export class DriverController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDriverDto: any) {
+    console.log('updateDriverDto',updateDriverDto)
     return this.driverService.update(+id, updateDriverDto);
   }
 

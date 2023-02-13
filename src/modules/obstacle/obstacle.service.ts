@@ -1,3 +1,4 @@
+import { trsObstacle } from './../../entities';
 import { Injectable } from '@nestjs/common';
 import { CreateObstacleDto } from './dto/create-obstacle.dto';
 import { UpdateObstacleDto } from './dto/update-obstacle.dto';
@@ -17,100 +18,82 @@ import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload'
 export class ObstacleService {
 
   constructor(
-    @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
-    private trsObstacleRepo: Repository<trsDriver>,
-    // @InjectRepository(trsDriverLicenseList, 'MSSQL_CONNECTION')
-    // private trsDriverLicenseListRepo: Repository<trsDriverLicenseList>,
+    @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
+    private trsObstacleRepo: Repository<trsObstacle>,
+    // @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
+    // private trsObstacleby: Repository<trsDriverLicenseList>,
     // @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
     // private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
   ) {
 
   }
 
-  // async create(createDriverDto: any) {
-  //   const actionType = ACTIONTYPE.CREATE
-  //   let timeNow = now();
-  //   let user = createDriverDto.request_by
-  //   let dataObj = createDriverDto
-  //   dataObj = stamp(dataObj, createDriverDto, actionType)
-  //   const trs_driver_license_lists:trsDriverLicenseList[] = dataObj.trs_driver_license_lists.map(rec => {
-  //     let tempDataObj = new trsDriverLicenseList()
-  //     stamp(tempDataObj, createDriverDto, actionType)
-  //     Object.keys(rec).map(keys => {
-  //       tempDataObj[keys] = rec[keys] || null
-  //     })
-  //     tempDataObj.is_active=true
-
-  //     return tempDataObj
-  //   })
-  //   delete dataObj.request_by
-  //   const createObj = new trsDriver()
-  //   Object.keys(createDriverDto).map(keys => {
-  //     // console.log(keys,'->',dataObj[keys])
-  //     createObj[keys] = dataObj[keys] || null
-  //   })
-  //   createObj.is_active=true
-  //   createObj.trs_driver_license_lists = trs_driver_license_lists
-  //   const dbRes = await this.trsDriverRepo.save(createObj)
-  //   return genPayload(dbRes,null,actionType)
-  // }
-
-  async findAll() {
-    return await this.trsObstacleRepo.query('select * from Prevent_Disaster.dbo.obstacle')
+  async create(CreateObstacleDto: any) {
+    console.log('CreateRegisterDto', CreateObstacleDto);
+    let timeNow = now();
+    let user = CreateObstacleDto.request_by;
+    let dataObj = CreateObstacleDto;
+    dataObj.create_by = CreateObstacleDto;
+    // dataObj['create_by_id'] = user.id;
+    // dataObj['create_by'] = user.displayname;
+    // dataObj['create_date'] = timeNow;
+    // dataObj['update_by_id'] = user.id;
+    // dataObj['update_by'] = user.displayname;
+    // dataObj['update_date'] = timeNow;
+    const finalItems = this.trsObstacleRepo.create(dataObj);
+    console.log('finalItems', finalItems);
+    //------creatsubitem---------//
+  
+    const dbRes = await this.trsObstacleRepo?.save(finalItems);
+    console.log('dbRes', dbRes);
+    return dbRes
   }
 
-//   async findAllLicense() {
-//     return await this.trsDrivingLicenseTypeRepo.find();
-//   }
+  async findAlldis() {
+    return await this.trsObstacleRepo.query('select * from Prevent_Disaster.dbo.obstacle where status=1')
+  }
 
-//   async findOne(id: number) {
-//     return await this.trsDriverRepo.createQueryBuilder('d')
-//     .leftJoinAndSelect('d.trs_driver_license_lists', 'tdll', 'tdll.is_active = 1')
-//     .where('d.id =:id', { id: id }).getOne()
-//   }
+  async findAllj() {
+    return await this.trsObstacleRepo.find({where:{is_active:true}});
+  }
 
-//   async update(id: number, updateDriverDto: any) {
-//     if (!updateDriverDto?.id && !id)    throw new HttpException(`Driver id ${id} not found.`, HttpStatus.FORBIDDEN)
-//     const actionType = ACTIONTYPE.UPDATE
-//     let timeNow = now();
-//     let user = updateDriverDto.request_by
-//     let dataObj = updateDriverDto
-//     const stampedObject = dataObj.trs_driver_license_lists.map((rec) => {
-//       let tempDataObj = new trsDriverLicenseList()
-//       stamp(tempDataObj, updateDriverDto, ACTIONTYPE.CREATE)
-//       Object.keys(rec).map(keys => {
-//         tempDataObj[keys] = rec[keys] || null
-//       })
-//       tempDataObj.is_active=true
+  async findOne(id: number) {
+    console.log('id',id)
+    return await this.trsObstacleRepo.createQueryBuilder('d')
+    .where('d.id =:id', { id: id })
+    .getOne()
+  }
 
-//       return tempDataObj
-//     })
-//     const updateObj = new trsDriver()
-//     // console.log(dataObj)
-//     Object.keys(dataObj).map(keys => {
-//       updateObj[keys] = dataObj[keys] || null
-//     })
-//     updateObj.id = id
-//     updateObj.unit_code = dataObj.unit_code
-//     updateObj.trs_driver_license_lists = stampedObject
+  async update(id: number, UpdateObstacleDto: any): Promise<any> {
+    console.log('updateRegisterDto', UpdateObstacleDto);
+    // console.log('query', query);
+    let timeNow = now();
+    let user = UpdateObstacleDto.request_by;
+    let dataObj = UpdateObstacleDto;
+    // dataObj['update_by_id'] = user.id;
+    delete dataObj.request_by;
+    delete dataObj.id;
+    // dataObj['update_date'] = timeNow;
+    // dataObj['update_by'] = user.displayname;
+    const finalItems = dataObj;
+    console.log('finalItems', finalItems);
 
-//     const dbRes = await this.trsDriverRepo.save(updateObj)
-//     const data = await this.findOne(id)
-
-//     return genPayload(data,null,actionType);
-//   }
+    const dbRes = await this.trsObstacleRepo.update(id, finalItems);
+    console.log('dbRes', dbRes);
+    return await this.findOne(id);
+  }
 
 
 
 
-//   async remove(id: number) {
-//     const actionType = ACTIONTYPE.DELETE
-//     await this.trsDriverRepo.update(id, {
-//       is_active: false
-//     });
-//     return genPayload({},null,actionType)
-//   }
-// }
+  async remove(id: number) {
+    const actionType = ACTIONTYPE.DELETE
+    await this.trsObstacleRepo.update(id, {
+      is_active: false
+    });
+    return genPayload({},null,actionType)
+  }
+
 
 
 
