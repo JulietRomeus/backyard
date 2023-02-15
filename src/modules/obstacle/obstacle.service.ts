@@ -35,11 +35,12 @@ export class ObstacleService {
     let dataObj = CreateObstacleDto;
     dataObj.create_by = CreateObstacleDto;
     // dataObj['create_by_id'] = user.id;
-    // dataObj['create_by'] = user.displayname;
-    // dataObj['create_date'] = timeNow;
+    dataObj['create_by'] = user.displayname;
+    dataObj['create_date'] = timeNow;
     // dataObj['update_by_id'] = user.id;
     // dataObj['update_by'] = user.displayname;
     // dataObj['update_date'] = timeNow;
+    console.log('dataObj',dataObj)
     const finalItems = this.trsObstacleRepo.create(dataObj);
     console.log('finalItems', finalItems);
     //------creatsubitem---------//
