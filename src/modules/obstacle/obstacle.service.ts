@@ -1,4 +1,4 @@
-import { trsObstacle } from './../../entities';
+import { trsObstacle } from '../../entities';
 import { Injectable } from '@nestjs/common';
 import { CreateObstacleDto } from './dto/create-obstacle.dto';
 import { UpdateObstacleDto } from './dto/update-obstacle.dto';
