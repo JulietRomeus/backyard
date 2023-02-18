@@ -90,9 +90,8 @@ export class ActivityController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   mission(@Param('id') id: string, @Body() body: any, @Query() query: any) {
-    return this.activityService.findOne(id, body, query);
+    return this.activityService.mission(id, body, query);
   }
-
 
   @Get(':id')
   @Permission({ route: route, action: 'view' })
