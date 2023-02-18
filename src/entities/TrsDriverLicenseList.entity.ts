@@ -58,6 +58,13 @@ export class trsDriverLicenseList {
   @Column("nvarchar", { name: "delete_date", nullable: true, length: 255 })
   delete_date: string | null;
 
+  @Column("datetime2", { name: "issue_date", nullable: true })
+  issue_date: Date | null;
+
+  @Column("datetime2", { name: "expire_date", nullable: true })
+  expire_date: Date | null;
+
+
   @ManyToOne(
     () => trsDrivingLicenseType,
     (trs_driving_license_type) =>

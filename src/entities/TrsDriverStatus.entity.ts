@@ -16,6 +16,8 @@ export class trsDriverStatus {
   @Column("nvarchar", { name: "driver_status", nullable: true, length: 255 })
   driver_status: string | null;
 
+  
+
   @OneToMany(() => trsDriver, (trs_driver) => trs_driver.driver_status)
   trs_drivers: trsDriver[];
 }

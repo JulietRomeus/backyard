@@ -88,6 +88,7 @@ export class DriverService {
         'tdll.is_active = 1',
       )
       .where('d.id =:id', { id: id })
+      .leftJoinAndSelect('d.driver_status','tds')
       .getOne();
   }
 

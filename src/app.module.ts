@@ -13,6 +13,7 @@ import { DriverModule } from './modules/driver/driver.module';
 import { ObstacleModule } from './modules/obstacle/obstacle.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 @Module({
   imports: [
     // Import Config
@@ -35,8 +36,10 @@ import Entities from './entities';
     RegisterModule,
 
     DriverModule,
-    
+
     ObstacleModule,
+    
+    DashboardModule,
 
     FacilityModule,
 
