@@ -6,7 +6,7 @@ import {
   trsDriver,
   trsDriverLicenseList,
   trsDrivingLicenseType,
-} from '../../entities';
+} from '../../entities/Index';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
@@ -67,12 +67,8 @@ export class DriverService {
         'tdll',
         'tdll.is_active = 1',
       )
-      .leftJoinAndSelect(
-        'd.driver_status',
-        'tds'
-      )
+      .leftJoinAndSelect('d.driver_status', 'tds')
       .getMany();
-      
   }
 
   async findAllLicense() {
@@ -88,7 +84,7 @@ export class DriverService {
         'tdll.is_active = 1',
       )
       .where('d.id =:id', { id: id })
-      .leftJoinAndSelect('d.driver_status','tds')
+      .leftJoinAndSelect('d.driver_status', 'tds')
       .getOne();
   }
 
@@ -105,8 +101,8 @@ export class DriverService {
     let dataObj = updateDriverDto;
     const stampedObject = dataObj.trs_driver_license_lists?.map((rec) => {
       let tempDataObj = new trsDriverLicenseList();
-      let action  = rec?.id?ACTIONTYPE.UPDATE: ACTIONTYPE.CREATE
-      stamp(tempDataObj, updateDriverDto,action);
+      let action = rec?.id ? ACTIONTYPE.UPDATE : ACTIONTYPE.CREATE;
+      stamp(tempDataObj, updateDriverDto, action);
       Object.keys(rec).map((keys) => {
         tempDataObj[keys] = rec[keys] || null;
       });

@@ -15,7 +15,7 @@ import {
   trsVehicleStatus,
   trsDriver,
   trsVehicle,
-} from '../../entities';
+} from '../../entities/Index';
 import { Repository, Brackets, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {

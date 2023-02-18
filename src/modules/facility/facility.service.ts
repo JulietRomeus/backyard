@@ -1,5 +1,4 @@
-
-import { trsFacility } from '../../entities'
+import { trsFacility } from '../../entities/Index';
 import { Injectable } from '@nestjs/common';
 import { CreateFacilityDto } from './dto/create-facility.dto';
 import { UpdateFacilityDto } from './dto/update-facility.dto';
@@ -7,19 +6,20 @@ import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
-import { HttpException,HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import now from '../../utils/now';
-import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
+import genPayload, {
+  stamp,
+  ACTIONTYPE,
+  ForbiddenException,
+} from 'src/utils/payload';
 import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class FacilityService {
-
   constructor(
     @InjectRepository(trsFacility, 'MSSQL_CONNECTION')
     private trsFacilityRepo: Repository<trsFacility>,
-  ) {
-
-  }
+  ) {}
   async create(CreateFacilityDto: any) {
     console.log('CreateRegisterDto', CreateFacilityDto);
     let timeNow = now();
@@ -35,21 +35,21 @@ export class FacilityService {
     const finalItems = this.trsFacilityRepo.create(dataObj);
     console.log('finalItems', finalItems);
     //------creatsubitem---------//
-  
+
     const dbRes = await this.trsFacilityRepo?.save(finalItems);
     console.log('dbRes', dbRes);
-    return dbRes
+    return dbRes;
   }
-
 
   async findAll() {
-    return await this.trsFacilityRepo.find({where:{is_active:true}});
+    return await this.trsFacilityRepo.find({ where: { is_active: true } });
   }
 
-
   async findOne(id: any) {
-    return await this.trsFacilityRepo.createQueryBuilder('d')
-    .where('d.id =:id', { id: id }).getOne()
+    return await this.trsFacilityRepo
+      .createQueryBuilder('d')
+      .where('d.id =:id', { id: id })
+      .getOne();
   }
 
   async update(id: number, UpdateFacilityDto: any): Promise<any> {
@@ -71,28 +71,21 @@ export class FacilityService {
     return await this.findOne(id);
   }
 
-
-
-
-async remove(id: number, UpdateFacilityDto: any, query: any): Promise<any> {
-  console.log('updateRegisterDto', UpdateFacilityDto);
-  let timeNow = now();
-  let user = UpdateFacilityDto.request_by;
-  let dataObj = UpdateFacilityDto;
-  dataObj['update_by_id'] = user.id;
-  delete dataObj.request_by;
-  delete dataObj.id;
-  dataObj['update_date'] = timeNow;
-  dataObj['update_by'] = user.displayname;
-  const finalItems = dataObj;
-  finalItems.is_active = 0;
-  const dbRes = await this.trsFacilityRepo.update(id, finalItems);
-  console.log(dbRes)
-}
-
-
-
-
+  async remove(id: number, UpdateFacilityDto: any, query: any): Promise<any> {
+    console.log('updateRegisterDto', UpdateFacilityDto);
+    let timeNow = now();
+    let user = UpdateFacilityDto.request_by;
+    let dataObj = UpdateFacilityDto;
+    dataObj['update_by_id'] = user.id;
+    delete dataObj.request_by;
+    delete dataObj.id;
+    dataObj['update_date'] = timeNow;
+    dataObj['update_by'] = user.displayname;
+    const finalItems = dataObj;
+    finalItems.is_active = 0;
+    const dbRes = await this.trsFacilityRepo.update(id, finalItems);
+    console.log(dbRes);
+  }
 
   // async update_x(id: number, updateDriverDto: any) {
   //   console.log(updateDriverDto)
@@ -101,7 +94,6 @@ async remove(id: number, UpdateFacilityDto: any, query: any): Promise<any> {
   //   let user = updateDriverDto.request_by
   //   let dataObj = updateDriverDto
   // dataObj = stamp(dataObj, updateDriverDto, 'create')
-
 
   //   delete dataObj.request_by
   //   // delete dataObj.id
@@ -154,4 +146,4 @@ async remove(id: number, UpdateFacilityDto: any, query: any): Promise<any> {
   //   })
 
   //   return await this.findOne(id);
-  }
+}

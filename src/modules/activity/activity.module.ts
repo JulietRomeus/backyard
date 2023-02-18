@@ -4,7 +4,7 @@ import { ActivityService } from './activity.service';
 import { ActivityController } from './activity.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import Entities from '../../entities'
+import Entities from '../../entities/Index';
 
 @Module({
   imports: [
@@ -21,10 +21,9 @@ import Entities from '../../entities'
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([...Entities],'MSSQL_CONNECTION')
-
+    TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
   ],
   controllers: [ActivityController],
-  providers: [ActivityService]
+  providers: [ActivityService],
 })
 export class ActivityModule {}
