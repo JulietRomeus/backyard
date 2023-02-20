@@ -1,4 +1,4 @@
-import { trsObstacle } from './../../entities';
+import { trsObstacle } from '../../entities/Index';
 import { Injectable } from '@nestjs/common';
 import { CreateObstacleDto } from './dto/create-obstacle.dto';
 import { UpdateObstacleDto } from './dto/update-obstacle.dto';
@@ -6,27 +6,28 @@ import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import {
   trsDriver,
   trsDriverLicenseList,
-  trsDrivingLicenseType
-} from '../../entities'
+  trsDrivingLicenseType,
+} from '../../entities/Index';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
-import { HttpException,HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import now from '../../utils/now';
-import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
+import genPayload, {
+  stamp,
+  ACTIONTYPE,
+  ForbiddenException,
+} from 'src/utils/payload';
 @Injectable()
 export class ObstacleService {
-
   constructor(
     @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
     private trsObstacleRepo: Repository<trsObstacle>,
-    // @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
-    // private trsObstacleby: Repository<trsDriverLicenseList>,
-    // @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
-    // private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
-  ) {
-
-  }
+  ) // @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
+  // private trsObstacleby: Repository<trsDriverLicenseList>,
+  // @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
+  // private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
+  {}
 
   async create(CreateObstacleDto: any) {
     console.log('CreateRegisterDto', CreateObstacleDto);
@@ -40,29 +41,32 @@ export class ObstacleService {
     // dataObj['update_by_id'] = user.id;
     // dataObj['update_by'] = user.displayname;
     // dataObj['update_date'] = timeNow;
-    console.log('dataObj',dataObj)
+    console.log('dataObj', dataObj);
     const finalItems = this.trsObstacleRepo.create(dataObj);
     console.log('finalItems', finalItems);
     //------creatsubitem---------//
-  
+
     const dbRes = await this.trsObstacleRepo?.save(finalItems);
     console.log('dbRes', dbRes);
-    return dbRes
+    return dbRes;
   }
 
   async findAlldis() {
-    return await this.trsObstacleRepo.query('select * from Prevent_Disaster.dbo.obstacle where status=1')
+    return await this.trsObstacleRepo.query(
+      'select * from Prevent_Disaster.dbo.obstacle where status=1',
+    );
   }
 
   async findAllj() {
-    return await this.trsObstacleRepo.find({where:{is_active:true}});
+    return await this.trsObstacleRepo.find({ where: { is_active: true } });
   }
 
   async findOne(id: number) {
-    console.log('id',id)
-    return await this.trsObstacleRepo.createQueryBuilder('d')
-    .where('d.id =:id', { id: id })
-    .getOne()
+    console.log('id', id);
+    return await this.trsObstacleRepo
+      .createQueryBuilder('d')
+      .where('d.id =:id', { id: id })
+      .getOne();
   }
 
   async update(id: number, UpdateObstacleDto: any): Promise<any> {
@@ -84,20 +88,13 @@ export class ObstacleService {
     return await this.findOne(id);
   }
 
-
-
-
   async remove(id: number) {
-    const actionType = ACTIONTYPE.DELETE
+    const actionType = ACTIONTYPE.DELETE;
     await this.trsObstacleRepo.update(id, {
-      is_active: false
+      is_active: false,
     });
-    return genPayload({},null,actionType)
+    return genPayload({}, null, actionType);
   }
-
-
-
-
 
   // async update_x(id: number, updateDriverDto: any) {
   //   console.log(updateDriverDto)
@@ -106,7 +103,6 @@ export class ObstacleService {
   //   let user = updateDriverDto.request_by
   //   let dataObj = updateDriverDto
   // dataObj = stamp(dataObj, updateDriverDto, 'create')
-
 
   //   delete dataObj.request_by
   //   // delete dataObj.id
@@ -159,4 +155,4 @@ export class ObstacleService {
   //   })
 
   //   return await this.findOne(id);
-  }
+}

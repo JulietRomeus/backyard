@@ -8,7 +8,7 @@ import {
   trsRegisStatusform,
   trsRegisDetail,
   trsRegisStatus,
-} from '../../entities';
+} from '../../entities/Index';
 import { Repository, Brackets, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import now from '../../utils/now';
@@ -114,7 +114,7 @@ export class RegisterService {
   //     )
   //     .getOne();
   // }
-  
+
   async create(CreateRegisterDto: any) {
     // console.log('CreateRegisterDto', CreateRegisterDto);
     let timeNow = now();
