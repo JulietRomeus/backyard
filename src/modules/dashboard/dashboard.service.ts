@@ -52,12 +52,26 @@ export class DashboardService {
     const vehicle_data: TrsDashboard[] = await this.trsrepository.query(
       vehicle,
     );
-    console.log(driver_data);
+    console.log(vehicle_data);
+
+    const vehicleTop5 = `[dbo].[disDash_TrsDashboard]
+    @unit_nos= ${id},
+    @dataset_name = N'VehicleTop5'`;
+    const vehicleTop5_data: TrsDashboard[] = await this.trsrepository.query(
+      vehicleTop5,
+    );
+
+    const newvehicle = vehicleTop5_data?.map((r:any)=>r.countt)
+    const newlabel = vehicleTop5_data?.map((r:any)=>r.name)
+
+    // console.log({newvehicel:newvehicle,label:newlabel});
+
 
     return {
       driver_data: driver_rank,
       driverstatus_data: neeew,
       vehicle_data: vehicle_data,
+      vehicletop5_data:({newvehicel:newvehicle,label:newlabel})
     };
   }
 }
