@@ -279,8 +279,10 @@ export class ActivityService {
     const beforeForm = `before_activity_form.*`;
     const afterForm = `after_activity_form.*`;
     const whileForm = `while_activity_form.*`;
+    const stopoverForm = `stopover_activity_form.*`;
+    const helpForm = `help_activity_form.*`;
     const accidentForm = `accident_activity_form.*.*`;
-    const missionFormField = `${activityField},${driverField},${vehicleField},${convoyField},${beforeForm},${afterForm},${whileForm},${accidentForm},*`;
+    const missionFormField = `${activityField},${driverField},${vehicleField},${convoyField},${beforeForm},${afterForm},${whileForm},${stopoverForm},${helpForm},${accidentForm},*`;
     // console.log('body', body?.request_by || '');
     // console.log('BODY,,,,,', body.request_by.data_permission);
     // console.log('query', query);
@@ -307,13 +309,13 @@ export class ActivityService {
     };
 
     const filterString = JSON.stringify(filterObj);
-    console.log('filterObj', filterString);
+    // console.log('filterObj', filterString);
     const getQuery = `trs_activity_vehicle_driver/${id}?${filterString}&fields=${missionFormField}`;
     try {
       const result = await firstValueFrom(
         this.httpService.get(`/items/${getQuery}`),
       );
-      // console.log('----', getQuery);
+      // console.log('----', result?.data?.data);
       return result?.data?.data || {};
     } catch (error) {
       // console.log('error get activity id', error);
