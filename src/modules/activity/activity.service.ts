@@ -251,7 +251,7 @@ export class ActivityService {
 
     const filterString = JSON.stringify(filterObj);
     // console.log('filterObj', filterString);
-    const getQuery = `trs_activity/${id}?${filterString}&fields=${formFields}`;
+    const getQuery = `trs_activity/${id}?filter=${filterString}&fields=${formFields}`;
     try {
       const result = await firstValueFrom(
         this.httpService.get(`/items/${getQuery}`),
@@ -267,6 +267,63 @@ export class ActivityService {
       // console.log('error get activity id', error);
       // return error;
       return {};
+    }
+  }
+
+  async missionAll(body: any, query: any) {
+    // console.log('>>>mission id ', body.request_by?.id);
+    const activityField = `activity.*,activity.activity_status.*,activity.activity_type.*`;
+    const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
+    const vehicleField = `vehicle.id,vehicle.vehicle_type.id,vehicle.vehicle_type.name,vehicle.vehicle_id,vehicle.license_plate,vehicle.unit_code`;
+    const convoyField = `convoy.*,convoy.route.*`;
+    const beforeForm = `before_activity_form.*`;
+    const afterForm = `after_activity_form.*`;
+    const whileForm = `while_activity_form.*`;
+    const stopoverForm = `stopover_activity_form.*`;
+    const helpForm = `help_activity_form.*`;
+    const accidentForm = `accident_activity_form.*.*`;
+    const missionFormField = `${activityField},${driverField},${vehicleField},${convoyField},*`;
+    // console.log('body', body?.request_by || '');
+    // console.log('BODY,,,,,', body.request_by.data_permission);
+    // console.log('query', query);
+    let filterObj = {
+      // is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
+      // is_test: { _neq: true }, // filter ข้อมูลที่ยังไม่ใช่ข้อมูลทดสอบ
+      // //  filter status ไม่ใช่ draft หรือ draft status ที่ผู้เรียกเป็นผู้สร้างฟอร์ม
+      driver: { driver_id: { _eq: body?.request_by?.id } },
+      convoy: { _nnull: true },
+      activity: { activity_status: { _neq: 'draft' } },
+      // _or: [
+      //   {
+      //     _and: [
+      //       { activity_status: { _neq: 'draft' } },
+      //       { is_delete: { _neq: true } },
+      //       { is_test: { _neq: true } },
+      //     ],
+      //   },
+      //   {
+      //     _and: [
+      //       { activity_status: { _eq: 'draft' } },
+      //       { req_create_by: body?.request_by?.id || '' },
+      //     ],
+      //   },
+      // ],
+      //   { roles: { role_id: { id: { _in: rolesIdArr } } } },
+    };
+
+    const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
+    const getQuery = `trs_activity_vehicle_driver?filter=${filterString}&fields=${missionFormField}`;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.get(`/items/${getQuery}`),
+      );
+      // console.log('----', result?.data?.data);
+      return result?.data?.data || {};
+    } catch (error) {
+      // console.log('error get activity id', error);
+      return error;
+      // return {};
     }
   }
 
