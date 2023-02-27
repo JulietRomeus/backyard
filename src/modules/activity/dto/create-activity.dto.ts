@@ -106,7 +106,7 @@ export class CreateActivityDto extends RequestByDto {
   @IsOptional()
   note?: string;
 
-  @IsArray()
+
   route: {
     id: number;
     order: number;
@@ -125,7 +125,7 @@ export class CreateActivityDto extends RequestByDto {
     longitude: number;
   }[];
 
-  @IsArray()
+
   vehicle_driver: {
     id: number;
     sort: number;
