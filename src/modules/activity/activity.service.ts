@@ -251,7 +251,7 @@ export class ActivityService {
 
     const filterString = JSON.stringify(filterObj);
     // console.log('filterObj', filterString);
-    const getQuery = `trs_activity/${id}?filter=${filterString}&fields=${formFields}`;
+    const getQuery = `trs_activity/${id}?${filterString}&fields=${formFields}`;
     try {
       const result = await firstValueFrom(
         this.httpService.get(`/items/${getQuery}`),
@@ -265,7 +265,7 @@ export class ActivityService {
       }
     } catch (error) {
       // console.log('error get activity id', error);
-      // return error;
+      return error;
       return {};
     }
   }
