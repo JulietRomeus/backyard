@@ -125,7 +125,8 @@ export class CreateActivityDto extends RequestByDto {
     longitude: number;
   }[];
 
-
+  @IsArray()
+  @IsOptional()
   vehicle_driver: {
     id: number;
     sort: number;
@@ -151,6 +152,7 @@ export class CreateActivityDto extends RequestByDto {
   }[];
 
   @IsArray()
+  @IsOptional()
   convoy: {
     order: number;
     controller: string;

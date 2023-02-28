@@ -481,7 +481,7 @@ export class ActivityService {
   }
 
   async update(id: string, updateActivityDto: UpdateActivityDto, query: any) {
-    // console.log(updateActivityDto.request_by);
+    // console.log("--->",updateActivityDto);
     const userUnit =
       updateActivityDto?.request_by?.activeUnit?.code ||
       updateActivityDto?.request_by?.units[0].code;
