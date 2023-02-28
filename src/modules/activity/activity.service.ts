@@ -271,7 +271,9 @@ export class ActivityService {
   }
 
   async missionAll(body: any, query: any) {
-    // console.log('>>>mission id ', body.request_by?.id);
+    
+    console.log('>>>mission id ', body.request_by.data_permission);
+  
     const activityField = `activity.*,activity.activity_status.*,activity.activity_type.*`;
     const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
     const vehicleField = `vehicle.id,vehicle.vehicle_type.id,vehicle.vehicle_type.name,vehicle.vehicle_id,vehicle.license_plate,vehicle.unit_code`;
@@ -328,7 +330,7 @@ export class ActivityService {
   }
 
   async mission(id: string, body: any, query: any) {
-    console.log('>>>mission id ', id);
+    // console.log('>>>mission id ', id);
     const activityField = `activity.*,activity.activity_status.*,activity.vehicle_driver.*.*,activity.activity_type.*,activity.files.*,activity.files.files.*.*`;
     const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
     const vehicleField = `vehicle.id,vehicle.vehicle_type.id,vehicle.vehicle_type.name,vehicle.vehicle_id,vehicle.license_plate,vehicle.unit_code`;
@@ -524,7 +526,7 @@ export class ActivityService {
       updateActivityDto?.request_by?.activeUnit?.code ||
       updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
-      updateActivityDto.unit_response.map((u) => {
+      updateActivityDto.unit_response?.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
         if (u.unit_no === userUnit) {
           u.status = 'pending_res_review';
@@ -623,7 +625,7 @@ export class ActivityService {
       updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
       // console.log('xxxx');
-      updateActivityDto.unit_response.map((u) => {
+      updateActivityDto.unit_response?.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
         if (u.unit_no === userUnit) {
           u.status = 'pending_res_approve';
@@ -667,7 +669,7 @@ export class ActivityService {
       updateActivityDto?.request_by?.activeUnit?.code ||
       updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
-      updateActivityDto.unit_response.map((u) => {
+      updateActivityDto.unit_response?.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
         if (u.unit_no === userUnit) {
           u.status = 'approved';
@@ -723,7 +725,7 @@ export class ActivityService {
       updateActivityDto?.request_by?.activeUnit?.code ||
       updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
-      updateActivityDto.unit_response.map((u) => {
+      updateActivityDto.unit_response?.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
         if (u.unit_no === userUnit) {
           u.status = 'disapproved';
@@ -765,7 +767,7 @@ export class ActivityService {
       updateActivityDto?.request_by?.activeUnit?.code ||
       updateActivityDto?.request_by?.units[0].code;
     if (query.type === 'res') {
-      updateActivityDto.unit_response.map((u) => {
+      updateActivityDto.unit_response?.map((u) => {
         // console.log('u..', u.unit_code, userUnit);
         if (u.unit_no === userUnit) {
           u.status = 'res_edit';
