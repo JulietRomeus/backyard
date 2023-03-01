@@ -134,6 +134,9 @@ export class trsVehicle {
   @Column("nvarchar", { name: "unit_code", nullable: true, length: 255 })
   unit_code: string | null;
 
+  @Column("nvarchar", { name: "vehicle_maintenance_status", nullable: true, length: 255 })
+  vehicle_maintenance_status: string | null;
+
   @Column("bit", { name: "is_delete", nullable: true, default: () => "'0'" })
   is_delete: boolean | null;
 
@@ -212,6 +215,7 @@ export class trsVehicle {
     () => trsVehicleType,
     (trs_vehicle_type) => trs_vehicle_type.trs_vehicles
   )
+
   @JoinColumn([{ name: "vehicle_type", referencedColumnName: "id" }])
   vehicle_type: trsVehicleType;
 
@@ -269,4 +273,11 @@ export class trsVehicle {
 
   @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand)
   vehicle_brand2: number | null;
+
+  @Column("datetime2", { name: "optional_insurance_enddate", nullable: true })
+  optional_insurance_enddate: Date | null;
+
+  @Column("datetime2", { name: "forced_insurance_enddate", nullable: true })
+  forced_insurance_enddate: Date | null;
+
 }

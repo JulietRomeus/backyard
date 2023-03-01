@@ -14,6 +14,7 @@ import { ObstacleModule } from './modules/obstacle/obstacle.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities/Index';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import {MaintenanceModule} from './modules/maintenance/maintenance.module'
 @Module({
   imports: [
     // Import Config
@@ -42,6 +43,8 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     DashboardModule,
 
     FacilityModule,
+
+    MaintenanceModule,
 
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION',

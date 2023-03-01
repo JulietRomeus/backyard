@@ -34,6 +34,7 @@ export class trsDriver {
   @Column('nvarchar', { name: 'driver_license', nullable: true })
   driver_license: string | null;
 
+
   @Column('nvarchar', {
     name: 'driver_license',
     nullable: true,

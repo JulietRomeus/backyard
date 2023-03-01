@@ -12,7 +12,6 @@ import { trsVehicle } from "./TrsVehicle.entity";
 export class trsVehicleType {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
-
   @Column("nvarchar", { name: "name", nullable: true })
   name: string | null;
 
