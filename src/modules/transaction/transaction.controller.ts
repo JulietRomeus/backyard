@@ -9,16 +9,16 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Permission } from 'src/decorators/permission.decorator';
-import { MaintenanceService } from './maintenance.service';
-import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
-import { UpdateMaintenanceDto } from './dto/update-maintenance.dto';
+import { TransactionService } from './transaction.service';
+import { CreatetransactionDto } from './dto/create-transaction.dto';
+import { UpdatetransactionDto } from './dto/update-transaction.dto';
 import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
 // import actio
 // const route = 'driver';
 
-@Controller('maintenance')
-export class MaintenanceController {
-  constructor(private readonly maintenanceService: MaintenanceService) {}
+@Controller('transaction')
+export class TransactionController {
+  constructor(private readonly transactionService: TransactionService) {}
 
   // @Post()
   // async create(@Body() createDriverDto: any) {
@@ -27,13 +27,13 @@ export class MaintenanceController {
   //   return genPayload(data, null, ACTIONTYPE.CREATE);
   // }
 
-  // @Get()
-  // // @Permission({ route: route, action: 'view' })
-  // @ApiBearerAuth('JWT')
-  // @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
-  // findAll() {
-  //   return this.maintenanceService.findAll();
-  // }
+  @Get()
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  findAll() {
+    return this.transactionService.findAll();
+  }
 
 //   @Get('option/license')
 //   // @Permission({ route: route, action: 'view' })

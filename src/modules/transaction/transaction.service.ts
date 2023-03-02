@@ -1,8 +1,8 @@
+import { trsTransaction } from './../../entities/TrsTransaction.entity';
 import { Injectable } from '@nestjs/common';
-import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
-import { UpdateMaintenanceDto } from './dto/update-maintenance.dto';
+import { CreatetransactionDto } from './dto/create-transaction.dto';
+import { UpdatetransactionDto } from './dto/update-transaction.dto';
 import { RequestByDto } from '../../common/interfaces/requestBy.dto';
-import { trsVehicle } from '../../entities/Index';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
@@ -14,10 +14,10 @@ import genPayload, {
   ForbiddenException,
 } from 'src/utils/payload';
 @Injectable()
-export class MaintenanceService {
+export class TransactionService {
   constructor(
-    @InjectRepository(trsVehicle, 'MSSQL_CONNECTION')
-    private trsVehicleRepo: Repository<trsVehicle>,
+    @InjectRepository(trsTransaction, 'MSSQL_CONNECTION')
+    private trsTransactionRepo: Repository<trsTransaction>,
   ) {}
 
   // async create(createDriverDto: any) {
@@ -50,16 +50,20 @@ export class MaintenanceService {
   //   return dbRes;
   // }
 
-  // async findAll() {
-  //   return await this.trsVehicleRepo
-  //     .createQueryBuilder('d')
-  //     .where('d.is_delete = 0')
-  //     .leftJoinAndSelect(
-  //       'd.vehicle_type',
-  //       'tdll'
-  //     )
-  //     .getMany();
-  // }
+  async findAll() {
+    return await this.trsTransactionRepo
+      .createQueryBuilder('d')
+      .where('d.status = 1')
+      .leftJoinAndSelect(
+        'd.vehicle',
+        'dv'
+      )
+      .leftJoinAndSelect(
+        'd.transaction_type',
+        'tt'
+      )
+      .getMany();
+  }
 
   // async findAllLicense() {
   //   return await this.trsDrivingLicenseTypeRepo.find();

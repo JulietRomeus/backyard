@@ -1,3 +1,4 @@
+import { trsTransaction } from './TrsTransaction.entity';
 import { trsObstacle } from './TrsObstacle.entity';
 import { trsDriverStatus } from './TrsDriverStatus.entity';
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
@@ -71,6 +72,7 @@ import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsResourceReportFiles } from "./TrsResourceReportFiles.entity";
 import { trsDriver } from "./TrsDriver.entity";
 import { trsFacility } from "./TrsFacility.entitly";
+import { trsTransactionType } from './TrsTransactionType.entity';
 
 export {
   trsDriverFiles,
@@ -220,5 +222,7 @@ export default [
   trsDriver,
   trsFacility,
   trsDriverStatus,
-  trsObstacle
+  trsObstacle,
+  trsTransactionType,
+  trsTransaction
 ];

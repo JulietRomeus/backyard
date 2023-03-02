@@ -1,3 +1,4 @@
+import { TransactionModule } from './modules/transaction/transaction.module';
 import { FacilityModule } from './modules/facility/facility.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -45,6 +46,8 @@ import {MaintenanceModule} from './modules/maintenance/maintenance.module'
     FacilityModule,
 
     MaintenanceModule,
+
+    TransactionModule,
 
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION',
