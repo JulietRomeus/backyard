@@ -24,6 +24,9 @@ export class trsTransactionType {
   @Column("nvarchar", { name: "name", nullable: true, length: 255 })
   name: string | null;
 
+  @Column("nvarchar", { name: "name_en", nullable: true, length: 255 })
+  name_en: string | null;
+
   @OneToMany(
     () => trsTransaction,
     (trs_transaction) => trs_transaction.transaction_type

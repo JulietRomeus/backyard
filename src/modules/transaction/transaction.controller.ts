@@ -35,24 +35,27 @@ export class TransactionController {
     return this.transactionService.findAll();
   }
 
-//   @Get('option/license')
-//   // @Permission({ route: route, action: 'view' })
-//   @ApiBearerAuth('JWT')
-//   @ApiOperation({ summary: 'ดึงข้อมูลใบขับขี่ทั้งหมด' })
-//   findAllLicense() {
-//     return this.driverService.findAllLicense();
-//   }
+  @Get('option')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลใบขับขี่ทั้งหมด' })
+  findOptiontype() {
+    return this.transactionService.findOptiontype();
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.maintenanceService.findOne(+id);
-  // }
+ 
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateMaintenanceDto: any) {
-  //   console.log('updateDriverDto',updateMaintenanceDto)
-  //   return this.maintenanceService.update(+id, updateMaintenanceDto);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.transactionService.findOne(+id);
+  }
+
+  @Patch()
+ async update( @Body() updatetransactionDto: any) {
+    console.log('updateController',updatetransactionDto)
+   const data = await this.transactionService.update(updatetransactionDto);
+    return genPayload(data, null, ACTIONTYPE.UPDATE);
+  }
 
 //   @Delete(':id')
 //   remove(@Param('id') id: string) {

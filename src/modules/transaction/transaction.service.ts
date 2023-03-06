@@ -1,10 +1,11 @@
-import { trsTransaction } from './../../entities/TrsTransaction.entity';
+// import { slcSupply } from './../../entities/SlcSupply.entity';
+// import { trsTransaction } from './../../entities/TrsTransaction.entity';
 import { Injectable } from '@nestjs/common';
 import { CreatetransactionDto } from './dto/create-transaction.dto';
 import { UpdatetransactionDto } from './dto/update-transaction.dto';
 import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { find } from 'rxjs';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import now from '../../utils/now';
@@ -13,11 +14,21 @@ import genPayload, {
   ACTIONTYPE,
   ForbiddenException,
 } from 'src/utils/payload';
+import {
+  trsTransaction,
+  slcSupply,
+  slcSupplySpec
+} from '../../entities/Index';
+
 @Injectable()
 export class TransactionService {
   constructor(
     @InjectRepository(trsTransaction, 'MSSQL_CONNECTION')
     private trsTransactionRepo: Repository<trsTransaction>,
+    @InjectRepository(slcSupply, 'MSSQL_CONNECTION')
+    private trsSupplyRepo: Repository<slcSupply>,
+    @InjectRepository(slcSupplySpec, 'MSSQL_CONNECTION')
+    private trsSupplyspecRepo: Repository<slcSupplySpec>
   ) {}
 
   // async create(createDriverDto: any) {
@@ -51,50 +62,89 @@ export class TransactionService {
   // }
 
   async findAll() {
+    // return await this.trsTransactionRepo
+    //   .createQueryBuilder('d')
+    //   .where(`d.status = 1`)
+    //   .leftJoinAndSelect(
+    //     'd.vehicle',
+    //     'dv'
+    //   )
+    //   .leftJoinAndSelect(
+    //     'dv.supply_item',
+    //     'sii'
+    //   )
+    //   .leftJoinAndSelect(
+    //     'sii.supply_spec',
+    //     'ss'
+    //   )
+    //   .leftJoinAndSelect(
+    //     'ss.supply',
+    //     's'
+    //   )
+    //   .leftJoinAndSelect(
+    //     's.toa',
+    //     't',
+    //   )
+    //   .leftJoinAndSelect(
+    //     'd.transaction_type',
+    //     'tt'
+    //   )
+    //   .leftJoinAndSelect(
+    //     't.supply_sub_type',
+    //     'sst',
+    //     'sst.id =9'
+    //   )
+
+      return await this.trsTransactionRepo.query(
+        'select tt.*,ttt.* ,ssiav.attribute_value as license,ssi.name as item,sss.name as spec,ss.supply_name as type,ss.id as typeid from dbo.trs_transaction tt left join dbo.trs_transaction_type ttt on tt.transaction_type = ttt.id LEFT join dbo.slc_supply_item_attribute_value ssiav on tt.vehicle = ssiav .id left join dbo.slc_supply_item ssi on ssiav.supply_item_id = ssi.id left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id left join dbo.slc_supply ss on sss.supply_id = ss.id left join dbo.slc_toa st on st.id = ss.toa_id left join dbo.slc_refs_supply_sub_type srsst on st.supply_sub_type_id = srsst.id where srsst.id = 9 and tt.renewal_date <= DATEADD(MONTH,6,GETDATE())',
+      );
+    }
+      
+     
+      // .getMany();
+     
+  
+  async findOptiontype() {
+    return await this.trsSupplyRepo
+    .createQueryBuilder('d')
+    .where('d.is_active = 1')
+    .getMany();
+
+
+  }
+  // async finoptiongen() {
+  //   return await this.trsTransactionRepo
+  //   .createQueryBuilder('d')
+  //   .where('d.is_active = 1')
+  //   .getMany();
+  // }
+
+
+  async findOne(id: number) {
     return await this.trsTransactionRepo
       .createQueryBuilder('d')
-      .where('d.status = 1')
-      .leftJoinAndSelect(
-        'd.vehicle',
-        'dv'
-      )
-      .leftJoinAndSelect(
-        'd.transaction_type',
-        'tt'
-      )
-      .getMany();
+      .where('d.id =:id', { id: id })
+      // .where('d.status = 1')
+      .getOne();
   }
 
-  // async findAllLicense() {
-  //   return await this.trsDrivingLicenseTypeRepo.find();
-  // }
-
-  // async findOne(id: number) {
-  //   return await this.trsVehicleRepo
-  //     .createQueryBuilder('d')
-  //     .where('d.id =:id', { id: id })
-
-  //     .getOne();
-  // }
-
-  // async update(id: number, UpdatetrsVehicleDto: any): Promise<any> {
-  //   console.log('updateRegisterDto', UpdatetrsVehicleDto);
-  //   // console.log('query', query);
-  //   let timeNow = now();
-  //   let user = UpdatetrsVehicleDto.request_by;
-  //   let dataObj = UpdatetrsVehicleDto;
-  //   // dataObj['update_by_id'] = user.id;
-  //   delete dataObj.request_by;
-  //   delete dataObj.id;
-  //   // dataObj['update_date'] = timeNow;
-  //   // dataObj['update_by'] = user.displayname;
-  //   const finalItems = dataObj;
-  //   console.log('finalItems', finalItems);
-
-  //   const dbRes = await this.trsVehicleRepo.update(id, finalItems);
-  //   console.log('dbRes', dbRes);
-  //   return await this.findOne(id);
-  // }
+  async update(UpdatetransactionDto: any): Promise<any> {
+    console.log('trsTransaction', UpdatetransactionDto);
+    // console.log('query', query);
+    let timeNow = now();
+    let user = UpdatetransactionDto.request_by;
+    let dataObj = UpdatetransactionDto;
+    dataObj['update_by_id'] = user.id;
+    delete dataObj.request_by;
+    delete dataObj.id;
+    dataObj['update_date'] = `${timeNow}`;
+    dataObj['update_by'] = user.displayname;
+    const finalItems = dataObj;
+    console.log('finalItems', finalItems);
+    const dbRes = await this.trsTransactionRepo.update({id:In(finalItems.set)}, {renewal_date:finalItems.date,update_date:finalItems.update_date,update_by:finalItems.update_by,update_by_id:finalItems.update_by_id});
+    console.log('dbRes', dbRes);
+    return await this.trsTransactionRepo.find({where:{id : In(finalItems.set)}});
+  }
 
   // async update(id: any, updateDriverDto: any) {
   //   console.log('updateDriverDtoUbdate', updateDriverDto);

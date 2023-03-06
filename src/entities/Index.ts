@@ -1,3 +1,9 @@
+import { slcRefsSupplySubType } from './SlcRefsSupplySubType.entity';
+import { slcSupply } from './SlcSupply.entity';
+import { slcToa } from './SlcToa.entity';
+import { slcSupplyItemAttribute } from './SlcSupplyItemAttribute.entity';
+import { slcSupplyItemAttributeValue } from './SlcSupplyItemAttributeValue.entity';
+import { slcSupplySpec } from './SlcSupplySpec.entity';
 import { trsTransaction } from './TrsTransaction.entity';
 import { trsObstacle } from './TrsObstacle.entity';
 import { trsDriverStatus } from './TrsDriverStatus.entity';
@@ -73,6 +79,8 @@ import { trsResourceReportFiles } from "./TrsResourceReportFiles.entity";
 import { trsDriver } from "./TrsDriver.entity";
 import { trsFacility } from "./TrsFacility.entitly";
 import { trsTransactionType } from './TrsTransactionType.entity';
+import { slcSupplyItem } from './SlcSupplyItem.entity';
+
 
 export {
   trsDriverFiles,
@@ -146,7 +154,17 @@ export {
   trsResourceReportFiles,
   trsDriver,
   trsFacility,
-  trsObstacle
+  trsObstacle,
+  trsTransactionType,
+  trsTransaction,
+  slcSupplyItem,
+  slcSupplySpec,
+  slcSupplyItemAttributeValue,
+  slcSupplyItemAttribute,
+  slcToa,
+  slcSupply,
+  slcRefsSupplySubType
+  
 };
 
 export default [
@@ -224,5 +242,14 @@ export default [
   trsDriverStatus,
   trsObstacle,
   trsTransactionType,
-  trsTransaction
+  trsTransaction,
+  slcSupplyItem,
+  slcSupplySpec,
+  slcSupplyItemAttributeValue,
+  slcSupplyItemAttribute,
+  slcToa,
+  slcSupply,
+  slcRefsSupplySubType
+  
+
 ];
