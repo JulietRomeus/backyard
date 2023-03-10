@@ -27,13 +27,13 @@ export class MaintenanceController {
   //   return genPayload(data, null, ACTIONTYPE.CREATE);
   // }
 
-  // @Get()
-  // // @Permission({ route: route, action: 'view' })
-  // @ApiBearerAuth('JWT')
-  // @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
-  // findAll() {
-  //   return this.maintenanceService.findAll();
-  // }
+  @Get()
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  findAll() {
+    return this.maintenanceService.findAll();
+  }
 
 //   @Get('option/license')
 //   // @Permission({ route: route, action: 'view' })

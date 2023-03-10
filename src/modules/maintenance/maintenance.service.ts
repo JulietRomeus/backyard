@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
 import { UpdateMaintenanceDto } from './dto/update-maintenance.dto';
 import { RequestByDto } from '../../common/interfaces/requestBy.dto';
@@ -19,6 +19,7 @@ export class MaintenanceService {
     @InjectRepository(trsVehicle, 'MSSQL_CONNECTION')
     private trsVehicleRepo: Repository<trsVehicle>,
   ) {}
+  
 
   // async create(createDriverDto: any) {
   //   console.log('createDriverDtoooooo', createDriverDto);
@@ -50,16 +51,10 @@ export class MaintenanceService {
   //   return dbRes;
   // }
 
-  // async findAll() {
-  //   return await this.trsVehicleRepo
-  //     .createQueryBuilder('d')
-  //     .where('d.is_delete = 0')
-  //     .leftJoinAndSelect(
-  //       'd.vehicle_type',
-  //       'tdll'
-  //     )
-  //     .getMany();
-  // }
+  async findAll() {
+    return await this.trsVehicleRepo.query('select supply_group_id ,rm.unit_no,supply_group_name , rrrm.repair_methode,ssiav.attribute_value as license ,supply_item_name,rm.supply_item_id as item,rrmpt.period_type,ma_start_date ,ma_end_date,item_status,rm.update_by_id ,rm.update_by ,rm.update_date ,rm.create_by_id ,rm.create_by ,rm.create_date ,rm.delete_by_id, rm.delete_by ,rm.delete_date  from rep_maintenance rm left join dbo.rep_ref_repair_method rrrm ON repair_method_id = rrrm.id left join dbo.rep_ref_ma_period_type rrmpt on rrmpt.id = rm.supply_ma_period_id left join dbo.slc_refs_supply_group srsg on srsg.id = rm.supply_group_id left join dbo.slc_supply_item ssi  on ssi.id  = rm.supply_item_id left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id where srsg.id = 5'
+    )
+  }
 
   // async findAllLicense() {
   //   return await this.trsDrivingLicenseTypeRepo.find();
