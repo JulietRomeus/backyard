@@ -29,7 +29,7 @@ export class RegisterController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
   findAll(@Body() body: any, @Query() query: any)  {
-    return this.registerService.findAll();
+    return this.registerService.findAll(query);
   }
 
  
@@ -51,6 +51,10 @@ export class RegisterController {
   @Patch('send/:id')
   send(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
   {
+    // console.log('id',id)
+    // console.log('updateRegisterDto',updateRegisterDto)
+    // console.log('query',query)
+
     return this.registerService.send(id, updateRegisterDto, query);
   }
 

@@ -50,7 +50,8 @@ export class RegisterService {
   //   }
   // }
 
-  async findAll() {
+  async findAll(query) {
+    console.log('query',query)
     return await this.trsRegisRepo
       .createQueryBuilder('d')
       .where('d.is_active = 1')
@@ -203,7 +204,13 @@ export class RegisterService {
     dataObj['update_date'] = timeNow;
     dataObj['update_by'] = user.displayname;
     const finalItems = dataObj;
-    finalItems.trs_regis_statusform_no.id = 'review';
+    if (query.type == "req") {
+      finalItems.trs_regis_statusform_no.id = 'review';
+    }
+    else{
+      finalItems.trs_regis_statusform_no.id = 'res_review';
+    }
+   
     console.log('finalItems', finalItems);
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
@@ -227,7 +234,12 @@ export class RegisterService {
     dataObj['update_date'] = timeNow;
     dataObj['update_by'] = user.displayname;
     const finalItems = dataObj;
-    finalItems.trs_regis_statusform_no.id = 'pending_approve';
+    if (query.type == "req") {
+      finalItems.trs_regis_statusform_no.id = 'pending_approve';
+    }
+    else{
+      finalItems.trs_regis_statusform_no.id = 'res_pending_approve';
+    }
     console.log('finalItems', finalItems);
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
@@ -252,8 +264,13 @@ export class RegisterService {
     dataObj['update_by'] = user.displayname;
 
     const finalItems = dataObj;
-    finalItems.trs_regis_statusform_no.id = 'approved';
-    console.log('query.typejaa', query.type);
+    if (query.type == "req") {
+      finalItems.trs_regis_statusform_no.id = 'approved';
+    }
+    else{
+      finalItems.trs_regis_statusform_no.id = 'res_approved';
+    }
+    // console.log('query.typejaa', query.type);
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
