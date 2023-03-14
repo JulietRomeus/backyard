@@ -29,7 +29,7 @@ export class RegisterController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
   findAll(@Body() body: any, @Query() query: any)  {
-    return this.registerService.findAll();
+    return this.registerService.findAll(query);
   }
 
  
