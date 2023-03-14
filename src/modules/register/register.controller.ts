@@ -51,6 +51,10 @@ export class RegisterController {
   @Patch('send/:id')
   send(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
   {
+    // console.log('id',id)
+    // console.log('updateRegisterDto',updateRegisterDto)
+    // console.log('query',query)
+
     return this.registerService.send(id, updateRegisterDto, query);
   }
 
