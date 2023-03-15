@@ -134,6 +134,43 @@ export class trsRegis {
   @Column("nvarchar", { name: "road", nullable: true, length: 255 })
   road: string | null;
 
+  @Column("nvarchar", { name: "res_update_by_id", nullable: true, length: 255 })
+  res_update_by_id: string | null;
+
+  @Column("nvarchar", { name: "res_update_by", nullable: true, length: 255 })
+  res_update_by: string | null;
+
+  @Column("date", { name: "res_update_date", nullable: true })
+  res_update_date: Date | null;
+
+  @Column("nvarchar", { name: "res_review_by_id", nullable: true, length: 255 })
+  res_review_by_id: string | null;
+
+  @Column("nvarchar", { name: "res_review_by", nullable: true, length: 255 })
+  res_review_by: string | null;
+
+  @Column("date", { name: "res_review_date", nullable: true })
+  res_review_date: Date | null;
+
+  @Column("nvarchar", { name: "res_approve_by_id", nullable: true, length: 255 })
+  res_approve_by_id: string | null;
+
+  @Column("nvarchar", { name: "res_approve_by", nullable: true, length: 255 })
+  res_approve_by: string | null;
+
+  @Column("date", { name: "res_approve_date", nullable: true })
+  res_approve_date: Date | null;
+
+  @Column("nvarchar", { name: "review_by_id", nullable: true, length: 255 })
+  review_by_id: string | null;
+
+  @Column("nvarchar", { name: "review_by", nullable: true, length: 255 })
+  review_by: string | null;
+
+  @Column("date", { name: "review_date", nullable: true })
+  review_date: Date | null;
+
+
   @Column("nvarchar", {
     name: "vehicle_class_name",
     nullable: true,
