@@ -246,11 +246,11 @@ export class RegisterService {
     dataObj['review_date'] = timeNow;
     dataObj['review_by'] = user.displayname}
     else{
-      dataObj['res_review_by_id'] = user.id;
+      dataObj['res_update_by_id'] = user.id;
     delete dataObj.request_by;
     delete dataObj.id;
-    dataObj['res_review_date'] = timeNow;
-    dataObj['res_review_by'] = user.displayname
+    dataObj['res_update_date'] = timeNow;
+    dataObj['res_update_by'] = user.displayname
 
     }
 
@@ -291,11 +291,11 @@ export class RegisterService {
     }
     else{
       finalItems.trs_regis_statusform_no.id = 'res_pending_approve';
-      dataObj['res_approve_by_id'] = user.id;
+      dataObj['res_review_by_id'] = user.id;
       delete dataObj.request_by;
       delete dataObj.id;
-      dataObj['res_approve_date'] = timeNow;
-      dataObj['res_approve_by'] = user.displayname;
+      dataObj['res_review_date'] = timeNow;
+      dataObj['res_review_by'] = user.displayname;
     }
     console.log('finalItems', finalItems);
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
@@ -323,6 +323,11 @@ export class RegisterService {
     const finalItems = dataObj;
     if (query.type == "req") {
       finalItems.trs_regis_statusform_no.id = 'approved';
+      dataObj['res_approve_by_id'] = user.id;
+      delete dataObj.request_by;
+      delete dataObj.id;
+      dataObj['res_approve_date'] = timeNow;
+      dataObj['res_approve_by'] = user.displayname;
     }
     else{
       finalItems.trs_regis_statusform_no.id = 'res_approved';
