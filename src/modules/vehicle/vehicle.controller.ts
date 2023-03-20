@@ -7,15 +7,15 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
-  @Post()
-  create(@Body() createVehicleDto: CreateVehicleDto) {
-    return this.vehicleService.create(createVehicleDto);
-  }
+  // @Post()
+  // create(@Body() createVehicleDto: CreateVehicleDto) {
+  //   return this.vehicleService.create(createVehicleDto);
+  // }
 
-  @Get()
-  findAll() {
-    return this.vehicleService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.vehicleService.findAll();
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
