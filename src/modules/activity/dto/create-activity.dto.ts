@@ -14,33 +14,42 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateActivityDto extends RequestByDto {
   @IsString()
+  @IsOptional() //
   @ApiProperty({
     example: 'ขอสนับสนุนรถยนต์',
   })
   'name': string;
   @IsString()
+  @IsOptional() //
   'detail': string;
   @IsString()
+  @IsOptional() //
   'unit_request_code': string;
   'unit_request_name': string;
 
   @IsString()
+  @IsOptional() //
   'unit_response_code': string;
   'unit_response_name': string;
 
   @IsNumber()
+  @IsOptional() //
   'round': number;
 
   @IsBoolean()
+  @IsOptional() //
   'cmd_focus': boolean;
 
   @IsNumber()
+  @IsOptional() //
   'priority': number;
 
   @IsDateString()
+  @IsOptional() //
   'activity_start_date': Date;
 
   @IsDateString()
+  @IsOptional() //
   'activity_end_date': Date;
 
   @IsDateString()
@@ -64,9 +73,11 @@ export class CreateActivityDto extends RequestByDto {
   'sendback_comment': string;
 
   @IsString()
+  @IsOptional() //
   'action_type': string;
 
   @IsObject()
+  @IsOptional() //
   'activity_type': { id: number };
 
   @IsString()
