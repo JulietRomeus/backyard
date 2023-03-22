@@ -472,7 +472,7 @@ export class ActivityService {
       const result = await firstValueFrom(
         this.httpService.post(`/items/trs_activity`, createActivityDto),
       );
-      // console.log(result);
+      console.log(result);
       return result?.data?.data || [];
     } catch (error) {
       console.log('error update menupage id', error);

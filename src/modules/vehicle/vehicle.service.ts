@@ -4,59 +4,26 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  trsRegis,
-  trsRegisStatusform,
-  trsRegisDetail,
-  trsRegisStatus,
+  trsTransaction,
+  slcSupply,
+  slcSupplySpec
 } from '../../entities/Index';
 import { Repository, Brackets, Not } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
-const listFields = `*,trs_regis_statusform_no.*,trs_regis_status_no.*,trs_regis_detail_no.*`;
 
-@Injectable()
+Injectable()
 export class VehicleService {
-  // constructor(
-  //   private readonly httpService: HttpService,
-  //   @InjectRepository(trsRegis, 'MSSQL_CONNECTION')
-  //   private trsRegisRepo: Repository<trsRegisStatus>,
-  // ) {}
+  constructor(
+    @InjectRepository(trsTransaction, 'MSSQL_CONNECTION')
+    private trsTransactionRepo: Repository<trsTransaction>,
 
-  // create(createVehicleDto: CreateVehicleDto) {
-  //   return 'This action adds a new vehicle';
-  // }
+  ) {}
 
-  // async findAll() {
-  //   let filterObj = {
-  //     is_active: { _eq: 1 },
-  //     // trs_regis_statusform_no:{id:{_in:["res_approved","approved","res_review","res_pendding_approve","res_approved","res_diapproved"]}},
-  //      // filter ข้อมูลที่ยังไม่ถูกลบ
-  //   };
-
-  //   const filterString = JSON.stringify(filterObj);
-  //   // console.log('filterObj', filterString);
-  //   const getQuery = `slc_supply_item?filter=${filterString}`;
-  //   console.log(this.httpService.get(`/items/${getQuery}`));
-  //   try {
-  //     const result = await firstValueFrom(
-  //       this.httpService.get(`/items/${getQuery}`),
-  //     );
-  //     console.log(result.data);
-  //     return result?.data?.data || [];
-  //   } catch (error) {
-  //     console.log('error get status', error);
-  //     return {};
-  //   }
-  // }
-
-  findOne(id: number) {
-    return `This action returns a #${id} vehicle`;
+  async findAll() {
+      return await this.trsTransactionRepo.query(
+        'select min(df.id ) as img,rrs.status_name as status,max(ta.start_date) as start_date,df.description ,ssiav.attribute_value as license,ssi.name as item,sss.name as spec,ss.supply_name as type from dbo.slc_supply_item_attribute_value ssiav left join dbo.slc_supply_item ssi on ssiav.supply_item_id = ssi.id left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id left join dbo.slc_supply ss on sss.supply_id = ss.id left join dbo.slc_toa st on st.id = ss.toa_id left join dbo.slc_refs_supply_sub_type srsst on st.supply_sub_type_id = srsst.id left join dbo.slc_supply_item_files_1 ssif on ssif.slc_supply_item_id = ssi.id left join dbo.directus_files df on df.id = ssif.directus_files_id left join dbo.slc_master_image_type smit on smit.id = ssif.master_image_type_id left join dbo.rep_maintenance rm on rm.supply_item_id = ssi.id left join dbo.rep_repair_status rrs on rm.repair_status_id = rrs.id left join dbo.trs_activity_vehicle_driver tavd on tavd.vehicle = ssi.id left join dbo.trs_activity ta on ta.id = tavd.activity where srsst.id = 9 and ssi.is_active = 1 group by df.description,ssiav.attribute_value,ssi.name,sss.name,ss.supply_name,rm.repair_status_id ,rrs.status_name ',
+      );
+    }
+      
   }
-
-  update(id: number, updateVehicleDto: UpdateVehicleDto) {
-    return `This action updates a #${id} vehicle`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} vehicle`;
-  }
-}
+     

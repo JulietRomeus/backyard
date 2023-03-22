@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { VehicleService } from './vehicle.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
 
 @Controller('vehicle')
 export class VehicleController {
@@ -12,23 +14,25 @@ export class VehicleController {
   //   return this.vehicleService.create(createVehicleDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.vehicleService.findAll();
+  @Get()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  findAll() {
+    return this.vehicleService.findAll();
+  }
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.vehicleService.findOne(+id);
   // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.vehicleService.findOne(+id);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
+  //   return this.vehicleService.update(+id, updateVehicleDto);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
-    return this.vehicleService.update(+id, updateVehicleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.vehicleService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.vehicleService.remove(+id);
+  // }
 }
