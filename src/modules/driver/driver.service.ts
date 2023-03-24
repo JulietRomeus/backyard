@@ -7,6 +7,7 @@ import {
   trsDriverLicenseList,
   trsDrivingLicenseType,
 } from '../../entities/Index';
+import {User} from './../../entities/user.entity'
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
@@ -26,6 +27,8 @@ export class DriverService {
     private trsDriverLicenseListRepo: Repository<trsDriverLicenseList>,
     @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
     private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
+    @InjectRepository(User, 'PROGRESS')
+    private userRepo: Repository<User>,
   ) {}
 
   async create(createDriverDto: any) {
@@ -75,7 +78,44 @@ export class DriverService {
     return await this.trsDrivingLicenseTypeRepo.find();
   }
 
-  async findOne(id: number) {
+  async user() {
+    return await this.userRepo
+    .createQueryBuilder('d')
+    .where('d.status = 1')
+    .leftJoinAndSelect(
+      'd.roles',
+      'r',
+      // 'r.name = "driver"'
+    )
+    .where('r.name = :dri',{dri:'driver'})
+    .leftJoinAndSelect(
+      'd.units',
+      'u',
+    )
+    .getMany();
+  }
+
+  async userbyid(id:number) {
+    return await this.userRepo
+    .createQueryBuilder('d')
+    .where('d.status = 1')
+    .leftJoinAndSelect(
+      'd.roles',
+      'r',
+      // 'r.name = "driver"'
+    )
+    .where('d.id =:id', { id: id })
+    .leftJoinAndSelect(
+      'd.units',
+      'u',
+    )
+    
+    .getOne();
+  }
+
+
+  async findOne(id: any) {
+    console.log(id)
     return await this.trsDriverRepo
       .createQueryBuilder('d')
       .leftJoinAndSelect(
@@ -122,8 +162,8 @@ export class DriverService {
 
     const dbRes = await this.trsDriverRepo.save(updateObj);
     console.log('dbRes', dbRes);
-    const data = await this.findOne(id);
-    console.log('data', data);
+    // const data = await this.findOne(id);
+    // console.log('data', data);
     return dbRes;
   }
 

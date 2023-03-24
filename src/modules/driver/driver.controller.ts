@@ -27,6 +27,8 @@ export class DriverController {
     return genPayload(data, null, ACTIONTYPE.CREATE);
   }
 
+
+
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
@@ -34,6 +36,22 @@ export class DriverController {
   findAll() {
     return this.driverService.findAll();
   }
+  @Get('user')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  user() {
+    return this.driverService.user();
+  }
+
+  @Get('user/:id')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  userbyid(@Param('id') id: any) {
+    return this.driverService.userbyid(id);
+  }
+
 
   @Get('option/license')
   // @Permission({ route: route, action: 'view' })
@@ -44,8 +62,9 @@ export class DriverController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.driverService.findOne(+id);
+  findOne(@Param('id') id: any) {
+    console.log(id)
+    return this.driverService.findOne(id);
   }
 
   @Patch(':id')

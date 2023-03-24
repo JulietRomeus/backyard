@@ -16,6 +16,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities/Index';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import {MaintenanceModule} from './modules/maintenance/maintenance.module'
+
+import { Role } from './entities/role.entity';
+import { User } from './entities/user.entity';
+import { Unit } from './entities/unit.entity';
+
 @Module({
   imports: [
     // Import Config
@@ -62,6 +67,33 @@ import {MaintenanceModule} from './modules/maintenance/maintenance.module'
         password: configService.get('MSSQL_PASSWORD'),
 
         entities: [...Entities],
+
+        synchronize: false, //DONOT set to true
+        // migrationsRun: true,
+        extra: {
+          trustServerCertificate: true,
+        },
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      name: 'PROGRESS',
+      imports: [ConfigModule],
+      inject: [ConfigService],
+
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+      entities: [User, Role,Unit],
+      // migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
+      host: configService.get<string>('POSTGRES_MASTER_HOST'),
+      port: configService.get<number>('POSTGRES_MASTER_PORT'),
+      username: configService.get<string>('POSTGRES_USER'),
+      password: configService.get<string>('POSTGRES_PASSWORD'),
+      database: configService.get<string>('POSTGRES_DB'),
+      // cli: {
+      //   migrationsDir: 'src/migrations',
+      // },
+
+        // entities: [...Entities],
 
         synchronize: false, //DONOT set to true
         // migrationsRun: true,

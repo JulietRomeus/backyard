@@ -82,6 +82,7 @@ import { trsTransactionType } from './TrsTransactionType.entity';
 import { slcSupplyItem } from './SlcSupplyItem.entity';
 
 
+
 export {
   trsDriverFiles,
   trsRegisStatus,
@@ -163,7 +164,8 @@ export {
   slcSupplyItemAttribute,
   slcToa,
   slcSupply,
-  slcRefsSupplySubType
+  slcRefsSupplySubType,
+
   
 };
 

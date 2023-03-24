@@ -21,6 +21,13 @@ export class VehicleController {
     return this.vehicleService.findAll();
   }
 
+  // @Get('option')
+  // // @Permission({ route: route, action: 'view' })
+  // @ApiBearerAuth('JWT')
+  // @ApiOperation({ summary: 'ดึงข้อมูล' })
+  // findOptiontype() {
+  //   return this.vehicleService.findOptiontype();
+  // }
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.vehicleService.findOne(+id);
