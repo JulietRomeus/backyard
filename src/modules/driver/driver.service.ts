@@ -101,7 +101,7 @@ export class DriverService {
     .where('d.status = 1')
     .leftJoinAndSelect(
       'd.roles',
-      'r',
+      'r', 
       // 'r.name = "driver"'
     )
     .where('d.id =:id', { id: id })
