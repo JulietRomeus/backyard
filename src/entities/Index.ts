@@ -1,3 +1,7 @@
+import { slcMasterAttributeTypeDetail } from './SlcMasterAttributeTypeDetail.entity';
+import { slcMasterAttributeType } from './SlcMasterAttributeType.entity';
+import { slcMasterAttributeKeyword } from './SlcMasterAttributeKeyword.entity';
+import { slcRefsSupplySubDetail } from './SlcRefsSupplySubDetail.entity';
 import { slcRefsSupplySubType } from './SlcRefsSupplySubType.entity';
 import { slcSupply } from './SlcSupply.entity';
 import { slcToa } from './SlcToa.entity';
@@ -165,6 +169,10 @@ export {
   slcToa,
   slcSupply,
   slcRefsSupplySubType,
+  slcRefsSupplySubDetail,
+  slcMasterAttributeKeyword,
+  slcMasterAttributeType,
+  slcMasterAttributeTypeDetail
 
   
 };
@@ -251,7 +259,11 @@ export default [
   slcSupplyItemAttribute,
   slcToa,
   slcSupply,
-  slcRefsSupplySubType
+  slcRefsSupplySubType,
+  slcRefsSupplySubDetail,
+  slcMasterAttributeKeyword,
+  slcMasterAttributeType,
+  slcMasterAttributeTypeDetail
   
 
 ];

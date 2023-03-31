@@ -120,6 +120,18 @@ export class RegisterService {
   //   )
   // }
 
+  async findOptioncontract() {
+    console.log('first')
+    return await this.trsRegisRepo.query
+    (
+      `select sc.name as contract_name,sc.id as contract_id ,sc2.name as company_name ,sc2.id as contract_item_id,
+      sci.total_price,sci.supply_spec_id,sss.name as spec ,sss.id as spec_id from slc_contract sc 
+      left join slc_contract_item sci on sci.contact_id = sc.id 
+      left join slc_company sc2 on sc2.id = sc.company_id 
+      left join slc_supply_spec sss on sss.id = sci.supply_spec_id 
+      where sc.is_active = 1   
+      `)}
+  
   async findOne(id: any) {
     //console.log('body', body?.request_by || '');
     //console.log('query', query);

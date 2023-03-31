@@ -21,6 +21,42 @@ export class VehicleController {
     return this.vehicleService.findAll();
   }
 
+  @Get('optionsupply')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionVehicle_type' })
+  findsupply() {
+    return this.vehicleService.findsupply();
+  }
+
+  @Get('optionbrand/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionVehicle_brand' })
+  optionbrand(@Param('id') id: any) {
+    return this.vehicleService.optionbrand(id);
+  }
+
+  @Get('optiongen/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionVehicle_brand' })
+  optiongen(@Param('id') id: any) {
+    return this.vehicleService.optiongen(id);
+  }
+
+  @Get('optionspec/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionVehicle_brand' })
+  optionspec(@Param('id') id: any) {
+    return this.vehicleService.optionspec(id);
+  }
+
+  // @Get()
+  // @ApiBearerAuth('JWT')
+  // @ApiOperation({ summary: 'ดึงข้อมูลoptionVehicle_type' })
+  // findbrand() {
+  //   return this.vehicleService.findbrand();
+  // }
+
+
   // @Get('option')
   // // @Permission({ route: route, action: 'view' })
   // @ApiBearerAuth('JWT')

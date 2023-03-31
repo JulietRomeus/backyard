@@ -32,6 +32,15 @@ export class RegisterController {
     return this.registerService.findAll(query);
   }
 
+  @Get('optioncontract')
+  //@Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล' })
+  findOptioncontract(@Body() body: any, @Query() query: any)  {
+    console.log(body,query)
+    return this.registerService.findOptioncontract();
+  }
+
  
   @Get(':id')
   //@Permission({ route: route, action: 'view' })

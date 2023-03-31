@@ -9,10 +9,13 @@ import {
 } from "typeorm";
 // import { slcOilSupplyControlBook } from "./SlcOilSupplyControlBook.entity";
 // import { slcOilTankControlBook } from "./SlcOilTankControlBook.entity";
+// import { slcRequirementSummaryDetail } from "./SlcRequirementSummaryDetail.entity";
+// import { slcRequirementSummaryItem } from "./SlcRequirementSummaryItem.entity";
 import { slcToa } from "./SlcToa.entity";
 // import { slcRefsSupplyStatus } from "./SlcRefsSupplyStatus.entity";
 // import { slcSupplyControlBook } from "./SlcSupplyControlBook.entity";
 // import { slcSupplyControlSupply } from "./SlcSupplyControlSupply.entity";
+// import { slcSupplyFiles_1 } from "./SlcSupplyFiles_1.entity";
 import { slcSupplySpec } from "./SlcSupplySpec.entity";
 // import { slcSupplySpecAttribute } from "./SlcSupplySpecAttribute.entity";
 // import { slcWarehouseControlBook } from "./SlcWarehouseControlBook.entity";
@@ -26,20 +29,14 @@ export class slcSupply {
   @Column("nvarchar", { name: "supply_name", nullable: true, length: 250 })
   supply_name: string | null;
 
-  @Column("nvarchar", { name: "supply_code", nullable: true, length: 200 })
-  supply_code: string | null;
+  // @Column("nvarchar", { name: "supply_code", nullable: true, length: 200 })
+  // supply_code: string | null;
 
   // @Column("nvarchar", { name: "detail", nullable: true, length: 1000 })
   // detail: string | null;
 
-  // @Column("int", { name: "file_type_id", nullable: true })
-  // file_type_id: number | null;
-
-  // @Column("nvarchar", { name: "file_url", nullable: true, length: 2000 })
-  // file_url: string | null;
-
-  // @Column("bit", { name: "is_active", nullable: true })
-  // is_active: boolean | null;
+  @Column("bit", { name: "is_active", nullable: true })
+  is_active: boolean | null;
 
   // @Column("nvarchar", { name: "create_by_id", nullable: true, length: 100 })
   // create_by_id: string | null;
@@ -74,6 +71,12 @@ export class slcSupply {
   // @Column("int", { name: "budget_year", nullable: true })
   // budget_year: number | null;
 
+  // @Column("nvarchar", { name: "file_url", nullable: true, length: 255 })
+  // file_url: string | null;
+
+  // @Column("int", { name: "file_type_id", nullable: true })
+  // file_type_id: number | null;
+
   // @OneToMany(
   //   () => slcOilSupplyControlBook,
   //   (slc_oil_supply_control_book) => slc_oil_supply_control_book.supply
@@ -85,6 +88,18 @@ export class slcSupply {
   //   (slc_oil_tank_control_book) => slc_oil_tank_control_book.supply
   // )
   // slc_oil_tank_control_books: slcOilTankControlBook[];
+
+  // @OneToMany(
+  //   () => slcRequirementSummaryDetail,
+  //   (slc_requirement_summary_detail) => slc_requirement_summary_detail.supply
+  // )
+  // slc_requirement_summary_details: slcRequirementSummaryDetail[];
+
+  // @OneToMany(
+  //   () => slcRequirementSummaryItem,
+  //   (slc_requirement_summary_item) => slc_requirement_summary_item.supply
+  // )
+  // slc_requirement_summary_items: slcRequirementSummaryItem[];
 
   @ManyToOne(() => slcToa, (slc_toa) => slc_toa.slc_supplies, {
     onDelete: "SET NULL",
@@ -117,6 +132,12 @@ export class slcSupply {
   //   (slc_supply_control_supply) => slc_supply_control_supply.supply
   // )
   // slc_supply_control_supplies: slcSupplyControlSupply[];
+
+  // @OneToMany(
+  //   () => slcSupplyFiles_1,
+  //   (slc_supply_files_1) => slc_supply_files_1.slc_supply
+  // )
+  // slc_supply_files_s: slcSupplyFiles_1[];
 
   @OneToMany(() => slcSupplySpec, (slc_supply_spec) => slc_supply_spec.supply)
   slc_supply_specs: slcSupplySpec[];
