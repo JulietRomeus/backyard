@@ -81,7 +81,7 @@ export class DriverService {
   async user() {
     return await this.userRepo
     .createQueryBuilder('d')
-    .where('d.status = 1')
+    .where('d.status=1')
     .leftJoinAndSelect(
       'd.roles',
       'r',
@@ -92,6 +92,7 @@ export class DriverService {
       'd.units',
       'u',
     )
+
     .getMany();
   }
 

@@ -114,14 +114,16 @@ export class VehicleService {
   //     .getMany();
   // }
 
-  async optiongen(id: any) {
+  async optiongen(ssid: any,parentid:any) {
+    console.log(ssid,parentid)
     return await this.trsVehicleRepo.query(
-      `select smat.id as att_id,smat.[type] as att_type,smatd.id as att_value_id,smatd.[type] as att_value,ss.id as supply_id,ss.supply_name as supply_name from slc_master_attribute_type smat 
-          left join slc_master_attribute_type_detail smatd on smatd.master_attribute_type_id = smat.id
-          left join slc_refs_supply_sub_type srsst on srsst.id = smatd.supply_sub_type_id 
-          left join slc_toa st on st.supply_sub_type_id = srsst.id 
-          left join slc_supply ss on ss.toa_id = st.id 
-          where srsst.id = 9 and smat.id = 13 and ss.id = ${id} and smatd.is_active = 1 and srsst.is_active = 1 and st.is_active =1 and ss.is_active =1`,
+      `select smat.id as att_id,smat.[type] as att_type,smatd.id as att_value_id,smatd.[type] as att_value,smatd2.id as parent_id,ss.id as supply_id,ss.supply_name as supply_name from slc_master_attribute_type smat 
+      left join slc_master_attribute_type_detail smatd on smatd.master_attribute_type_id = smat.id
+      left join slc_master_attribute_type_detail smatd2 on smatd2.id = smatd.parent_id 
+      left join slc_refs_supply_sub_type srsst on srsst.id = smatd.supply_sub_type_id 
+      left join slc_toa st on st.supply_sub_type_id = srsst.id 
+      left join slc_supply ss on ss.toa_id = st.id 
+      where srsst.id = 9 and smat.id = 13 and ss.id = ${ssid} and smatd.is_active = 1 and srsst.is_active = 1 and st.is_active =1 and ss.is_active =1 and smatd2.id =${parentid}`,
     );
   }
 
