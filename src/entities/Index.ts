@@ -1,3 +1,4 @@
+import { trsObstacleType } from './TrsObstacleType.entity';
 import { slcMasterAttributeTypeDetail } from './SlcMasterAttributeTypeDetail.entity';
 import { slcMasterAttributeType } from './SlcMasterAttributeType.entity';
 import { slcMasterAttributeKeyword } from './SlcMasterAttributeKeyword.entity';
@@ -172,7 +173,8 @@ export {
   slcRefsSupplySubDetail,
   slcMasterAttributeKeyword,
   slcMasterAttributeType,
-  slcMasterAttributeTypeDetail
+  slcMasterAttributeTypeDetail,
+  trsObstacleType
 
   
 };
@@ -263,7 +265,8 @@ export default [
   slcRefsSupplySubDetail,
   slcMasterAttributeKeyword,
   slcMasterAttributeType,
-  slcMasterAttributeTypeDetail
+  slcMasterAttributeTypeDetail,
+  trsObstacleType
   
 
 ];

@@ -1,4 +1,4 @@
-import { trsObstacle } from '../../entities/Index';
+import { trsObstacle, trsObstacleType } from '../../entities/Index';
 import { Injectable } from '@nestjs/common';
 import { CreateObstacleDto } from './dto/create-obstacle.dto';
 import { UpdateObstacleDto } from './dto/update-obstacle.dto';
@@ -23,11 +23,14 @@ export class ObstacleService {
   constructor(
     @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
     private trsObstacleRepo: Repository<trsObstacle>,
-  ) // @InjectRepository(trsObstacle, 'MSSQL_CONNECTION')
-  // private trsObstacleby: Repository<trsDriverLicenseList>,
-  // @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
-  // private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
-  {}
+    @InjectRepository(trsObstacleType, 'MSSQL_CONNECTION')
+    private trsObstacleTypeRepo: Repository<trsObstacleType>,
+  ) {}
+
+  async option() {
+    console.log('first');
+    return await this.trsObstacleTypeRepo.createQueryBuilder('d').getMany();
+  }
 
   async create(CreateObstacleDto: any) {
     console.log('CreateRegisterDto', CreateObstacleDto);
@@ -58,7 +61,10 @@ export class ObstacleService {
   }
 
   async findAllj() {
-    return await this.trsObstacleRepo.find({ where: { is_active: true } });
+    return await this.trsObstacleRepo
+    .createQueryBuilder('d')
+    .where('d.is_active = 1')
+    .getMany();
   }
 
   async findOne(id: number) {

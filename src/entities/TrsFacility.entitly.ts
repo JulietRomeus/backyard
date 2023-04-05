@@ -50,4 +50,7 @@ export class trsFacility {
 
   @Column("bit", { name: "is_active", nullable: true, default: () => "'1'" })
   is_active: boolean | null;
+
+  @Column("nvarchar", { name: "facility_type_name", nullable: true, length: 100 })
+  facility_type_name: string | null;
 }

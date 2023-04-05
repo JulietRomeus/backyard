@@ -11,6 +11,15 @@ import { UpdateObstacleDto } from './dto/update-obstacle.dto';
 export class ObstacleController {
   constructor(private readonly obstacleService: ObstacleService) {}
 
+
+  @Get('option')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  option() {
+    return this.obstacleService.option();
+
+
+  }
   @Post()
   create(@Body() createDriverDto: any) {
     console.log('createDriverDto',createDriverDto)
@@ -38,6 +47,7 @@ export class ObstacleController {
     return this.obstacleService.findOne(id);
   }
 
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() UpdateObstacleDto: any) {
     return this.obstacleService.update(+id, UpdateObstacleDto);
@@ -47,4 +57,8 @@ export class ObstacleController {
   remove(@Param('id') id: any) {
     return this.obstacleService.remove(id);
   }
+
+
+
+
 }

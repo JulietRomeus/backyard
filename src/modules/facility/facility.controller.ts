@@ -25,6 +25,23 @@ export class FacilityController {
     return this.facilityService.findAll();
   }
 
+  @Get('facility')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  facility() {
+    return this.facilityService.facility();
+  }
+
+  @Get('optionfac')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูล' })
+  option() {
+    return this.facilityService.option();
+  }
+
+
   // @Get('option/license')
   // // @Permission({ route: route, action: 'view' })
   // @ApiBearerAuth('JWT')
@@ -50,4 +67,6 @@ export class FacilityController {
     console.log('UpdateFacilityDto',UpdateFacilityDto)
     return this.facilityService.remove(id, UpdateFacilityDto, query);
   }
+
+ 
 }

@@ -7,7 +7,7 @@ import {
   trsDriverLicenseList,
   trsDrivingLicenseType,
 } from '../../entities/Index';
-import {User} from './../../entities/user.entity'
+import { User } from './../../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { find } from 'rxjs';
@@ -80,43 +80,52 @@ export class DriverService {
 
   async user() {
     return await this.userRepo
-    .createQueryBuilder('d')
-    .where('d.status=1')
-    .leftJoinAndSelect(
-      'd.roles',
-      'r',
-      // 'r.name = "driver"'
-    )
-    .where('r.name = :dri',{dri:'driver'})
-    .leftJoinAndSelect(
-      'd.units',
-      'u',
-    )
+      .createQueryBuilder('d')
+      .where('d.status=1')
+      .leftJoinAndSelect(
+        'd.roles',
+        'r',
+        // 'r.name = "driver"'
+      )
+      .where('r.name = :dri', { dri: 'driver' })
+      .leftJoinAndSelect('d.units', 'u')
 
-    .getMany();
+      .getMany();
   }
 
-  async userbyid(id:number) {
+  async userbyid(id: number) {
     return await this.userRepo
-    .createQueryBuilder('d')
-    .where('d.status = 1')
-    .leftJoinAndSelect(
-      'd.roles',
-      'r', 
-      // 'r.name = "driver"'
-    )
-    .where('d.id =:id', { id: id })
-    .leftJoinAndSelect(
-      'd.units',
-      'u',
-    )
-    
-    .getOne();
+      .createQueryBuilder('d')
+      .where('d.status = 1')
+      .leftJoinAndSelect(
+        'd.roles',
+        'r',
+        // 'r.name = "driver"'
+      )
+      .where('d.id =:id', { id: id })
+      .leftJoinAndSelect('d.units', 'u')
+
+      .getOne();
   }
 
+  async useremail() {
+    const user = await this.user();
+    const driver = await this.findAll();
 
+    const filter = user.filter(function (r) {
+      return (
+        driver.filter(function (rr) {
+          return rr.driver_id == r.id;
+        }).length == 0
+      );
+    });
+    return filter;
+    // console.log(filter)
+    // console.log(user,driver)
+  }
+  
   async findOne(id: any) {
-    console.log(id)
+    console.log(id);
     return await this.trsDriverRepo
       .createQueryBuilder('d')
       .leftJoinAndSelect(

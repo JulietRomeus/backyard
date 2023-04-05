@@ -36,6 +36,14 @@ export class DriverController {
   findAll() {
     return this.driverService.findAll();
   }
+  @Get('useremail')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  useremail() {
+    return this.driverService.useremail();
+  }
+
   @Get('user')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
