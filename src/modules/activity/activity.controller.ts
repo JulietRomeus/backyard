@@ -66,7 +66,7 @@ export class ActivityController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะที่ว่างอยู่' })
   vehicle(@Query() query: any, @Body() body: any) {
-    return this.activityService.vehicle(query, body);
+    return this.activityService.vehicleOption(query, body);
   }
 
   @Get('option/vehicle-type')
@@ -74,7 +74,7 @@ export class ActivityController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลประเภทยานพาหนะ' })
   vehicleType(@Query() query: any, @Body() body: any) {
-    return this.activityService.vehicleType(query, body);
+    return this.activityService.vehicleTypeOption(query, body);
   }
 
   @Get('option/driver')
