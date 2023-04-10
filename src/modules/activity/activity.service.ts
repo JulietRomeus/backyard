@@ -271,7 +271,7 @@ export class ActivityService {
   }
 
   async missionAll(body: any, query: any) {
-    console.log('>>>mission id ', body.request_by.data_permission);
+    // console.log('>>>mission id ', body.request_by.data_permission);
 
     const activityField = `activity.*,activity.activity_status.*,activity.activity_type.*`;
     const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
@@ -960,8 +960,6 @@ export class ActivityService {
   }
 
   async vehicleOption(query: any, body: RequestByDto) {
- 
-
     return await this.trsVehicleRepo
       .query(`select ss.id as supply_id,ss.supply_name  as supply_name ,sss.name  as spec_name,ssi.id as item_id,
     ssi.name as item_name,ssia.attribute_name as att_name,ssia.id ,ssi.unit_no as unit
@@ -974,12 +972,17 @@ export class ActivityService {
     left join slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
     left join slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
     left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-    where srsst.id =9 and smak.id =21 ${query.unit && `and ssi.unit_no ='${query.unit}'` || `and ssi.unit_no ='${body?.request_by?.activeUnit?.code || body?.request_by?.units[0]?.code || ''}'`} ${query.type && `and ss.id =${query.type}` || ''}`);
+    where srsst.id =9 and smak.id =21 ${
+      (query.unit && `and ssi.unit_no ='${query.unit}'`) ||
+      `and ssi.unit_no ='${
+        body?.request_by?.activeUnit?.code ||
+        body?.request_by?.units[0]?.code ||
+        ''
+      }'`
+    } ${(query.type && `and ss.id =${query.type}`) || ''}`);
   }
 
-
   async vehicleTypeOption(query: any, body: RequestByDto) {
-
     return await this.trsVehicleRepo
       .query(`select ss.id ,ss.supply_name  from  slc_supply ss 
       left join slc_toa st on ss.toa_id = st.id 
