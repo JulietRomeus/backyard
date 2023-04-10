@@ -60,4 +60,15 @@ export class trsTransaction {
   )
   @JoinColumn([{ name: "vehicle", referencedColumnName: "id" }])
   vehicle: slcSupplyItemAttributeValue;
+
+
+  @Column("nvarchar", { name: "company_name", nullable: true, length: 255 })
+  company_name: string | null;
+
+  @Column("nvarchar", { name: "policy_no", nullable: true, length: 255 })
+  policy_no: string | null;
+
+  
 }
+
+

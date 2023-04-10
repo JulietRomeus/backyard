@@ -27,13 +27,19 @@ export class RegisterService {
     private trsRegisStatusRepo: Repository<trsRegisStatus>,
   ) {}
 
-  async findAll(query) {
-    //console.log('body', body?.request_by || '');
+  async findAll(body,query) {
+    console.log('body',body.request_by)
     console.log('query', query);
+    const unit_no=body.request_by.units?.map((r:any)=>r.code)
+    console.log(unit_no)
+
+
     if(query.type == "req")
+
     {let filterObj = {
       is_active: { _eq: 1 },
-      trs_regis_statusform_no:{id:{_in:["approved","draft","review","pendding_approve","approved","diapproved","res_approved"]}},
+      trs_regis_statusform_no:{id:{_in:["approved","draft","review","pending_approve","approved","diapproved","res_approved"]}},
+      unit_no:{_in:(unit_no)}
        // filter ข้อมูลที่ยังไม่ถูกลบ
     };
 
@@ -54,8 +60,10 @@ export class RegisterService {
     else{
       let filterObj = {
         is_active: { _eq: 1 },
-        trs_regis_statusform_no:{id:{_in:["res_approved","approved","res_review","res_pendding_approve","res_approved","res_diapproved"]}},
-         // filter ข้อมูลที่ยังไม่ถูกลบ
+        trs_regis_statusform_no:{id:{_in:["res_approved","approved","res_review","res_pending_approve","res_approved","res_diapproved"]}},
+        unit_no:{_in:(unit_no)}
+
+        // filter ข้อมูลที่ยังไม่ถูกลบ
       };
   
       const filterString = JSON.stringify(filterObj);
@@ -199,6 +207,7 @@ export class RegisterService {
         return temDetail;
       },
     );
+
     subItems.trs_regis_detail_no = trs_regis_detail_no;
     console.log(trs_regis_detail_no);
 
@@ -208,55 +217,56 @@ export class RegisterService {
   }
 
   async update(id: number, updateRegisterDto: any): Promise<any> {
+    console.log('updated')
     console.log('updateRegisterDto', updateRegisterDto);
+    
     let timeNow = now();
+    console.log('timeNow',timeNow)
+
     let user = updateRegisterDto.request_by;
+
     let dataObj = updateRegisterDto;
     dataObj['update_by_id'] = user.id;
     delete dataObj.request_by;
     delete dataObj.id;
     dataObj['update_date'] = timeNow;
-    dataObj['update_by'] = user.displayname;
-    let finalItems = new trsRegis();
+    dataObj['update_by'] = user.displayname
 
-    Object.keys(dataObj).map((keys) => {
-      finalItems[keys] = dataObj[keys] || null;
-    });
-    console.log('finalItems', finalItems);
-    console.log('dataObj.trs_regis_detail_no', dataObj.trs_regis_detail_no);
-    const trs_regis_detail_no = dataObj.trs_regis_detail_no.map(
-      (rec: trsRegisDetail) => {
-        let temDetail = new trsRegisDetail();
-
-        Object.keys(rec).map((keys) => {
-          temDetail[keys] = rec[keys] || null;
-        });
-        return temDetail;
-        // regis_no: id
-        // this.trsRegisDetailRepo.save({ ...d, regis_no: id })
-      },
+    let finalItems = dataObj;
+   finalItems.id=id
+    finalItems.trs_regis_detail_no =dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
+      this.trsRegisDetailRepo.create({ ...d,  }),
     );
-    // delete dataObj.trs_regis_detail_no;
-    finalItems.trs_regis_detail_no = trs_regis_detail_no;
-    console.log(trs_regis_detail_no);
-    const dbRes = await this.trsRegisRepo.save(finalItems);
+      console.log('finalItemssss', finalItems);
 
+    // delete finalItems.trs_regis_detail_no;
+
+    console.log('dfff',finalItems)
+    const dbRes = await this.trsRegisRepo.save(finalItems);
+    console.log('dbRes', dbRes);
     return await this.findOne(id);
   }
 
   async send(id: number, updateRegisterDto: any, query: any): Promise<any> {
+    console.log('send')
     console.log('updateRegisterDto', updateRegisterDto);
     console.log('query', query);
+    
     let timeNow = now();
+    console.log('timeNow',timeNow)
+
     let user = updateRegisterDto.request_by;
+
     let dataObj = updateRegisterDto;
     // dataObj['update_by_id'] = user.id;
     if(query.type=="req")
-   { dataObj['review_by_id'] = user.id;
+   {
+      // dataObj['review_by_id'] = user.id;
     delete dataObj.request_by;
     delete dataObj.id;
-    dataObj['review_date'] = timeNow;
-    dataObj['review_by'] = user.displayname}
+    // dataObj['review_date'] = timeNow;
+    // dataObj['review_by'] = user.displayname
+  }
     else{
       dataObj['res_update_by_id'] = user.id;
     delete dataObj.request_by;
@@ -291,24 +301,26 @@ export class RegisterService {
     let timeNow = now();
     let user = updateRegisterDto.request_by;
     let dataObj = updateRegisterDto;
-   
     const finalItems = dataObj;
     if (query.type == "req") {
       finalItems.trs_regis_statusform_no.id = 'pending_approve';
-      dataObj['approve_by_id'] = user.id;
-      delete dataObj.request_by;
-      delete dataObj.id;
-      dataObj['approve_date'] = timeNow;
-      dataObj['approve_by'] = user.displayname;
     }
     else{
       finalItems.trs_regis_statusform_no.id = 'res_pending_approve';
-      dataObj['res_review_by_id'] = user.id;
-      delete dataObj.request_by;
-      delete dataObj.id;
-      dataObj['res_review_date'] = timeNow;
-      dataObj['res_review_by'] = user.displayname;
     }
+  if(query.type=="req")
+    { dataObj['review_by_id'] = user.id;
+     delete dataObj.request_by;
+     delete dataObj.id;
+     dataObj['review_date'] = timeNow;
+     dataObj['review_by'] = user.displayname}
+     else{
+       dataObj['res_review_by_id'] = user.id;
+     delete dataObj.request_by;
+     delete dataObj.id;
+     dataObj['res_review_date'] = timeNow;
+     dataObj['res_review_by'] = user.displayname
+     }
     console.log('finalItems', finalItems);
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
@@ -322,7 +334,7 @@ export class RegisterService {
 
   async approve(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
-    console.log('query', query);
+    console.log('queryyyyyyy', query);
     let timeNow = now();
     let user = updateRegisterDto.request_by;
     let dataObj = updateRegisterDto;
@@ -331,19 +343,25 @@ export class RegisterService {
     delete dataObj.id;
     // dataObj['update_date'] = timeNow;
     // dataObj['update_by'] = user.displayname;
-
     const finalItems = dataObj;
+ 
     if (query.type == "req") {
       finalItems.trs_regis_statusform_no.id = 'approved';
+      dataObj['approve_by_id'] = user.id;
+      delete dataObj.request_by;
+      delete dataObj.id;
+      dataObj['approve_date'] = timeNow;
+      dataObj['approve_by'] = user.displayname;
+    }
+    else{
+      finalItems.trs_regis_statusform_no.id = 'res_approved';
       dataObj['res_approve_by_id'] = user.id;
       delete dataObj.request_by;
       delete dataObj.id;
       dataObj['res_approve_date'] = timeNow;
       dataObj['res_approve_by'] = user.displayname;
     }
-    else{
-      finalItems.trs_regis_statusform_no.id = 'res_approved';
-    }
+  
     // console.log('query.typejaa', query.type);
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),

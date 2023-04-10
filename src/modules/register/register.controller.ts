@@ -11,7 +11,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { Permission } from 'src/decorators/permission.decorator';
-//const route = 'activity-request';
+const route = 'register-request';
 
 @Controller('register')
 export class RegisterController {
@@ -25,11 +25,11 @@ export class RegisterController {
   }
 
   @Get()
-  //@Permission({ route: route, action: 'view' })
+  // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
   findAll(@Body() body: any, @Query() query: any)  {
-    return this.registerService.findAll(query);
+    return this.registerService.findAll(body,query);
   }
 
   @Get('optioncontract')

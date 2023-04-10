@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Injectable, Query } from '@nestjs/common';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
 import { UpdateMaintenanceDto } from './dto/update-maintenance.dto';
@@ -51,8 +52,30 @@ export class MaintenanceService {
   //   return dbRes;
   // }
 
-  async findAll() {
-    return await this.trsVehicleRepo.query('select supply_group_id ,rm.unit_no,supply_group_name , rrrm.repair_methode,ssiav.attribute_value as license ,supply_item_name,rm.supply_item_id as item,rrmpt.period_type,ma_start_date ,ma_end_date,item_status,rm.update_by_id ,rm.update_by ,rm.update_date ,rm.create_by_id ,rm.create_by ,rm.create_date ,rm.delete_by_id, rm.delete_by ,rm.delete_date  from rep_maintenance rm left join dbo.rep_ref_repair_method rrrm ON repair_method_id = rrrm.id left join dbo.rep_ref_ma_period_type rrmpt on rrmpt.id = rm.supply_ma_period_id left join dbo.slc_refs_supply_group srsg on srsg.id = rm.supply_group_id left join dbo.slc_supply_item ssi  on ssi.id  = rm.supply_item_id left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id where srsg.id = 5'
+  async findAll(body: any) {
+    console.log('body',body.request_by.units?.map((r:any)=>r.code ))
+    const unit_no=body.request_by.units?.map((r:any)=>r.code)
+    return await this.trsVehicleRepo.query(`
+    select rm.*,ss.supply_name as supply ,sss.name as spec,rrrm.repair_methode ,rrmpt.period_type ,srsg.group_name
+,rrs.status_name as status_name, rrs.id as status_id
+from rep_maintenance rm 
+left join dbo.rep_repair_status rrs on rrs.id = rm.repair_status_id 
+left join dbo.rep_ref_repair_method rrrm ON repair_method_id = rrrm.id 
+left join dbo.rep_ref_ma_period_type rrmpt on rrmpt.id = rm.supply_ma_period_id 
+left join dbo.slc_refs_supply_group srsg on srsg.id = rm.supply_group_id 
+left join dbo.slc_supply_item ssi  on ssi.id  = rm.supply_item_id 
+left join slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
+left join slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
+left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
+left join slc_supply_spec sss on sss.id = ssi.supply_spec_id 
+left join slc_supply ss on ss.id = sss.supply_id 
+left join slc_toa st on ss.toa_id = st.id 
+left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
+left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
+where srsg.id = 5 and srssd.[key] =1 and rm.is_active =1 and ssi.is_active =1 
+and sss.is_active =1 and rrrm.is_active =1 and rrmpt.is_active =1 and srsg.is_active =1 and ssiav.is_active =1
+and ssia.is_active =1 and smak.is_active =1 and ss.is_active =1 and srsst.is_active =1 and srssd.ia_active =1
+and ma_unit_no in (${unit_no})`
     )
   }
 
