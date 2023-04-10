@@ -271,9 +271,8 @@ export class ActivityService {
   }
 
   async missionAll(body: any, query: any) {
-    
     console.log('>>>mission id ', body.request_by.data_permission);
-  
+
     const activityField = `activity.*,activity.activity_status.*,activity.activity_type.*`;
     const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
     const vehicleField = `vehicle.id,vehicle.vehicle_type.id,vehicle.vehicle_type.name,vehicle.vehicle_id,vehicle.license_plate,vehicle.unit_code`;
@@ -960,6 +959,35 @@ export class ActivityService {
     });
   }
 
+  async vehicleOption(query: any, body: RequestByDto) {
+ 
+
+    return await this.trsVehicleRepo
+      .query(`select ss.id as supply_id,ss.supply_name  as supply_name ,sss.name  as spec_name,ssi.id as item_id,
+    ssi.name as item_name,ssia.attribute_name as att_name,ssia.id ,ssi.unit_no as unit
+    ,ssiav.attribute_value as license
+     from slc_supply ss 
+    left join slc_toa st on ss.toa_id = st.id 
+    left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
+    left join slc_supply_spec sss on sss.supply_id = ss.id 
+    left join slc_supply_item ssi on ssi.supply_spec_id = sss.id 
+    left join slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
+    left join slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
+    left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
+    where srsst.id =9 and smak.id =21 ${query.unit && `and ssi.unit_no ='${query.unit}'` || `and ssi.unit_no ='${body?.request_by?.activeUnit?.code || body?.request_by?.units[0]?.code || ''}'`} ${query.type && `and ss.id =${query.type}` || ''}`);
+  }
+
+
+  async vehicleTypeOption(query: any, body: RequestByDto) {
+
+    return await this.trsVehicleRepo
+      .query(`select ss.id ,ss.supply_name  from  slc_supply ss 
+      left join slc_toa st on ss.toa_id = st.id 
+      left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
+      left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
+      where srsst.id = 9 and srssd.[key] =1`);
+  }
+
   // async vehicleType(query: any, body: RequestByDto) {
   //   // console.log('body', body?.request_by || '');
   //   // console.log('query', query);
@@ -1059,9 +1087,9 @@ export class ActivityService {
       // is_available: true,
     };
     if (query.unit) {
-      filterObj['unit_code'] = query.unit;
+      filterObj['unit_no'] = query.unit;
     } else {
-      filterObj['unit_code'] =
+      filterObj['unit_no'] =
         body?.request_by?.activeUnit?.code || body.request_by.units[0].code;
     }
     if (query.type) {
