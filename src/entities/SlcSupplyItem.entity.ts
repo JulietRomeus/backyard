@@ -223,6 +223,9 @@ export class slcSupplyItem {
   // )
   // slc_warehouse_control_items: slcWarehouseControlItem[];
 
-  @OneToMany(() => trsTransaction, (trs_transaction) => trs_transaction.vehicle)
+  @OneToMany(
+    () => trsTransaction,
+    (trs_transaction) => trs_transaction.supply_item
+  )
   trs_transactions: trsTransaction[];
 }

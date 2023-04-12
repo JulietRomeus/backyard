@@ -31,8 +31,8 @@ export class TransactionController {
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
-  findAll() {
-    return this.transactionService.findAll();
+  findAll(@Body() body: any) {
+    return this.transactionService.findAll(body);
   }
 
   @Get('option')
@@ -56,6 +56,13 @@ export class TransactionController {
    const data = await this.transactionService.update(updatetransactionDto);
     return genPayload(data, null, ACTIONTYPE.UPDATE);
   }
+
+  @Patch('status')
+  async updatestatus( @Body() updatetransactionDto: any) {
+     console.log('updateController',updatetransactionDto)
+    const data = await this.transactionService.updatestatus(updatetransactionDto);
+     return genPayload(data, null, ACTIONTYPE.UPDATE);
+   }
 
 //   @Delete(':id')
 //   remove(@Param('id') id: string) {

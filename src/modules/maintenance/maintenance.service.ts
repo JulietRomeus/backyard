@@ -56,7 +56,7 @@ export class MaintenanceService {
     console.log('body',body.request_by.units?.map((r:any)=>r.code ))
     const unit_no=body.request_by.units?.map((r:any)=>r.code)
     return await this.trsVehicleRepo.query(`
-    select rm.*,ss.supply_name as supply ,sss.name as spec,rrrm.repair_methode ,rrmpt.period_type ,srsg.group_name
+    select rm.*,ss.supply_name as supply , ss.id as supply_id ,sss.name as spec,rrrm.repair_methode ,rrmpt.period_type ,srsg.group_name
 ,rrs.status_name as status_name, rrs.id as status_id
 from rep_maintenance rm 
 left join dbo.rep_repair_status rrs on rrs.id = rm.repair_status_id 
