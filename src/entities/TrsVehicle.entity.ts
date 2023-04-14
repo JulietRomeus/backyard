@@ -266,8 +266,8 @@ export class trsVehicle {
   @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand)
   vehicle_brand2: number | null;
 
-  @OneToMany(() => trsTransaction, (trs_transaction) => trs_transaction.vehicle)
-  trs_transactions: trsTransaction[];
+  // @OneToMany(() => trsTransaction, (trs_transaction) => trs_transaction.vehicle)
+  // trs_transactions: trsTransaction[];
 
 
 

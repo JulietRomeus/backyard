@@ -140,7 +140,7 @@ export class trsRegis {
   @Column("nvarchar", { name: "res_update_by", nullable: true, length: 255 })
   res_update_by: string | null;
 
-  @Column("date", { name: "res_update_date", nullable: true })
+  @Column("datetime", { name: "res_update_date", nullable: true })
   res_update_date: Date | null;
 
   @Column("nvarchar", { name: "res_review_by_id", nullable: true, length: 255 })
@@ -149,16 +149,16 @@ export class trsRegis {
   @Column("nvarchar", { name: "res_review_by", nullable: true, length: 255 })
   res_review_by: string | null;
 
-  @Column("date", { name: "res_review_date", nullable: true })
+  @Column("datetime2", { name: "res_review_date", nullable: true })
   res_review_date: Date | null;
 
   @Column("nvarchar", { name: "res_approve_by_id", nullable: true, length: 255 })
   res_approve_by_id: string | null;
 
-  @Column("nvarchar", { name: "res_approve_by", nullable: true, length: 255 })
-  res_approve_by: string | null;
+  // @Column("nvarchar", { name: "res_approve_by", nullable: true, length: 255 })
+  // res_approve_by: string | null;
 
-  @Column("date", { name: "res_approve_date", nullable: true })
+  @Column("datetime2", { name: "res_approve_date", nullable: true })
   res_approve_date: Date | null;
 
   @Column("nvarchar", { name: "review_by_id", nullable: true, length: 255 })
@@ -167,8 +167,12 @@ export class trsRegis {
   @Column("nvarchar", { name: "review_by", nullable: true, length: 255 })
   review_by: string | null;
 
-  @Column("date", { name: "review_date", nullable: true })
+
+  @Column("datetime2", { name: "review_date", nullable: true })
   review_date: Date | null;
+
+  @Column("nvarchar", { name: "remark", nullable: true, length: 300 })
+  remark: string | null;
 
 
   @Column("nvarchar", {
@@ -200,4 +204,16 @@ export class trsRegis {
     {cascade:true}
   )
   trs_regis_detail_no: trsRegisDetail[];
+
+  @Column("nvarchar", { name: "res_approve_by", nullable: true, length: 255 })
+  res_approve_by: string | null;
+
+  @Column("nvarchar", { name: "unit_no", nullable: true, length: 255 })
+  unit_no: string | null;
+
+  @Column("nvarchar", { name: "unit_name", nullable: true, length: 255 })
+  unit_name: string | null;
+
+
+
 }

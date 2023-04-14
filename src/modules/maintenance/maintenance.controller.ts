@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Permission } from 'src/decorators/permission.decorator';
@@ -31,8 +32,8 @@ export class MaintenanceController {
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
-  findAll() {
-    return this.maintenanceService.findAll();
+  findAll(@Body() body: any, @Query() query: any) {
+    return this.maintenanceService.findAll(body);
   }
 
 //   @Get('option/license')

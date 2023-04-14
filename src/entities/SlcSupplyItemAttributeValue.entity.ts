@@ -71,6 +71,6 @@ export class slcSupplyItemAttributeValue {
   @JoinColumn([{ name: "supply_item_id", referencedColumnName: "id" }])
   supply_item: slcSupplyItem;
 
-  @OneToMany(() => trsTransaction, (trs_transaction) => trs_transaction.vehicle)
-  trs_transactions: trsTransaction[];
+  // @OneToMany(() => trsTransaction, (trs_transaction) => trs_transaction.vehicle)
+  // trs_transactions: trsTransaction[];
 }

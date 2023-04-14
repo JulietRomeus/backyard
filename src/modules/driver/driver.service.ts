@@ -61,16 +61,20 @@ export class DriverService {
     return dbRes;
   }
 
-  async findAll() {
+  async findAll(body:any) {
+    console.log('body',body)
+    const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
+    console.log(unit_no)
     return await this.trsDriverRepo
       .createQueryBuilder('d')
-      .where('d.is_active = 1')
+      .where(`d.is_active = 1 and d.unit_no in (${unit_no})`)
       .leftJoinAndSelect(
         'd.trs_driver_license_lists',
         'tdll',
         'tdll.is_active = 1',
       )
       .leftJoinAndSelect('d.driver_status', 'tds')
+      // .getQuery();
       .getMany();
   }
 
@@ -108,9 +112,9 @@ export class DriverService {
       .getOne();
   }
 
-  async useremail() {
+  async useremail(body:any) {
     const user = await this.user();
-    const driver = await this.findAll();
+    const driver = await this.findAll(body);
 
     const filter = user.filter(function (r) {
       return (
@@ -123,7 +127,7 @@ export class DriverService {
     // console.log(filter)
     // console.log(user,driver)
   }
-  
+
   async findOne(id: any) {
     console.log(id);
     return await this.trsDriverRepo

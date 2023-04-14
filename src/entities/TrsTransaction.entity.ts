@@ -53,11 +53,27 @@ export class trsTransaction {
   transaction_type: trsTransactionType;
 
   @ManyToOne(
-    () => slcSupplyItemAttributeValue,
-    (slc_supply_item_attribute_value) =>
-      slc_supply_item_attribute_value.trs_transactions,
+    () => slcSupplyItem,
+    (slc_supply_item) => slc_supply_item.trs_transactions,
     { onDelete: "SET NULL" }
   )
-  @JoinColumn([{ name: "vehicle", referencedColumnName: "id" }])
-  vehicle: slcSupplyItemAttributeValue;
+  @JoinColumn([{ name: "supply_item", referencedColumnName: "id" }])
+  supply_item: slcSupplyItem;
+
+
+  @Column("nvarchar", { name: "company_name", nullable: true, length: 255 })
+  company_name: string | null;
+
+  @Column("nvarchar", { name: "policy_no", nullable: true, length: 255 })
+  policy_no: string | null;
+
+  
+  @Column("nvarchar", { name: "unit_no", nullable: true, length: 255 })
+  unit_no: string | null;
+
+
+ 
+
 }
+
+
