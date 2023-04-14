@@ -117,7 +117,6 @@ export class CreateActivityDto extends RequestByDto {
   @IsOptional()
   note?: string;
 
-
   route: {
     id: number;
     order: number;
@@ -211,6 +210,9 @@ export class CreateActivityDto extends RequestByDto {
         driver_name: string;
         driver_license: string[];
       };
+      vehicle_suppy_id: string; // id ประเภท
+      vehicle_item_id?: string; // id รถ
+      vehicle_license?: string; // ทะเบียนรถ
     }[];
   }[];
 

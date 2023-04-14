@@ -11,6 +11,7 @@ import {
 import { ActivityService } from './activity.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
+import { UpdateMissionDto } from './dto/update-mission.dto';
 import { RequestActivityDto } from './dto/request-activity.dto';
 import { DeleteActivityDto } from './dto/delete-activity.dto';
 
@@ -86,7 +87,7 @@ export class ActivityController {
   }
 
   @Get('mission')
-  @Permission({ route: route, action: 'view' })
+  @Permission({ route: 'activity-mission', action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   missionAll(@Body() body: any, @Query() query: any) {
@@ -94,11 +95,23 @@ export class ActivityController {
   }
 
   @Get('mission/:id')
-  @Permission({ route: route, action: 'view' })
+  @Permission({ route: 'activity-mission', action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   mission(@Param('id') id: string, @Body() body: any, @Query() query: any) {
     return this.activityService.mission(id, body, query);
+  }
+
+  @Patch('mission/:id')
+  @Permission({ route: 'activity-mission', action: 'update' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดทข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  updateMission(
+    @Param('id') id: string,
+    @Body() updateMissionDto: UpdateMissionDto,
+  ) {
+    // console.log('>>>>>');
+    return this.activityService.updateMission(id, updateMissionDto);
   }
 
   @Get(':id')

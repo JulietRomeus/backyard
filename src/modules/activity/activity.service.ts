@@ -3,6 +3,7 @@ import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { RequestActivityDto } from './dto/request-activity.dto';
 import { DeleteActivityDto } from './dto/delete-activity.dto';
+import { UpdateMissionDto } from './dto/update-mission.dto';
 
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
@@ -271,7 +272,7 @@ export class ActivityService {
   }
 
   async missionAll(body: any, query: any) {
-    console.log('>>>mission id ', body.request_by.data_permission);
+    // console.log('>>>mission id ', body.request_by.data_permission);
 
     const activityField = `activity.*,activity.activity_status.*,activity.activity_type.*`;
     const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
@@ -475,6 +476,57 @@ export class ActivityService {
       return result?.data?.data || [];
     } catch (error) {
       console.log('error update menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async updateMission(id: string, updateMissionDto: UpdateMissionDto) {
+    // console.log("--->",updateActivityDto);
+
+    if (updateMissionDto.accident_activity_form) {
+      updateMissionDto.accident_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.accident_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.accident_activity_form.update_date = now();
+    }
+
+    if (updateMissionDto.before_activity_form) {
+      updateMissionDto.before_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.before_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.before_activity_form.update_date = now();
+    }
+
+    if (updateMissionDto.while_activity_form) {
+      updateMissionDto.while_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.while_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.while_activity_form.update_date = now();
+    }
+
+    if (updateMissionDto.after_activity_form) {
+      updateMissionDto.after_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.after_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.after_activity_form.update_date = now();
+    }
+
+    delete updateMissionDto.request_by;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(
+          `/items/trs_activity_vehicle_driver/${id}`,
+          updateMissionDto,
+        ),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error update mission id', error);
       return error.response.data.errors;
     }
   }
@@ -960,8 +1012,6 @@ export class ActivityService {
   }
 
   async vehicleOption(query: any, body: RequestByDto) {
- 
-
     return await this.trsVehicleRepo
       .query(`select ss.id as supply_id,ss.supply_name  as supply_name ,sss.name  as spec_name,ssi.id as item_id,
     ssi.name as item_name,ssia.attribute_name as att_name,ssia.id ,ssi.unit_no as unit
@@ -974,12 +1024,17 @@ export class ActivityService {
     left join slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
     left join slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
     left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-    where srsst.id =9 and smak.id =21 ${query.unit && `and ssi.unit_no ='${query.unit}'` || `and ssi.unit_no ='${body?.request_by?.activeUnit?.code || body?.request_by?.units[0]?.code || ''}'`} ${query.type && `and ss.id =${query.type}` || ''}`);
+    where srsst.id =9 and smak.id =21 ${
+      (query.unit && `and ssi.unit_no ='${query.unit}'`) ||
+      `and ssi.unit_no ='${
+        body?.request_by?.activeUnit?.code ||
+        body?.request_by?.units[0]?.code ||
+        ''
+      }'`
+    } ${(query.type && `and ss.id =${query.type}`) || ''}`);
   }
 
-
   async vehicleTypeOption(query: any, body: RequestByDto) {
-
     return await this.trsVehicleRepo
       .query(`select ss.id ,ss.supply_name  from  slc_supply ss 
       left join slc_toa st on ss.toa_id = st.id 
