@@ -3,6 +3,7 @@ import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { RequestActivityDto } from './dto/request-activity.dto';
 import { DeleteActivityDto } from './dto/delete-activity.dto';
+import { UpdateMissionDto } from './dto/update-mission.dto';
 
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
@@ -475,6 +476,57 @@ export class ActivityService {
       return result?.data?.data || [];
     } catch (error) {
       console.log('error update menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async updateMission(id: string, updateMissionDto: UpdateMissionDto) {
+    // console.log("--->",updateActivityDto);
+
+    if (updateMissionDto.accident_activity_form) {
+      updateMissionDto.accident_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.accident_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.accident_activity_form.update_date = now();
+    }
+
+    if (updateMissionDto.before_activity_form) {
+      updateMissionDto.before_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.before_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.before_activity_form.update_date = now();
+    }
+
+    if (updateMissionDto.while_activity_form) {
+      updateMissionDto.while_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.while_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.while_activity_form.update_date = now();
+    }
+
+    if (updateMissionDto.after_activity_form) {
+      updateMissionDto.after_activity_form.update_by =
+        updateMissionDto.request_by.id || '';
+      updateMissionDto.after_activity_form.update_by_name =
+        updateMissionDto.request_by.displayname || '';
+      updateMissionDto.after_activity_form.update_date = now();
+    }
+
+    delete updateMissionDto.request_by;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(
+          `/items/trs_activity_vehicle_driver/${id}`,
+          updateMissionDto,
+        ),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error update mission id', error);
       return error.response.data.errors;
     }
   }
