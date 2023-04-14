@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Query} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  HttpStatus,
+} from '@nestjs/common';
 import { RegisterService } from './register.service';
 import { CreateRegisterDto } from './dto/create-register.dto';
 import { UpdateRegisterDto } from './dto/update-register.dto';
@@ -9,7 +19,10 @@ import {
   ApiResponse,
   ApiOkResponse,
   ApiTags,
-} from '@nestjs/swagger'
+} from '@nestjs/swagger';
+import now from '../../utils/now';
+
+
 import { Permission } from 'src/decorators/permission.decorator';
 const route = 'register-request';
 
@@ -17,31 +30,43 @@ const route = 'register-request';
 export class RegisterController {
   constructor(private readonly registerService: RegisterService) {}
 
+
+
+
   @Post()
   create(@Body() createRegisterDto: any) {
-    console.log('this.registerService.create(createRegisterDto)',createRegisterDto)
+    console.log(
+      'this.registerService.create(createRegisterDto)',
+      createRegisterDto,
+    );
     return this.registerService.create(createRegisterDto);
-    
   }
 
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
-  findAll(@Body() body: any, @Query() query: any)  {
-    return this.registerService.findAll(body,query);
+  findAll(@Body() body: any, @Query() query: any) {
+    return this.registerService.findAll(body, query);
+  }
+
+  @Get('vehicle/:id')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  getvehicle(@Param('id') id: any,@Body() body: any) {
+    return this.registerService.getvehicle(id);
   }
 
   @Get('optioncontract')
   //@Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูล' })
-  findOptioncontract(@Body() body: any, @Query() query: any)  {
-    console.log(body,query)
+  findOptioncontract(@Body() body: any, @Query() query: any) {
+    console.log(body, query);
     return this.registerService.findOptioncontract();
   }
 
- 
   @Get(':id')
   //@Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
@@ -50,16 +75,18 @@ export class RegisterController {
     return this.registerService.findOne(id);
   }
 
-
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRegisterDto: any) {
-    console.log(updateRegisterDto)
+    console.log(updateRegisterDto);
     return this.registerService.update(+id, updateRegisterDto);
   }
 
   @Patch('send/:id')
-  send(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
-  {
+  send(
+    @Param('id') id: any,
+    @Body() updateRegisterDto: any,
+    @Query() query: any,
+  ) {
     // console.log('id',id)
     // console.log('updateRegisterDto',updateRegisterDto)
     // console.log('query',query)
@@ -68,23 +95,32 @@ export class RegisterController {
   }
 
   @Patch('review/:id')
-  review(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
-  {
+  review(
+    @Param('id') id: any,
+    @Body() updateRegisterDto: any,
+    @Query() query: any,
+  ) {
     return this.registerService.review(id, updateRegisterDto, query);
   }
 
-
   @Patch('approve/:id')
-  approve(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any)
-  {
+  approve(
+    @Param('id') id: any,
+    @Body() updateRegisterDto: any,
+    @Query() query: any,
+  ) {
     return this.registerService.approve(id, updateRegisterDto, query);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: any, @Body() updateRegisterDto: any,@Query() query: any){
+  remove(
+    @Param('id') id: any,
+    @Body() updateRegisterDto: any,
+    @Query() query: any,
+  ) {
     return this.registerService.remove(id, updateRegisterDto, query);
   }
-//----------------getobstacle-------------------//
 
 
+  //----------------getobstacle-------------------//
 }

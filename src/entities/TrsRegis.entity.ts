@@ -80,7 +80,7 @@ export class trsRegis {
   @Column("varchar", { name: "create_by_id", nullable: true, length: 100 })
   create_by_id: string | null;
 
-  @Column("varchar", { name: "create_by", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "create_by", nullable: true, length: 300 })
   create_by: string | null;
 
   @Column("datetime", { name: "create_date", nullable: true })
@@ -89,7 +89,7 @@ export class trsRegis {
   @Column("varchar", { name: "update_by_id", nullable: true, length: 100 })
   update_by_id: string | null;
 
-  @Column("varchar", { name: "update_by", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "update_by", nullable: true, length: 300 })
   update_by: string | null;
 
   @Column("datetime", { name: "update_date", nullable: true })
@@ -98,7 +98,7 @@ export class trsRegis {
   @Column("varchar", { name: "delete_by_id", nullable: true, length: 100 })
   delete_by_id: string | null;
 
-  @Column("varchar", { name: "delete_by", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "delete_by", nullable: true, length: 300 })
   delete_by: string | null;
 
   @Column("datetime", { name: "delete_date", nullable: true })

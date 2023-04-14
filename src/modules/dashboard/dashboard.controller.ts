@@ -2,6 +2,7 @@ import { Controller, Post, Get, Body, HttpStatus, Param } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { DashboardService } from './dashboard.service';
 import now from '../../utils/now';
+import { RegisterService } from '../register/register.service';
 
 import { Permission } from 'src/decorators/permission.decorator';
 
@@ -10,7 +11,8 @@ import { Permission } from 'src/decorators/permission.decorator';
 @Controller('dashboard')
 @ApiTags('Dashboard (ข้อมูลสำหรับ dashboards)')
 export class DashboardController {
-  constructor(private readonly dashboardService: DashboardService) {}
+  constructor(private readonly dashboardService: DashboardService)
+   {}
 
   @Get(':id') //
 //   @Permission({ route: defaultRoute, action: 'view' })
@@ -32,4 +34,20 @@ export class DashboardController {
       timestamp: now(),
     };
   }
+  @Get('vehicle') //
+  //   @Permission({ route: defaultRoute, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Get ' })
+  async getregis(@Body() request_by: any): Promise<any> {
+    const response: any = await this.dashboardService.getregis(request_by);
+    return {
+      status: HttpStatus.OK,
+      message: 'GET_UNIT_OK',
+      data: response,
+      error: null,
+      timestamp: now(),
+    };
+  }
+
+
 }

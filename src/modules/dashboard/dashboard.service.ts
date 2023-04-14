@@ -10,7 +10,17 @@ export class DashboardService {
   constructor(
     @InjectRepository(TrsDashboard, 'MSSQL_CONNECTION_HOST')
     private readonly trsrepository: Repository<TrsDashboard>,
+   
   ) {}
+
+  async getregis(request_by: any) {
+    const regis = `[dbo].[Example_Trs_GetCarAndContract]`;
+    const regis_data: TrsDashboard[] = await this.trsrepository.query(regis);
+    console.log('regis_data',regis_data)
+    return {
+      regis_data: regis_data,
+    };
+  }
   
   async getdriver(id: any, request_by: any) {
     const driverrate = `[dbo].[disDash_TrsDashboard]
