@@ -33,7 +33,7 @@ const vehicleDriverFields = `vehicle_driver.unit_code,vehicle_driver.unit_name,v
 const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
 const convoyVehicleFields = `convoy.vehicle_driver.vehicle.id,convoy.vehicle_driver.vehicle.vehicle_type,convoy.vehicle_driver.vehicle.is_available,convoy.vehicle_driver.vehicle.license_plate,${convoyMainDriverFields}`;
 const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.driver_license`;
-const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,${convoyVehicleFields},${convoyDriverFields}`;
+const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,convoy.vehicle_driver.before_activity_form.*,convoy.vehicle_driver.after_activity_form.*,${convoyVehicleFields},${convoyDriverFields}`;
 
 const unitResFields = `unit_response.status.*`;
 const formFields = `*.*,${vehicleDriverFields},${convoyVehicleDriverFields},files.files.*,files.files.directus_files_id.*,convoy.route.*,${unitResFields}`;
