@@ -33,7 +33,7 @@ const vehicleDriverFields = `vehicle_driver.unit_code,vehicle_driver.unit_name,v
 const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
 const convoyVehicleFields = `convoy.vehicle_driver.vehicle.id,convoy.vehicle_driver.vehicle.vehicle_type,convoy.vehicle_driver.vehicle.is_available,convoy.vehicle_driver.vehicle.license_plate,${convoyMainDriverFields}`;
 const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.driver_license`;
-const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,${convoyVehicleFields},${convoyDriverFields}`;
+const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,${convoyVehicleFields},${convoyDriverFields}`;
 
 const unitResFields = `unit_response.status.*`;
 const formFields = `*.*,${vehicleDriverFields},${convoyVehicleDriverFields},files.files.*,files.files.directus_files_id.*,convoy.route.*,${unitResFields}`;
@@ -1041,6 +1041,38 @@ export class ActivityService {
       left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
       left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
       where srsst.id = 9 and srssd.[key] =1`);
+  }
+
+  async oilType() {
+    return await this.trsVehicleRepo.query(`SELECT 
+      (CASE 
+       when sog.name = N'ภาคพื้น' then sss.name
+       else sss.name +N' ('+ sog.name+')'
+      END
+      )
+      as name,
+      sog.name as group_name,
+      sog.id as grop_id,
+      sot.[type] as oil_type_name,
+      sssot.oil_type_id,
+      (CASE 
+       when sog.name = N'ภาคพื้น' then sss.name
+       else sss.name +N' ('+ sog.name+')'
+      END
+      )
+      as oil_name,
+      sssot.supply_spec_id,
+      sssot.id as id,
+      sss.api_code
+      FROM 
+      slc_supply_spec_oil_type sssot 
+      left join 
+      slc_oil_type sot on sot.id = sssot.oil_type_id 
+      left join 
+      slc_supply_spec sss on sss.id= sssot.supply_spec_id 
+      left join 
+      slc_oil_group sog on sog.id =  sot.group_no
+      where sog.id =1`);
   }
 
   // async vehicleType(query: any, body: RequestByDto) {

@@ -86,6 +86,14 @@ export class ActivityController {
     return this.activityService.driver(query, body);
   }
 
+  @Get('option/oil')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับที่ว่างอยู่' })
+  oilType() {
+    return this.activityService.oilType();
+  }
+
   @Get('mission')
   @Permission({ route: 'activity-mission', action: 'view' })
   @ApiBearerAuth('JWT')
@@ -213,7 +221,7 @@ export class ActivityController {
   }
 
   @Patch('back/:id')
-  @Permission({ route: route, action: 'approve' })
+  @Permission({ route: route, action: 'update' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'อนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
   back(
