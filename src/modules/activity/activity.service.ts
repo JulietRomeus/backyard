@@ -60,6 +60,10 @@ export class ActivityService {
   async findAll(body: any, query: any) {
     // console.log('body', body?.request_by || '');
     // console.log('query', query);
+    const userUnit =
+      body?.request_by?.activeUnit?.code ||
+      body?.request_by?.units[0]?.code ||
+      '';
     let filterObj = {
       is_delete: { _neq: true }, // filter ข้อมูลที่ยังไม่ถูกลบ
       is_test: { _neq: true }, // filter ข้อมูลที่ยังไม่ใช่ข้อมูลทดสอบ
@@ -77,6 +81,15 @@ export class ActivityService {
         { activity_status: { _neq: 'req_edit' } },
         { activity_status: { _neq: 'pending_req_review' } },
         { activity_status: { _neq: 'pending_req_approve' } },
+      ];
+      // filterObj['unit_response_code'] = { _eq: userUnit };
+      filterObj['_or'] = [
+        {
+          unit_response_code: {
+            _eq: userUnit,
+          },
+          unit_response: { unit_no: { _in: userUnit } },
+        },
       ];
     } else if (query.type === 'cmd') {
       // รายการสั่งการ
@@ -109,16 +122,12 @@ export class ActivityService {
           ],
         },
       ];
+      // filter type = res(ตอบรับ) ให้ unit_response_code = unit ของ user หรือ unit_request_code = unit ของ user
+      filterObj['unit_request_code'] = {
+        _eq: userUnit,
+      };
     }
-    // filter type = res(ตอบรับ) ให้ unit_response_code = unit ของ user หรือ unit_request_code = unit ของ user
-    filterObj[
-      query.type === 'res' ? 'unit_response_code' : 'unit_request_code'
-    ] = {
-      _eq:
-        body?.request_by?.activeUnit?.code ||
-        body?.request_by?.units[0]?.code ||
-        '',
-    };
+
     // console.log('filterObj', filterObj);
     const filterString = JSON.stringify(filterObj);
     const getQuery = `trs_activity?filter=${filterString}&fields=${listFields}&sort=-req_create_date`;
@@ -129,7 +138,8 @@ export class ActivityService {
       // console.log(result.data);
       return result?.data?.data || [];
     } catch (error) {
-      console.log('error get menupage');
+      console.log('error getAll activity');
+      return error;
       return [];
     }
   }
@@ -812,8 +822,7 @@ export class ActivityService {
     // console.log(updateActivityDto.request_by);
 
     updateActivityDto.activity_status = 'done';
-    updateActivityDto['done_by'] =
-      updateActivityDto?.request_by?.id || '';
+    updateActivityDto['done_by'] = updateActivityDto?.request_by?.id || '';
     updateActivityDto['done_by_name'] =
       updateActivityDto?.request_by?.displayname || '';
     updateActivityDto['done_date'] = now();
