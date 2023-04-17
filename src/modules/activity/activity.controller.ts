@@ -14,7 +14,7 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 import { UpdateMissionDto } from './dto/update-mission.dto';
 import { RequestActivityDto } from './dto/request-activity.dto';
 import { DeleteActivityDto } from './dto/delete-activity.dto';
-
+import { RequestByDto } from '../../common/interfaces/requestBy.dto';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -182,6 +182,14 @@ export class ActivityController {
     return this.activityService.cancel_request(id);
   }
 
+  @Patch('request/approve/:id')
+  @Permission({ route: route, action: 'update' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ขอสนับสนุนรถหน่วยอื่นเพิ่มเติม' })
+  approveReq(@Param('id') id: string, @Body() body: RequestByDto) {
+    return this.activityService.approveReq(id, body);
+  }
+
   @Patch('review/:id')
   @Permission({ route: route, action: 'review' })
   @ApiBearerAuth('JWT')
@@ -224,10 +232,7 @@ export class ActivityController {
   @Permission({ route: route, action: 'done' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ไม่อนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
-  done(
-    @Param('id') id: string,
-    @Body() updateActivityDto: UpdateActivityDto,
-  ) {
+  done(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
     return this.activityService.done(id, updateActivityDto);
   }
 

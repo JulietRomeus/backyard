@@ -638,7 +638,7 @@ export class ActivityService {
       return {
         ...u,
         activity: id,
-        status: 'pending_res_draft',
+        status: 'pending_res_approve',
         req_unit_code:
           requestActivityDto?.request_by?.activeUnit?.code ||
           requestActivityDto?.request_by?.units[0].code ||
@@ -672,6 +672,27 @@ export class ActivityService {
     try {
       const result = await firstValueFrom(
         this.httpService.delete(`/items/trs_activity_unit_response/${id}`),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error delete unit res id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async approveReq(id: string, body: RequestByDto) {
+    // console.log(updateActivityDto.request_by);
+    // console.log(unitResponse);
+    const data = {
+      status: 'approved',
+      approve_by_name: body?.request_by?.displayname || '',
+      approve_by: body?.request_by?.id || '',
+      approve_date: now(),
+    };
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/trs_activity_unit_response/${id}`, data),
       );
       // console.log(result);
       return result?.data?.data || [];
@@ -1204,7 +1225,7 @@ export class ActivityService {
     //2. use Repo
     let filterObj = {
       is_delete: false, // filter ข้อมูลที่ยังไม่ถูกลบ
-      // is_available: true,
+      is_active: true,
     };
     if (query.unit) {
       filterObj['unit_no'] = query.unit;
