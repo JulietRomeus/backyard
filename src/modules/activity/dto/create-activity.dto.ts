@@ -292,4 +292,7 @@ export class CreateActivityDto extends RequestByDto {
   'sendback_date': Date;
   'sendback_by': string;
   'sendback_by_name': string;
+  'done': Date;
+  'done_by': string;
+  'done_by_name': string;
 }

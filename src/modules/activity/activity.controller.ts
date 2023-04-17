@@ -220,6 +220,17 @@ export class ActivityController {
     return this.activityService.disApprove(id, updateActivityDto, query);
   }
 
+  @Patch('done/:id')
+  @Permission({ route: route, action: 'done' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ไม่อนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  done(
+    @Param('id') id: string,
+    @Body() updateActivityDto: UpdateActivityDto,
+  ) {
+    return this.activityService.done(id, updateActivityDto);
+  }
+
   @Patch('back/:id')
   @Permission({ route: route, action: 'update' })
   @ApiBearerAuth('JWT')

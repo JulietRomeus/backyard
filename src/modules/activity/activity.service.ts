@@ -808,6 +808,28 @@ export class ActivityService {
     }
   }
 
+  async done(id: string, updateActivityDto: UpdateActivityDto) {
+    // console.log(updateActivityDto.request_by);
+
+    updateActivityDto.activity_status = 'done';
+    updateActivityDto['done_by'] =
+      updateActivityDto?.request_by?.id || '';
+    updateActivityDto['done_by_name'] =
+      updateActivityDto?.request_by?.displayname || '';
+    updateActivityDto['done_date'] = now();
+    delete updateActivityDto.request_by;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/trs_activity/${id}`, updateActivityDto),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error done menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
   async back(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
     updateActivityDto['sendback_by'] = updateActivityDto?.request_by?.id || '';
