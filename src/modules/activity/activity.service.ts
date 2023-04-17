@@ -72,7 +72,7 @@ export class ActivityService {
 
     if (query.type === 'res') {
       // รายการตอบรับ
-      // console.log('res');
+      console.log('unitnoo', userUnit);
       // filter ในฐานะผู้ตอบรับคำขอ
       filterObj['action_type'] = { _eq: 'request' };
       // filter exclude
@@ -88,7 +88,9 @@ export class ActivityService {
           unit_response_code: {
             _eq: userUnit,
           },
-          unit_response: { unit_no: { _in: userUnit } },
+        },
+        {
+          unit_response: { unit_no: { _eq: userUnit } },
         },
       ];
     } else if (query.type === 'cmd') {
@@ -128,8 +130,8 @@ export class ActivityService {
       };
     }
 
-    // console.log('filterObj', filterObj);
     const filterString = JSON.stringify(filterObj);
+    // console.log('filterObj', filterString);
     const getQuery = `trs_activity?filter=${filterString}&fields=${listFields}&sort=-req_create_date`;
     try {
       const result = await firstValueFrom(
