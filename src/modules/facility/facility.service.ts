@@ -48,7 +48,7 @@ export class FacilityService {
 
   async facility() {
     return await this.trsFacilityRepo.query(
-      `select mrs.id as station_id,mra.resource_attribute_name,mrav.value as facility_name,mrs.loc_x as lat,mrs.loc_y as long,mrs.province ,
+      `select mrs.id as station_id,mra.resource_attribute_name,mrav.value as facility_name,mrs.loc_x as long,mrs.loc_y as lat,mrs.province ,
       mrs.amphoe ,mrs.tambon ,mrt.group_name ,mrt.type_name_th as facility_type_name  ,mrt.id as facility_type from mob_resource_attribute mra 
       left join mob_resource_attribute_value mrav on mra.id = mrav.resource_attribute_id 
       left join mob_resource_station mrs on mrs.id = mrav.resource_station_id 

@@ -200,7 +200,7 @@ export class RegisterService {
   // }
 
   async create(CreateRegisterDto: any) {
-    // console.log('CreateRegisterDto', CreateRegisterDto);
+    console.log('CreateRegisterDto', CreateRegisterDto);
     let timeNow = now();
     let user = CreateRegisterDto.request_by;
     let dataObj = CreateRegisterDto;

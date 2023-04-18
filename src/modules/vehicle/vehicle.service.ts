@@ -21,11 +21,14 @@ export class VehicleService {
     private slcSupplyRepo: Repository<slcSupply>,
   ) {}
 
-  async findAll() {
+  async findAll(body:any) {
+    console.log('body',body)
+    const unit_no=body.request_by.units?.map((r:any)=>`${r.code}`)
+    console.log(unit_no)
     return await this.trsVehicleRepo.query(
       `select  srsis.status as status,srsis.id as status_id,srst.id as source_id,srst.[type] as source,
-      min(smit.id) as images,min(df.id ) as img,
-            max(ta.start_date) as startdate,df.description ,ssiav.attribute_value as license,
+      min(smit.id) as images,min(df.id ) as img
+           ,df.description ,ssiav.attribute_value as license,
             ssi.name as item,ssi.id as item_id ,ssi.unit_no as unit_no,sss.name as spec,
             sss.id as spec_id ,ss.id as type_id, ss.supply_name as type from dbo.slc_supply_item ssi 
             left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id 
@@ -36,15 +39,13 @@ export class VehicleService {
             left join dbo.directus_files df on df.id = ssif.directus_files_id 
             left join dbo.slc_master_image_type smit on smit.id = ssif.master_image_type_id 
             left join dbo.slc_refs_supply_item_status srsis on srsis.id = ssi.supply_item_status_id 
-            left join dbo.trs_activity_vehicle_driver tavd on tavd.vehicle = ssi.id 
-            left join dbo.trs_activity ta on ta.id = tavd.activity 
             left join dbo.slc_supply_source sss2 on sss2.supply_item_id = ssi.id 
             left join dbo.slc_refs_source_type srst on srst.id = sss2.source_type_id 
             left join dbo.slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id  
             left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
             left join dbo.slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
             left join dbo.slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-            where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no = '6360000000'
+            where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no in (${unit_no})
             group by ssiav.attribute_name,srsis.status,srsis.id,df.description,ssiav.attribute_value,ssi.name,
             ssi.id,sss.name,sss.id,ss.id,ss.supply_name,srst.id,srst.[type] ,ssi.unit_no`,
     );

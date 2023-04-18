@@ -23,18 +23,15 @@ export class trsRegisDetail {
   @Column("int", { name: "vehicle_type", nullable: true })
   vehicle_type: number | null;
 
-  @Column("int", { name: "vehicle_brand", nullable: true })
-  vehicle_brand: number | null;
+  @Column("nvarchar", { name: "vehicle_brand", nullable: true, length: 127 })
+  vehicle_brand: string | null;
 
-  @Column("int", { name: "vehicle_brand_model", nullable: true })
-  vehicle_brand_model: number | null;
-
-  @Column("varchar", {
-    name: "type_fuel_consumption",
+  @Column("nvarchar", {
+    name: "vehicle_brand_model",
     nullable: true,
-    length: 100,
+    length: 127,
   })
-  type_fuel_consumption: string | null;
+  vehicle_brand_model: string | null;
 
   @Column("int", { name: "approved_budget", nullable: true })
   approved_budget: number | null;
@@ -52,10 +49,7 @@ export class trsRegisDetail {
   @Column("int", { name: "amount", nullable: true })
   amount: number | null;
 
-  @Column("varchar", { name: "create_by_id", nullable: true, length: 100 })
-  create_by_id: string | null;
-
-  @Column("varchar", { name: "create_by", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "create_by", nullable: true, length: 300 })
   create_by: string | null;
 
   @Column("datetime", { name: "create_date", nullable: true })
@@ -64,7 +58,7 @@ export class trsRegisDetail {
   @Column("varchar", { name: "update_by_id", nullable: true, length: 100 })
   update_by_id: string | null;
 
-  @Column("varchar", { name: "update_by", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "update_by", nullable: true, length: 300 })
   update_by: string | null;
 
   @Column("datetime", { name: "update_date", nullable: true })
@@ -73,7 +67,7 @@ export class trsRegisDetail {
   @Column("varchar", { name: "delete_by_id", nullable: true, length: 100 })
   delete_by_id: string | null;
 
-  @Column("varchar", { name: "delete_by", nullable: true, length: 300 })
+  @Column("nvarchar", { name: "delete_by", nullable: true, length: 300 })
   delete_by: string | null;
 
   @Column("datetime", { name: "delete_date", nullable: true })
@@ -96,4 +90,6 @@ export class trsRegisDetail {
   })
   @JoinColumn([{ name: "trs_regis_no", referencedColumnName: "id" }])
   trs_regis_no: trsRegis;
+  @Column("nvarchar", { name: "vehicle_spec", nullable: true, length: 255 })
+  vehicle_spec: string | null;
 }
