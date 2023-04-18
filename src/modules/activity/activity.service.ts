@@ -32,7 +32,7 @@ const vehicleDriverFields = `vehicle_driver.unit_code,vehicle_driver.unit_name,v
 
 const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
 const convoyVehicleFields = `convoy.vehicle_driver.vehicle.id,convoy.vehicle_driver.vehicle.vehicle_type,convoy.vehicle_driver.vehicle.is_available,convoy.vehicle_driver.vehicle.license_plate,${convoyMainDriverFields}`;
-const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.driver_license`;
+const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.firstname,convoy.vehicle_driver.driver.lastname,convoy.vehicle_driver.driver.driver_license`;
 const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,convoy.vehicle_driver.before_activity_form.*,convoy.vehicle_driver.help_activity_form.*,convoy.vehicle_driver.after_activity_form.*,convoy.vehicle_driver.lat,convoy.vehicle_driver.long,convoy.vehicle_driver.client_id,convoy.vehicle_driver.last_location_date,${convoyVehicleFields},${convoyDriverFields}`;
 
 const unitResFields = `unit_response.status.*`;
@@ -702,8 +702,6 @@ export class ActivityService {
     }
   }
 
-
-
   async review(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
     const userUnit =
@@ -800,8 +798,6 @@ export class ActivityService {
       return error.response.data.errors;
     }
   }
-
-
 
   async disApprove(
     id: string,
