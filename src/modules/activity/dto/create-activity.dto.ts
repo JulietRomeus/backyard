@@ -52,9 +52,6 @@ export class CreateActivityDto extends RequestByDto {
   @IsOptional() //
   'activity_end_date': Date;
 
-  @IsDateString()
-  @IsOptional()
-  'start_date': Date;
 
   @IsDateString()
   @IsOptional()
@@ -292,7 +289,10 @@ export class CreateActivityDto extends RequestByDto {
   'sendback_date': Date;
   'sendback_by': string;
   'sendback_by_name': string;
-  'done': Date;
+  'done_date': Date;
   'done_by': string;
   'done_by_name': string;
+  'start_date': Date;
+  'start_by': string;
+  'start_by_name': string;
 }

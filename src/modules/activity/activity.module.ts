@@ -2,6 +2,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { ActivityController } from './activity.controller';
+import { ActivityGateway } from './activity.gateway';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Entities from '../../entities/Index';
@@ -24,6 +25,6 @@ import Entities from '../../entities/Index';
     TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
   ],
   controllers: [ActivityController],
-  providers: [ActivityService],
+  providers: [ActivityGateway, ActivityService],
 })
 export class ActivityModule {}

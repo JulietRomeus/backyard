@@ -33,10 +33,10 @@ const vehicleDriverFields = `vehicle_driver.unit_code,vehicle_driver.unit_name,v
 const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
 const convoyVehicleFields = `convoy.vehicle_driver.vehicle.id,convoy.vehicle_driver.vehicle.vehicle_type,convoy.vehicle_driver.vehicle.is_available,convoy.vehicle_driver.vehicle.license_plate,${convoyMainDriverFields}`;
 const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.driver_license`;
-const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,convoy.vehicle_driver.before_activity_form.*,convoy.vehicle_driver.after_activity_form.*,${convoyVehicleFields},${convoyDriverFields}`;
+const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,convoy.vehicle_driver.before_activity_form.*,convoy.vehicle_driver.help_activity_form.*,convoy.vehicle_driver.after_activity_form.*,convoy.vehicle_driver.lat,convoy.vehicle_driver.long,convoy.vehicle_driver.client_id,convoy.vehicle_driver.last_location_date,${convoyVehicleFields},${convoyDriverFields}`;
 
 const unitResFields = `unit_response.status.*`;
-const formFields = `*.*,${vehicleDriverFields},${convoyVehicleDriverFields},files.files.*,files.files.directus_files_id.*,convoy.route.*,${unitResFields}`;
+const formFields = `*.*,${vehicleDriverFields},${convoyVehicleDriverFields},files.files.*,files.files.directus_files_id.*,convoy.activity.id,convoy.activity.name,convoy.route.*,${unitResFields}`;
 const listFields = `*,route.*,convoy.*.*,activity_status.id,activity_status.name,activity_status.color,activity_type.id,activity_type.name`;
 
 @Injectable()
@@ -346,7 +346,7 @@ export class ActivityService {
     const activityField = `activity.*,activity.activity_status.*,activity.vehicle_driver.*.*,activity.activity_type.*,activity.files.*,activity.files.files.*.*`;
     const driverField = `driver.id,driver.driver_id,driver.firstname,driver.lastname`;
     const vehicleField = `vehicle.id,vehicle.vehicle_type.id,vehicle.vehicle_type.name,vehicle.vehicle_id,vehicle.license_plate,vehicle.unit_code`;
-    const convoyField = `convoy.*,convoy.route.*,convoy.vehicle_driver.*.*`;
+    const convoyField = `convoy.*,convoy.activity.id,convoy.activity.name,convoy.route.*,convoy.vehicle_driver.*.*`;
     const beforeForm = `before_activity_form.*`;
     const afterForm = `after_activity_form.*`;
     const whileForm = `while_activity_form.*`;
@@ -702,6 +702,8 @@ export class ActivityService {
     }
   }
 
+
+
   async review(id: string, updateActivityDto: UpdateActivityDto, query: any) {
     // console.log(updateActivityDto.request_by);
     const userUnit =
@@ -799,6 +801,8 @@ export class ActivityService {
     }
   }
 
+
+
   async disApprove(
     id: string,
     updateActivityDto: UpdateActivityDto,
@@ -837,6 +841,26 @@ export class ActivityService {
       return result?.data?.data || [];
     } catch (error) {
       console.log('error approve menupage id', error);
+      return error.response.data.errors;
+    }
+  }
+
+  async start(id: string, updateActivityDto: UpdateActivityDto) {
+    // console.log(updateActivityDto.request_by);
+    updateActivityDto.activity_status = 'on_mission';
+    updateActivityDto['start_by'] = updateActivityDto?.request_by?.id || '';
+    updateActivityDto['start_by_name'] =
+      updateActivityDto?.request_by?.displayname || '';
+    updateActivityDto['start_date'] = now();
+    delete updateActivityDto.request_by;
+    try {
+      const result = await firstValueFrom(
+        this.httpService.patch(`/items/trs_activity/${id}`, updateActivityDto),
+      );
+      // console.log(result);
+      return result?.data?.data || [];
+    } catch (error) {
+      console.log('error done menupage id', error);
       return error.response.data.errors;
     }
   }

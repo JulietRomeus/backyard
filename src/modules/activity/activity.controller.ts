@@ -216,6 +216,16 @@ export class ActivityController {
     return this.activityService.approve(id, updateActivityDto, query);
   }
 
+  @Patch('start/:id')
+  @Permission({ route: route, action: 'approve' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({
+    summary: 'อนุมัติอนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย',
+  })
+  start(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
+    return this.activityService.start(id, updateActivityDto);
+  }
+
   @Patch('disapprove/:id')
   @Permission({ route: route, action: 'approve' })
   @ApiBearerAuth('JWT')
