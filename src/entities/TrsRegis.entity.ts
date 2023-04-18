@@ -214,6 +214,7 @@ export class trsRegis {
   @Column("nvarchar", { name: "unit_name", nullable: true, length: 255 })
   unit_name: string | null;
 
-
+  @Column("int", { name: "contract_id", nullable: true })
+  contract_id: number | null;
 
 }

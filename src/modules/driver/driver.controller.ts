@@ -38,8 +38,6 @@ export class DriverController {
     return this.driverService.findAll(body);
   }
 
-
-
   @Get('useremail')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')

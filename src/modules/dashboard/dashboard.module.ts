@@ -4,10 +4,25 @@ import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import {TrsDashboard} from './entities/dashboard.entity'
 import { ConfigModule, ConfigService } from '@nestjs/config';
- 
+import { HttpModule } from '@nestjs/axios';
+import Entities from '../../entities/Index';
 
 @Module({
   imports: [ 
+    HttpModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        timeout: 100000,
+        baseURL: configService.get('DIRECTUS_LOGISTICS_URI'),
+        headers: {
+          authorization: `Bearer ${configService.get(
+            'DIRECTUS_LOGISTICS_TOKEN',
+          )}`,
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION_HOST',
       imports: [ConfigModule],
@@ -26,10 +41,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         }
       })
     }),
+    
     TypeOrmModule.forFeature([
       TrsDashboard
     ],
      'MSSQL_CONNECTION_HOST')],
+     
   controllers: [DashboardController],
   providers: [DashboardService]
 })

@@ -17,14 +17,14 @@ export class VehicleController {
   @Get()
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
-  findAll() {
-    return this.vehicleService.findAll();
+  findAll(@Body() body: any) {
+    return this.vehicleService.findAll(body);
   }
 
   @Get('optionsupply')
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลoptionVehicle_type' })
-  findsupply() {
+  findsupply(@Body() body: any) {
     return this.vehicleService.findsupply();
   }
 
