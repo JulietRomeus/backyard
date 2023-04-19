@@ -109,7 +109,22 @@ export class ActivityGateway
     @MessageBody() data: any,
   ): Promise<any> {
     // console.log('help...', `help-convoy-${data.convoy.id}`, data);
-    this.server.emit(`help-convoy-${data.convoy.id}`, data);
+    this.server.emit(`help-convoy-${data.convoy.id}`, {
+      client_id: client.id,
+      ...data,
+    });
+  }
+
+  @SubscribeMessage('detour')
+  async detour(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ): Promise<any> {
+    console.log('detour...', data);
+    this.server.emit(`detour-convoy-${data.convoy.id}`, {
+      client_id: client.id,
+      ...data,
+    });
   }
 
   // private updateTrack ()=>{
