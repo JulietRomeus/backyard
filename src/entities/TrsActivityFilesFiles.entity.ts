@@ -31,15 +31,15 @@ export class trsActivityFilesFiles {
   @JoinColumn([{ name: "trs_activity_files_id", referencedColumnName: "id" }])
   trs_activity_files: trsActivityFiles;
 
-  @RelationId(
-    (trs_activity_files_files: trsActivityFilesFiles) =>
-      trs_activity_files_files.directus_files
-  )
-  directus_files_id: string | null;
+  // @RelationId(
+  //   (trs_activity_files_files: trsActivityFilesFiles) =>
+  //     trs_activity_files_files.directus_files
+  // )
+  // directus_files_id: string | null;
 
-  @RelationId(
-    (trs_activity_files_files: trsActivityFilesFiles) =>
-      trs_activity_files_files.trs_activity_files
-  )
-  trs_activity_files_id: number | null;
+  // @RelationId(
+  //   (trs_activity_files_files: trsActivityFilesFiles) =>
+  //     trs_activity_files_files.trs_activity_files
+  // )
+  // trs_activity_files_id: number | null;
 }

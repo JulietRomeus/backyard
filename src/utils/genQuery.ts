@@ -1,4 +1,4 @@
-import { directusFields } from './../entities/DirectusFields.entity';
+// import { directusFields } from './../entities/DirectusFields.entity';
 const _ = require('lodash');
 import { FragmentsOnCompositeTypesRule } from 'graphql';
 import {

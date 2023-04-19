@@ -55,8 +55,5 @@ export class trsPartiesList {
   @JoinColumn([{ name: "parties_type", referencedColumnName: "id" }])
   parties_type: trsPartiesType;
 
-  @RelationId(
-    (trs_parties_list: trsPartiesList) => trs_parties_list.parties_type
-  )
-  parties_type2: number | null;
+
 }

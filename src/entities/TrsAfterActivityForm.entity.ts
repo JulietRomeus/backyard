@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { trsActivity } from "./TrsActivity.entity";
+import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 
 @Index("PK__trs_afte__3213E83FC86F4E99", ["id"], { unique: true })
 @Entity("trs_after_activity_form", { schema: "dbo" })
@@ -64,9 +64,37 @@ export class trsAfterActivityForm {
   @Column("nvarchar", { name: "update_by_name", nullable: true })
   update_by_name: string | null;
 
+  @Column("nvarchar", { name: "fuel_add", nullable: true, length: 20 })
+  fuel_add: string | null;
+
+  @Column("nvarchar", { name: "fuel_left", nullable: true, length: 20 })
+  fuel_left: string | null;
+
+  @Column("nvarchar", { name: "miles_last", nullable: true, length: 20 })
+  miles_last: string | null;
+
+  @Column("bit", { name: "steering", nullable: true })
+  steering: boolean | null;
+
+  @Column("bit", { name: "process", nullable: true })
+  process: boolean | null;
+
+  @Column("bit", { name: "grease", nullable: true })
+  grease: boolean | null;
+
+  @Column("bit", { name: "battery", nullable: true })
+  battery: boolean | null;
+
+  @Column("bit", { name: "warmup", nullable: true })
+  warmup: boolean | null;
+
+  @Column("bit", { name: "clutch", nullable: true })
+  clutch: boolean | null;
+
   @OneToMany(
-    () => trsActivity,
-    (trs_activity) => trs_activity.after_activity_form
+    () => trsActivityVehicleDriver,
+    (trs_activity_vehicle_driver) =>
+      trs_activity_vehicle_driver.after_activity_form
   )
-  trs_activities: trsActivity[];
+  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
 }

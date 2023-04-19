@@ -32,11 +32,11 @@ export class trsActivityFiles {
   @Column("int", { name: "order", nullable: true })
   order: number | null;
 
-  @ManyToOne(
-    () => trsActivity,
-    (trs_activity) => trs_activity.files,
-    { onDelete: "SET NULL" }
-  )
+  // @ManyToOne(
+  //   () => trsActivity,
+  //   (trs_activity) => trs_activity.files,
+  //   { onDelete: "SET NULL" }
+  // )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
   activity: trsActivity;
 
@@ -46,8 +46,8 @@ export class trsActivityFiles {
   )
   trs_activity_files_files: trsActivityFilesFiles[];
 
-  @RelationId(
-    (trs_activity_files: trsActivityFiles) => trs_activity_files.activity
-  )
-  activity2: number | null;
+  // @RelationId(
+  //   (trs_activity_files: trsActivityFiles) => trs_activity_files.activity
+  // )
+  // activity2: number | null;
 }

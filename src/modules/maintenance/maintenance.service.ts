@@ -74,7 +74,7 @@ left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id
 left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
 where srsg.id = 5 and srssd.[key] =1 and rm.is_active =1 and ssi.is_active =1 
 and sss.is_active =1 and rrrm.is_active =1 and rrmpt.is_active =1 and srsg.is_active =1 and ssiav.is_active =1
-and ssia.is_active =1 and smak.is_active =1 and ss.is_active =1 and srsst.is_active =1 and srssd.ia_active =1
+and ssia.is_active =1 and smak.is_active =1 and ss.is_active =1 and srsst.is_active =1 and srssd.is_active =1
 and ma_unit_no in (${unit_no})`
     )
   }

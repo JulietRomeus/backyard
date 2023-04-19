@@ -82,11 +82,11 @@ export class trsActivityUnitResponse {
   @Column("nvarchar", { name: "unit_name", nullable: true, length: 255 })
   unit_name: string | null;
 
-  @ManyToOne(
-    () => trsActivity,
-    (trs_activity) => trs_activity.unit_response,
-    { onDelete: "SET NULL" }
-  )
+  // @ManyToOne(
+  //   () => trsActivity,
+  //   (trs_activity) => trs_activity.unit_response,
+  //   { onDelete: "SET NULL" }
+  // )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
   activity: trsActivity;
 
@@ -98,15 +98,15 @@ export class trsActivityUnitResponse {
   @JoinColumn([{ name: "status", referencedColumnName: "id" }])
   status: trsActivityStatus;
 
-  @RelationId(
-    (trs_activity_unit_response: trsActivityUnitResponse) =>
-      trs_activity_unit_response.activity
-  )
-  activity2: number | null;
+  // @RelationId(
+  //   (trs_activity_unit_response: trsActivityUnitResponse) =>
+  //     trs_activity_unit_response.activity
+  // )
+  // activity2: number | null;
 
-  @RelationId(
-    (trs_activity_unit_response: trsActivityUnitResponse) =>
-      trs_activity_unit_response.status
-  )
-  status2: string | null;
+  // @RelationId(
+  //   (trs_activity_unit_response: trsActivityUnitResponse) =>
+  //     trs_activity_unit_response.status
+  // )
+  // status2: string | null;
 }

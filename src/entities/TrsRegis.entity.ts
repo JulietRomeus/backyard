@@ -11,6 +11,7 @@ import {
 import { trsRegisStatus } from "./TrsRegisStatus.entity";
 import { trsRegisStatusform } from "./TrsRegisStatusform.entity";
 import { trsRegisDetail } from "./TrsRegisDetail.entity";
+import { trsRegisFiles } from "./TrsRegisFiles.entity";
 
 @Index("PK__trs_regi__3213E83F65252CE3", ["id"], { unique: true })
 @Entity("trs_regis", { schema: "dbo" })
@@ -216,5 +217,13 @@ export class trsRegis {
 
   @Column("int", { name: "contract_id", nullable: true })
   contract_id: number | null;
+
+
+  @OneToMany(
+    () => trsRegisFiles,
+    (trs_regis_files) => trs_regis_files.trs_regis,
+    {cascade:true}
+  )
+  trs_regis_files: trsRegisFiles[];
 
 }

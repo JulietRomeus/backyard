@@ -79,7 +79,7 @@ export class VehicleService {
       left join slc_toa st on st.id = ss.toa_id
       left join slc_refs_supply_sub_type srsst on st.supply_sub_type_id = srsst.id
       left join slc_refs_supply_sub_detail srssd on srsst.id = srssd.sub_type_id
-      where srssd.[key] =1 and srssd.id =4 and ss.is_active = 1 and st.is_active =1 and srsst.is_active =1 and srssd.ia_active =1`,
+      where srssd.[key] =1 and srssd.id =4 and ss.is_active = 1 and st.is_active =1 and srsst.is_active =1 and srssd.is_active =1`,
     );
   }
 

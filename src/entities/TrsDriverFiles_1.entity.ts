@@ -29,13 +29,13 @@ export class trsDriverFiles_1 {
   @JoinColumn([{ name: "directus_files_id", referencedColumnName: "id" }])
   directus_files: directusFiles;
 
-  @RelationId(
-    (trs_driver_files_1: trsDriverFiles_1) => trs_driver_files_1.trs_driver
-  )
-  trs_driver_id: number | null;
+  // @RelationId(
+  //   (trs_driver_files_1: trsDriverFiles_1) => trs_driver_files_1.trs_driver
+  // )
+  // trs_driver_id: number | null;
 
-  @RelationId(
-    (trs_driver_files_1: trsDriverFiles_1) => trs_driver_files_1.directus_files
-  )
-  directus_files_id: string | null;
+  // @RelationId(
+  //   (trs_driver_files_1: trsDriverFiles_1) => trs_driver_files_1.directus_files
+  // )
+  // directus_files_id: string | null;
 }

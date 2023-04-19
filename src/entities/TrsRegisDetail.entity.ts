@@ -5,8 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  RelationId,
+  PrimaryGeneratedColumn
 } from "typeorm";
 import { trsRegis } from "./TrsRegis.entity";
 

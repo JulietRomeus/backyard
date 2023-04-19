@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { trsActivity } from "./TrsActivity.entity";
+import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 
 @Index("PK__trs_befo__3213E83FB6DFE8F5", ["id"], { unique: true })
 @Entity("trs_before_activity_form", { schema: "dbo" })
@@ -76,9 +76,13 @@ export class trsBeforeActivityForm {
   @Column("float", { name: "distance", nullable: true, precision: 53 })
   distance: number | null;
 
+  @Column("nvarchar", { name: "fuel_left", nullable: true, length: 20 })
+  fuel_left: string | null;
+
   @OneToMany(
-    () => trsActivity,
-    (trs_activity) => trs_activity.before_activity_form
+    () => trsActivityVehicleDriver,
+    (trs_activity_vehicle_driver) =>
+      trs_activity_vehicle_driver.before_activity_form
   )
-  trs_activities: trsActivity[];
+  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
 }

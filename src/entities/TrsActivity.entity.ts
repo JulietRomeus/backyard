@@ -6,14 +6,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
-import { trsActivityStatus } from "./TrsActivityStatus.entity";
-import { trsAccidentActivityForm } from "./TrsAccidentActivityForm.entity";
-import { trsWhileActivityForm } from "./TrsWhileActivityForm.entity";
-import { trsAfterActivityForm } from "./TrsAfterActivityForm.entity";
 import { trsActivityType } from "./TrsActivityType.entity";
-import { trsBeforeActivityForm } from "./TrsBeforeActivityForm.entity";
+import { trsActivityStatus } from "./TrsActivityStatus.entity";
 import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
 import { trsActivityFiles } from "./TrsActivityFiles.entity";
 import { trsActivityRoute } from "./TrsActivityRoute.entity";
@@ -154,37 +149,50 @@ export class trsActivity {
   @Column("datetime2", { name: "activity_end_date", nullable: true })
   activity_end_date: Date | null;
 
-  @ManyToOne(
-    () => trsActivityStatus,
-    (trs_activity_status) => trs_activity_status.trs_activities,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "activity_status", referencedColumnName: "id" }])
-  activity_status: trsActivityStatus;
+  @Column("bit", { name: "cmd_focus", nullable: true, default: () => "'0'" })
+  cmd_focus: boolean | null;
 
-  @ManyToOne(
-    () => trsAccidentActivityForm,
-    (trs_accident_activity_form) => trs_accident_activity_form.trs_activities,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "accident_activity_form", referencedColumnName: "id" }])
-  accident_activity_form: trsAccidentActivityForm;
+  @Column("int", { name: "priority", nullable: true, default: () => "'1'" })
+  priority: number | null;
 
-  @ManyToOne(
-    () => trsWhileActivityForm,
-    (trs_while_activity_form) => trs_while_activity_form.trs_activities,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "while_activity_form", referencedColumnName: "id" }])
-  while_activity_form: trsWhileActivityForm;
+  @Column("nvarchar", { name: "req_type", nullable: true, length: 255 })
+  req_type: string | null;
 
-  @ManyToOne(
-    () => trsAfterActivityForm,
-    (trs_after_activity_form) => trs_after_activity_form.trs_activities,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "after_activity_form", referencedColumnName: "id" }])
-  after_activity_form: trsAfterActivityForm;
+  @Column("nvarchar", { name: "gov_order", nullable: true, length: 100 })
+  gov_order: string | null;
+
+  @Column("nvarchar", { name: "p_name", nullable: true, length: 400 })
+  p_name: string | null;
+
+  @Column("int", { name: "staff_carry", nullable: true })
+  staff_carry: number | null;
+
+  @Column("nvarchar", { name: "thing_carry", nullable: true, length: 500 })
+  thing_carry: string | null;
+
+  @Column("int", { name: "total_carry", nullable: true })
+  total_carry: number | null;
+
+  @Column("float", { name: "weight", nullable: true, precision: 53 })
+  weight: number | null;
+
+  @Column("nvarchar", { name: "driver_rep_to", nullable: true, length: 500 })
+  driver_rep_to: string | null;
+
+  @Column("nvarchar", { name: "purpose", nullable: true, length: 3000 })
+  purpose: string | null;
+
+  @Column("nvarchar", { name: "note", nullable: true, length: 3000 })
+  note: string | null;
+
+  @Column("nvarchar", { name: "p_unit", nullable: true, length: 255 })
+  p_unit: string | null;
+
+  @Column("nvarchar", { name: "p_pos", nullable: true, length: 300 })
+  p_pos: string | null;
+
+  @Column("nvarchar", { name: "unit_no", nullable: true, length: 255 })
+  unit_no: string | null;
 
   @ManyToOne(
     () => trsActivityType,
@@ -195,66 +203,46 @@ export class trsActivity {
   activity_type: trsActivityType;
 
   @ManyToOne(
-    () => trsBeforeActivityForm,
-    (trs_before_activity_form) => trs_before_activity_form.trs_activities,
+    () => trsActivityStatus,
+    (trs_activity_status) => trs_activity_status.trs_activities,
     { onDelete: "SET NULL" }
   )
-  @JoinColumn([{ name: "before_activity_form", referencedColumnName: "id" }])
-  before_activity_form: trsBeforeActivityForm;
+  @JoinColumn([{ name: "activity_status", referencedColumnName: "id" }])
+  activity_status: trsActivityStatus;
 
   @OneToMany(
     () => trsActivityConvoy,
     (trs_activity_convoy) => trs_activity_convoy.activity
   )
-  convoy: trsActivityConvoy[];
+  trs_activity_convoys: trsActivityConvoy[];
 
   @OneToMany(
     () => trsActivityFiles,
     (trs_activity_files) => trs_activity_files.activity
   )
-  files: trsActivityFiles[];
+  trs_activity_files: trsActivityFiles[];
 
   @OneToMany(
     () => trsActivityRoute,
     (trs_activity_route) => trs_activity_route.activity
   )
-  route: trsActivityRoute[];
+  trs_activity_routes: trsActivityRoute[];
 
   @OneToMany(
     () => trsActivityUnitResponse,
     (trs_activity_unit_response) => trs_activity_unit_response.activity
   )
-  unit_response: trsActivityUnitResponse[];
+  trs_activity_unit_responses: trsActivityUnitResponse[];
 
   @OneToMany(
     () => trsActivityVehicleDriver,
     (trs_activity_vehicle_driver) => trs_activity_vehicle_driver.activity
   )
-  vehicle_driver: trsActivityVehicleDriver[];
+  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
 
   @OneToMany(() => trsHelpChat, (trs_help_chat) => trs_help_chat.activity)
   trs_help_chats: trsHelpChat[];
 
   @OneToMany(() => trsVehicle, (trs_vehicle) => trs_vehicle.activity)
   trs_vehicles: trsVehicle[];
-
-  // @RelationId((trs_activity: trsActivity) => trs_activity.activity_status)
-  // activity_status_id: string | null;
-
-  // @RelationId(
-  //   (trs_activity: trsActivity) => trs_activity.accident_activity_form
-  // )
-  // accident_activity_form_id: number | null;
-
-  // @RelationId((trs_activity: trsActivity) => trs_activity.while_activity_form)
-  // while_activity_form_id: number | null;
-
-  // @RelationId((trs_activity: trsActivity) => trs_activity.after_activity_form)
-  // after_activity_form_id: number | null;
-
-  // @RelationId((trs_activity: trsActivity) => trs_activity.activity_type)
-  // activity_type_id: number | null;
-
-  // @RelationId((trs_activity: trsActivity) => trs_activity.before_activity_form)
-  // before_activity_form_id: number | null;
 }
