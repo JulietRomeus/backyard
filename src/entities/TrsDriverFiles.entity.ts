@@ -29,11 +29,5 @@ export class trsDriverFiles {
   @JoinColumn([{ name: "directus_files_id", referencedColumnName: "id" }])
   directus_files: directusFiles;
 
-  @RelationId((trs_driver_files: trsDriverFiles) => trs_driver_files.trs_driver)
-  trs_driver_id: number | null;
 
-  @RelationId(
-    (trs_driver_files: trsDriverFiles) => trs_driver_files.directus_files
-  )
-  directus_files_id: string | null;
 }

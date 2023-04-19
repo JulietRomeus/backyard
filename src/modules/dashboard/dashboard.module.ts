@@ -22,7 +22,7 @@ import Entities from '../../entities/Index';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
+   
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION_HOST',
       imports: [ConfigModule],
@@ -45,7 +45,9 @@ import Entities from '../../entities/Index';
     TypeOrmModule.forFeature([
       TrsDashboard
     ],
-     'MSSQL_CONNECTION_HOST')],
+     'MSSQL_CONNECTION_HOST'),
+     TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
+    ],
      
   controllers: [DashboardController],
   providers: [DashboardService]

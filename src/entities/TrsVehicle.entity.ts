@@ -225,46 +225,46 @@ export class trsVehicle {
   @JoinColumn([{ name: "vehicle_brand", referencedColumnName: "id" }])
   vehicle_brand: trsVehicleBrand;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.type_tyre)
-  type_tyre2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.type_tyre)
+  // type_tyre2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.country)
-  country2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.country)
+  // country2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.int_piston)
-  int_piston2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.int_piston)
+  // int_piston2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.main_driver)
-  main_driver2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.main_driver)
+  // main_driver2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.activity)
-  activity2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.activity)
+  // activity2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_active_status)
-  vehicle_active_status2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_active_status)
+  // vehicle_active_status2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.method_use)
-  method_use2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.method_use)
+  // method_use2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.type_warehouse)
-  type_warehouse2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.type_warehouse)
+  // type_warehouse2: number | null;
 
-  @RelationId(
-    (trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand_model_variant
-  )
-  vehicle_brand_model_variant2: number | null;
+  // @RelationId(
+  //   (trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand_model_variant
+  // )
+  // vehicle_brand_model_variant2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand_model)
-  vehicle_brand_model2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand_model)
+  // vehicle_brand_model2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_type)
-  vehicle_type2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_type)
+  // vehicle_type2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_status)
-  vehicle_status2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_status)
+  // vehicle_status2: number | null;
 
-  @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand)
-  vehicle_brand2: number | null;
+  // @RelationId((trs_vehicle: trsVehicle) => trs_vehicle.vehicle_brand)
+  // vehicle_brand2: number | null;
 
   // @OneToMany(() => trsTransaction, (trs_transaction) => trs_transaction.vehicle)
   // trs_transactions: trsTransaction[];

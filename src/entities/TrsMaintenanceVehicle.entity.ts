@@ -52,10 +52,6 @@ maintenance_type:trsMaintenanceVehicleType;
 
 maintenance_status:trsMaintenanceVehicleStatus;
 
-@RelationId((trs_maintenance_vehicle:trsMaintenanceVehicle)=>trs_maintenance_vehicle.maintenance_type)
-maintenance_type2:number | null;
 
-@RelationId((trs_maintenance_vehicle:trsMaintenanceVehicle)=>trs_maintenance_vehicle.maintenance_status)
-maintenance_status2:number | null;
 
 }

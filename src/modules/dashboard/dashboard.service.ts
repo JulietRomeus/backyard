@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import {
   trsActivity,
+  trsActivityConvoy,
   trsActivityType,
   trsVehicleType,
   trsVehicleStatus,
@@ -19,8 +20,8 @@ import {
 export class DashboardService {
   constructor(
     private readonly httpService: HttpService,
-    @InjectRepository(trsActivity, 'MSSQL_CONNECTION')
-    private trsActivity: Repository<trsActivity>,
+    @InjectRepository(trsActivityConvoy, 'MSSQL_CONNECTION')
+    private trsActivityConvoy: Repository<trsActivityConvoy>,
     @InjectRepository(TrsDashboard, 'MSSQL_CONNECTION_HOST')
     private readonly trsrepository: Repository<TrsDashboard>,
     @InjectRepository(trsActivity, 'MSSQL_CONNECTION')
@@ -51,23 +52,21 @@ console.log('valuefree',valuefree)
     const valueinpro= tempvehicleinpro?.map((r: any) => r.amount);
 
     const oveallfree = [
-      {
-        name: 'ใช้ราชการได้',
-        data: valuefree,
-        borderRadiusTopLeft: '80%',
-       borderRadiusTopRight: '80%',
-      },
+    
       {
         name: 'ชำรุด',
         data: [],
-        borderRadiusTopLeft: '80%',
-        borderRadiusTopRight: '80%',
+       
       },
       {
         name: 'ปฏิบัติภารกิจ',
         data: valueinpro,
-        borderRadiusTopLeft: '80%',
-        borderRadiusTopRight: '80%',
+       
+      },
+      {
+        name: 'ใช้ราชการได้',
+        data: valuefree,
+      
       },
     ];
 
@@ -205,8 +204,21 @@ console.log('valuefree',valuefree)
     console.log('body',body)
     // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
     // console.log(unit_no)
-    return await this.trsActivityRepo
-      .createQueryBuilder('d')
+    return await this.trsActivityConvoy
+      .createQueryBuilder('tac')
+      .leftJoinAndSelect(
+        'tac.trs_activity_vehicle_drivers',
+        'tavd',
+      )
+      .leftJoinAndSelect(
+        'tac.trs_activity_routes',
+        'tar',
+      )
+      .leftJoinAndSelect(
+        'tac.activity',
+        'ta',
+      )
+
       .getMany();
   }
 

@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
 import { trsActivity } from "./TrsActivity.entity";
@@ -46,6 +45,15 @@ export class trsActivityRoute {
   @Column("float", { name: "long", nullable: true, precision: 53 })
   long: number | null;
 
+  @Column("nvarchar", { name: "polyline", nullable: true })
+  polyline: string | null;
+
+  @Column("datetime2", { name: "end_date", nullable: true })
+  end_date: Date | null;
+
+  @Column("nvarchar", { name: "est_distance", nullable: true, length: 20 })
+  est_distance: string | null;
+
   @ManyToOne(
     () => trsActivityConvoy,
     (trs_activity_convoy) => trs_activity_convoy.trs_activity_routes,
@@ -56,19 +64,9 @@ export class trsActivityRoute {
 
   @ManyToOne(
     () => trsActivity,
-    (trs_activity) => trs_activity.route,
+    (trs_activity) => trs_activity.trs_activity_routes,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
   activity: trsActivity;
-
-  @RelationId(
-    (trs_activity_route: trsActivityRoute) => trs_activity_route.convoy
-  )
-  convoy2: number | null;
-
-  @RelationId(
-    (trs_activity_route: trsActivityRoute) => trs_activity_route.activity
-  )
-  activity2: number | null;
 }

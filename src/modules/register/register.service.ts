@@ -1,3 +1,4 @@
+import { directusFiles } from './../../entities/DirectusFiles.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateRegisterDto } from './dto/create-register.dto';
 import { UpdateRegisterDto } from './dto/update-register.dto';
@@ -8,11 +9,12 @@ import {
   trsRegisStatusform,
   trsRegisDetail,
   trsRegisStatus,
+  trsRegisFiles,
 } from '../../entities/Index';
 import { Repository, Brackets, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import now from '../../utils/now';
-const listFields = `*,trs_regis_statusform_no.*,trs_regis_status_no.*,trs_regis_detail_no.*`;
+const listFields = `*,trs_regis_statusform_no.*,trs_regis_status_no.*,trs_regis_detail_no.*,files.*,files.directus_files_id.*`;
 @Injectable()
 export class RegisterService {
   constructor(
@@ -25,7 +27,10 @@ export class RegisterService {
     private trsRegisStatusformRepo: Repository<trsRegisStatusform>,
     @InjectRepository(trsRegisStatus, 'MSSQL_CONNECTION')
     private trsRegisStatusRepo: Repository<trsRegisStatus>,
-   
+    @InjectRepository(trsRegisFiles, 'MSSQL_CONNECTION')
+    private trsRegisFilesRepo: Repository<trsRegisFiles>,
+    @InjectRepository(directusFiles, 'MSSQL_CONNECTION')
+    private directusFilesRepo: Repository<directusFiles>,
   ) {}
 
   async findAll(body, query) {
@@ -231,11 +236,20 @@ export class RegisterService {
       },
     );
 
+    const files = dataObj.files?.map((r: any) => {
+      let tempfiles = new trsRegisFiles();
+
+      tempfiles.directus_files_id = r.directus_files_id;
+
+      return tempfiles;
+    });
+
+    subItems.trs_regis_files = files;
     subItems.trs_regis_detail_no = trs_regis_detail_no;
-    console.log(trs_regis_detail_no);
 
     const dbRes = await this.trsRegisRepo.save(subItems);
     console.log('dbRes', dbRes);
+
     return await this.findOne(dbRes.id);
   }
 
@@ -262,8 +276,7 @@ export class RegisterService {
     );
     console.log('finalItemssss', finalItems);
 
-    // delete finalItems.trs_regis_detail_no;
-
+    
     console.log('dfff', finalItems);
     const dbRes = await this.trsRegisRepo.save(finalItems);
     console.log('dbRes', dbRes);
@@ -296,20 +309,43 @@ export class RegisterService {
       dataObj['res_update_by'] = user.displayname;
     }
 
-    const finalItems = dataObj;
-    if (query.type == 'req') {
-      finalItems.trs_regis_statusform_no.id = 'review';
-    } else {
-      finalItems.trs_regis_statusform_no.id = 'res_review';
-    }
+    let subItems = new trsRegis();
+    Object.keys(dataObj)?.map((keys) => {
+      subItems[keys] = dataObj[keys] || null;
+    });
 
-    console.log('finalItems', finalItems);
-    dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
+    const finalItems = dataObj;
+    // finalItems.id = id;
+    if (query.type == 'req') {
+      subItems.trs_regis_statusform_no.id = 'review';
+    } else {
+      subItems.trs_regis_statusform_no.id = 'res_review';
+    }
+    console.log('finalItems', subItems);
+    //---------------------------------
+    subItems.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
+    //---------------------------------
+    const files = dataObj.files?.map((r: any) => {
+      let tempfiles = new trsRegisFiles();
 
-    delete dataObj.trs_regis_detail_no;
-    const dbRes = await this.trsRegisRepo.update(id, finalItems);
+      tempfiles.directus_files_id = r.directus_files_id;
+      return tempfiles;
+    });
+    subItems.trs_regis_files = files;
+    console.log('finalItems',subItems)
+    // finalItems.files = files.trsRegisFiles;
+    
+    //----------------------------------
+
+    // delete dataObj.trs_regis_detail_no;
+    // delete dataObj.files;
+    //---------------------------------
+  
+    //----------------------------------
+
+    const dbRes = await this.trsRegisRepo.save(finalItems);
     console.log('dbRes', dbRes);
     return await this.findOne(id);
   }
@@ -344,7 +380,10 @@ export class RegisterService {
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
 
+ 
+   
     delete dataObj.trs_regis_detail_no;
+
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
     console.log('dbRes', dbRes);
     return await this.findOne(id);
@@ -384,6 +423,8 @@ export class RegisterService {
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
 
+ 
+
     delete dataObj.trs_regis_detail_no;
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
     return await this.findOne(id);
@@ -404,8 +445,7 @@ export class RegisterService {
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
   }
 
-  async getvehicle(id:any) {
-    
+  async getvehicle(id: any) {
     return await this.trsRegisRepo.query(
       `SET NOCOUNT ON;
 
@@ -1032,6 +1072,4 @@ export class RegisterService {
       where fr.contract_id = ${id}`,
     );
   }
-
-
 }

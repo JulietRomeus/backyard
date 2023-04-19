@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { trsActivity } from "./TrsActivity.entity";
+import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 
 @Index("PK__trs_whil__3213E83F2AE2A810", ["id"], { unique: true })
 @Entity("trs_while_activity_form", { schema: "dbo" })
@@ -71,8 +71,9 @@ export class trsWhileActivityForm {
   update_by_name: string | null;
 
   @OneToMany(
-    () => trsActivity,
-    (trs_activity) => trs_activity.while_activity_form
+    () => trsActivityVehicleDriver,
+    (trs_activity_vehicle_driver) =>
+      trs_activity_vehicle_driver.while_activity_form
   )
-  trs_activities: trsActivity[];
+  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
 }

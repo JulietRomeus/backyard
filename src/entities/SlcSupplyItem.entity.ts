@@ -26,6 +26,7 @@ import { slcSupplyItemAttributeValue } from "./SlcSupplyItemAttributeValue.entit
 // import { slcSupplyOrderItem } from "./SlcSupplyOrderItem.entity";
 // import { slcWarehouseControlItem } from "./SlcWarehouseControlItem.entity";
 import { trsTransaction } from "./TrsTransaction.entity";
+import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 
 @Index("PK__slc_supp__3213E83F933F7065", ["id"], { unique: true })
 @Entity("slc_supply_item", { schema: "dbo" })
@@ -228,4 +229,10 @@ export class slcSupplyItem {
     (trs_transaction) => trs_transaction.supply_item
   )
   trs_transactions: trsTransaction[];
+  @OneToMany(
+    () => trsActivityVehicleDriver,
+    (trs_activity_vehicle_driver) => trs_activity_vehicle_driver.vehicle_item
+  )
+  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
+  
 }

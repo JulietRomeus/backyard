@@ -7,13 +7,14 @@ import {
   OneToMany,
   RelationId,
 } from "typeorm";
-import { directusFolders } from "./DirectusFolders.entity";
-import { directusUsers } from "./DirectusUsers.entity";
-import { directusSettings } from "./DirectusSettings.entity";
+// import { directusFolders } from "./DirectusFolders.entity";
+// import { directusUsers } from "./DirectusUsers.entity";
+// import { directusSettings } from "./DirectusSettings.entity";
 import { trsActivityFilesFiles } from "./TrsActivityFilesFiles.entity";
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
 import { trsDriver } from "./TrsDriver.entity";
+import { trsRegisFiles } from "./TrsRegisFiles.entity";
 
 @Index("directus_files_pkey", ["id"], { unique: true })
 @Entity("directus_files", { schema: "dbo" })
@@ -72,45 +73,8 @@ export class directusFiles {
   @Column("nvarchar", { name: "metadata", nullable: true })
   metadata: string | null;
 
-  @ManyToOne(
-    () => directusFolders,
-    (directus_folders) => directus_folders.directus_files,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "folder", referencedColumnName: "id" }])
-  folder: directusFolders;
 
-  @ManyToOne(
-    () => directusUsers,
-    (directus_users) => directus_users.directus_files
-  )
-  @JoinColumn([{ name: "uploaded_by", referencedColumnName: "id" }])
-  uploaded_by: directusUsers;
 
-  @ManyToOne(
-    () => directusUsers,
-    (directus_users) => directus_users.directus_files2
-  )
-  @JoinColumn([{ name: "modified_by", referencedColumnName: "id" }])
-  modified_by: directusUsers;
-
-  @OneToMany(
-    () => directusSettings,
-    (directus_settings) => directus_settings.project_logo
-  )
-  directus_settings: directusSettings[];
-
-  @OneToMany(
-    () => directusSettings,
-    (directus_settings) => directus_settings.public_foreground
-  )
-  directus_settings2: directusSettings[];
-
-  @OneToMany(
-    () => directusSettings,
-    (directus_settings) => directus_settings.public_background
-  )
-  directus_settings3: directusSettings[];
 
   @OneToMany(
     () => trsActivityFilesFiles,
@@ -130,14 +94,20 @@ export class directusFiles {
   )
   trs_driver_files_s: trsDriverFiles_1[];
 
-  @RelationId((directus_files: directusFiles) => directus_files.folder)
-  folder2: string | null;
+  @OneToMany(
+    () => trsRegisFiles,
+    (trs_regis_files) => trs_regis_files.directus_files_id
+  )
+  trs_regis_files: trsRegisFiles[];
 
-  @RelationId((directus_files: directusFiles) => directus_files.uploaded_by)
-  uploaded_by2: string | null;
+  // @RelationId((directus_files: directusFiles) => directus_files.folder)
+  // folder2: string | null;
 
-  @RelationId((directus_files: directusFiles) => directus_files.modified_by)
-  modified_by2: string | null;
+  // @RelationId((directus_files: directusFiles) => directus_files.uploaded_by)
+  // uploaded_by2: string | null;
+
+  // @RelationId((directus_files: directusFiles) => directus_files.modified_by)
+  // modified_by2: string | null;
 
 
 

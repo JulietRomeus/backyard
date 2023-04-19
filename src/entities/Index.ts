@@ -1,3 +1,7 @@
+import { trsRegisFiles } from './TrsRegisFiles.entity';
+import { trsAccidentActivityFormFiles } from './TrsAccidentActivityFormFiles.entity';
+import { trsAccidentPersonHelper } from './TrsAccidentPersonHelper.entity';
+import { trsAccidentPersonGov } from './TrsAccidentPersonGov.entity';
 import { trsObstacleType } from './TrsObstacleType.entity';
 import { slcMasterAttributeTypeDetail } from './SlcMasterAttributeTypeDetail.entity';
 import { slcMasterAttributeType } from './SlcMasterAttributeType.entity';
@@ -15,59 +19,40 @@ import { trsDriverStatus } from './TrsDriverStatus.entity';
 import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsRegisStatus } from "./TrsRegisStatus.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
-import { directusDashboards } from "./DirectusDashboards.entity";
 import { trsRegisVehicleImg } from "./TrsRegisVehicleImg.entity";
 import { trsRegisStatusform } from "./TrsRegisStatusform.entity";
 import { trsActivityType } from "./TrsActivityType.entity";
-import { directusPanels } from "./DirectusPanels.entity";
-import { directusNotifications } from "./DirectusNotifications.entity";
+
 import { trsActivityFilesFiles } from "./TrsActivityFilesFiles.entity";
 import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
 import { trsRegis } from "./TrsRegis.entity";
-import { directusShares } from "./DirectusShares.entity";
-import { directusCollections } from "./DirectusCollections.entity";
-import { trsRegisDetail } from "./TrsRegisDetail.entity";
-import { directusRoles } from "./DirectusRoles.entity";
-import { directusFlows } from "./DirectusFlows.entity";
-import { directusUsers } from "./DirectusUsers.entity";
-import { directusOperations } from "./DirectusOperations.entity";
-import { directusFields } from "./DirectusFields.entity";
+
 import { trsActivity } from "./TrsActivity.entity";
-import { directusActivity } from "./DirectusActivity.entity";
 import { trsActivityFiles } from "./TrsActivityFiles.entity";
 import { trsDrivingLicenseType } from "./TrsDrivingLicenseType.entity";
-import { directusFolders } from "./DirectusFolders.entity";
 import { trsDriverLicenseList } from "./TrsDriverLicenseList.entity";
 import { directusFiles } from "./DirectusFiles.entity";
 import { trsVehicleType } from "./TrsVehicleType.entity";
 import { trsVehicleStatus } from "./TrsVehicleStatus.entity";
 import { trsVehicle } from "./TrsVehicle.entity";
-import { directusPermissions } from "./DirectusPermissions.entity";
 import { trsVehicleBrand } from "./TrsVehicleBrand.entity";
 import { trsVehicleBrandModel } from "./TrsVehicleBrandModel.entity";
-import { directusPresets } from "./DirectusPresets.entity";
 import { trsVehicleBrandModelVariant } from "./TrsVehicleBrandModelVariant.entity";
 import { trsMethodUse } from "./TrsMethodUse.entity";
 import { trsTypeWarehouse } from "./TrsTypeWarehouse.entity";
-import { directusRelations } from "./DirectusRelations.entity";
 import { trsTypeTyre } from "./TrsTypeTyre.entity";
 import { trsTypeFuel } from "./TrsTypeFuel.entity";
-import { directusRevisions } from "./DirectusRevisions.entity";
 import { trsIntPiston } from "./TrsIntPiston.entity";
 import { trsCountry } from "./TrsCountry.entity";
 import { trsVehicleAvailableStatus } from "./TrsVehicleAvailableStatus.entity";
-import { directusSessions } from "./DirectusSessions.entity";
 import { trsVehicleActiveStatus } from "./TrsVehicleActiveStatus.entity";
-import { directusSettings } from "./DirectusSettings.entity";
 import { trsMaintenanceVehicle } from "./TrsMaintenanceVehicle.entity";
 import { trsMaintenance_3monthForm } from "./TrsMaintenance_3monthForm.entity";
 import { trsMaintenance_3monthRemark } from "./TrsMaintenance_3monthRemark.entity";
 import { trsMaintenance_6monthForm } from "./TrsMaintenance_6monthForm.entity";
 import { trsMaintenanceVehicleType } from "./TrsMaintenanceVehicleType.entity";
-import { directusWebhooks } from "./DirectusWebhooks.entity";
 import { trsMaintenanceVehicleStatus } from "./TrsMaintenanceVehicleStatus.entity";
 import { trsVehicleFiles } from "./TrsVehicleFiles.entity";
-import { directusMigrations } from "./DirectusMigrations.entity";
 import { trsActivityRoute } from "./TrsActivityRoute.entity";
 import { trsBeforeActivityForm } from "./TrsBeforeActivityForm.entity";
 import { trsWhileActivityForm } from "./TrsWhileActivityForm.entity";
@@ -85,66 +70,57 @@ import { trsDriver } from "./TrsDriver.entity";
 import { trsFacility } from "./TrsFacility.entitly";
 import { trsTransactionType } from './TrsTransactionType.entity';
 import { slcSupplyItem } from './SlcSupplyItem.entity';
-
+import { trsRegisDetail } from './TrsRegisDetail.entity';
 
 
 export {
   trsDriverFiles,
   trsRegisStatus,
   trsDriverFiles_1,
-  directusDashboards,
   trsRegisVehicleImg,
   trsRegisStatusform,
   trsActivityType,
-  directusPanels,
-  directusNotifications,
+  trsRegisDetail,
   trsActivityFilesFiles,
   trsActivityConvoy,
   trsRegis,
-  directusShares,
-  directusCollections,
-  trsRegisDetail,
-  directusRoles,
-  directusFlows,
-  directusUsers,
-  directusOperations,
-  directusFields,
+
   trsActivity,
-  directusActivity,
+
   trsActivityFiles,
   trsDrivingLicenseType,
-  directusFolders,
+
   trsDriverLicenseList,
   directusFiles,
   trsVehicleType,
   trsVehicleStatus,
   trsVehicle,
-  directusPermissions,
+
   trsVehicleBrand,
   trsVehicleBrandModel,
-  directusPresets,
+
   trsVehicleBrandModelVariant,
   trsMethodUse,
   trsTypeWarehouse,
-  directusRelations,
+
   trsTypeTyre,
   trsTypeFuel,
-  directusRevisions,
+
   trsIntPiston,
   trsCountry,
   trsVehicleAvailableStatus,
-  directusSessions,
+
   trsVehicleActiveStatus,
-  directusSettings,
+
   trsMaintenanceVehicle,
   trsMaintenance_3monthForm,
   trsMaintenance_3monthRemark,
   trsMaintenance_6monthForm,
   trsMaintenanceVehicleType,
-  directusWebhooks,
+
   trsMaintenanceVehicleStatus,
   trsVehicleFiles,
-  directusMigrations,
+
   trsActivityRoute,
   trsBeforeActivityForm,
   trsWhileActivityForm,
@@ -174,68 +150,62 @@ export {
   slcMasterAttributeKeyword,
   slcMasterAttributeType,
   slcMasterAttributeTypeDetail,
-  trsObstacleType
+  trsObstacleType,
+  trsAccidentPersonGov,
+  trsAccidentPersonHelper,
+  trsAccidentActivityFormFiles,
+  trsRegisFiles
 
-  
 };
 
 export default [
   trsDriverFiles,
   trsRegisStatus,
   trsDriverFiles_1,
-  directusDashboards,
   trsRegisVehicleImg,
   trsRegisStatusform,
   trsActivityType,
-  directusPanels,
-  directusNotifications,
+
   trsActivityFilesFiles,
   trsActivityConvoy,
   trsRegis,
-  directusShares,
-  directusCollections,
-  trsRegisDetail,
-  directusRoles,
-  directusFlows,
-  directusUsers,
-  directusOperations,
-  directusFields,
+
   trsActivity,
-  directusActivity,
+  trsRegisDetail,
   trsActivityFiles,
   trsDrivingLicenseType,
-  directusFolders,
+
   trsDriverLicenseList,
   directusFiles,
   trsVehicleType,
   trsVehicleStatus,
   trsVehicle,
-  directusPermissions,
+
   trsVehicleBrand,
   trsVehicleBrandModel,
-  directusPresets,
+
   trsVehicleBrandModelVariant,
   trsMethodUse,
   trsTypeWarehouse,
-  directusRelations,
+
   trsTypeTyre,
   trsTypeFuel,
-  directusRevisions,
+
   trsIntPiston,
   trsCountry,
   trsVehicleAvailableStatus,
-  directusSessions,
+
   trsVehicleActiveStatus,
-  directusSettings,
+
   trsMaintenanceVehicle,
   trsMaintenance_3monthForm,
   trsMaintenance_3monthRemark,
   trsMaintenance_6monthForm,
   trsMaintenanceVehicleType,
-  directusWebhooks,
+
   trsMaintenanceVehicleStatus,
   trsVehicleFiles,
-  directusMigrations,
+
   trsActivityRoute,
   trsBeforeActivityForm,
   trsWhileActivityForm,
@@ -266,7 +236,13 @@ export default [
   slcMasterAttributeKeyword,
   slcMasterAttributeType,
   slcMasterAttributeTypeDetail,
-  trsObstacleType
-  
+  trsObstacleType,
+  trsActivityConvoy,
+  trsActivityFiles,
+  trsAccidentPersonGov,
+  trsAccidentPersonHelper,
+  trsAccidentActivityForm,
+  trsAccidentActivityFormFiles,
+  trsRegisFiles
 
 ];

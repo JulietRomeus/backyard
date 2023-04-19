@@ -4,13 +4,21 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
-import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
-import { trsActivity } from "./TrsActivity.entity";
+import { trsActivityHelp } from "./TrsActivityHelp.entity";
+import { trsActivityStopover } from "./TrsActivityStopover.entity";
 import { trsDriver } from "./TrsDriver.entity";
 import { trsVehicle } from "./TrsVehicle.entity";
+import { trsActivityConvoy } from "./TrsActivityConvoy.entity";
+// import { slcSupplySpecOilType } from "./SlcSupplySpecOilType.entity";
+import { slcSupplyItem } from "./SlcSupplyItem.entity";
+import { trsAccidentActivityForm } from "./TrsAccidentActivityForm.entity";
+import { trsWhileActivityForm } from "./TrsWhileActivityForm.entity";
+import { trsAfterActivityForm } from "./TrsAfterActivityForm.entity";
+import { trsBeforeActivityForm } from "./TrsBeforeActivityForm.entity";
+import { trsActivity } from "./TrsActivity.entity";
 
 @Index("PK__trs_acti__3213E83F631C2C19", ["id"], { unique: true })
 @Entity("trs_activity_vehicle_driver", { schema: "dbo" })
@@ -27,21 +35,33 @@ export class trsActivityVehicleDriver {
   @Column("nvarchar", { name: "unit_code", nullable: true, length: 255 })
   unit_code: string | null;
 
-  @ManyToOne(
-    () => trsActivityConvoy,
-    (trs_activity_convoy) => trs_activity_convoy.trs_activity_vehicle_drivers,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "convoy", referencedColumnName: "id" }])
-  convoy: trsActivityConvoy;
+  @Column("nvarchar", { name: "unit_name", nullable: true, length: 255 })
+  unit_name: string | null;
 
-  @ManyToOne(
-    () => trsActivity,
-    (trs_activity) => trs_activity.vehicle_driver,
-    { onDelete: "SET NULL" }
-  )
-  @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
-  activity: trsActivity;
+  @Column("nvarchar", {
+    name: "vehicle_supply_id",
+    nullable: true,
+    length: 255,
+  })
+  vehicle_supply_id: string | null;
+
+  @Column("nvarchar", { name: "vehicle_license", nullable: true, length: 255 })
+  vehicle_license: string | null;
+
+  @Column("int", { name: "oil_coupon", nullable: true })
+  oil_coupon: number | null;
+
+  // @OneToMany(
+  //   () => trsActivityHelp,
+  //   (trs_activity_help) => trs_activity_help.mission_form
+  // )
+  // trs_activity_helps: trsActivityHelp[];
+
+  // @OneToMany(
+  //   () => trsActivityStopover,
+  //   (trs_activity_stopover) => trs_activity_stopover.mission_form
+  // )
+  // trs_activity_stopovers: trsActivityStopover[];
 
   @ManyToOne(
     () => trsDriver,
@@ -59,27 +79,72 @@ export class trsActivityVehicleDriver {
   @JoinColumn([{ name: "vehicle", referencedColumnName: "id" }])
   vehicle: trsVehicle;
 
-  @RelationId(
-    (trs_activity_vehicle_driver: trsActivityVehicleDriver) =>
-      trs_activity_vehicle_driver.convoy
+  @ManyToOne(
+    () => trsActivityConvoy,
+    (trs_activity_convoy) => trs_activity_convoy.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
   )
-  convoy2: number | null;
+  @JoinColumn([{ name: "convoy", referencedColumnName: "id" }])
+  convoy: trsActivityConvoy;
 
-  @RelationId(
-    (trs_activity_vehicle_driver: trsActivityVehicleDriver) =>
-      trs_activity_vehicle_driver.activity
-  )
-  activity2: number | null;
+  // @ManyToOne(
+  //   () => slcSupplySpecOilType,
+  //   (slc_supply_spec_oil_type) =>
+  //     slc_supply_spec_oil_type.trs_activity_vehicle_drivers,
+  //   { onDelete: "SET NULL" }
+  // )
+  // @JoinColumn([{ name: "oil_type", referencedColumnName: "id" }])
+  // oil_type: slcSupplySpecOilType;
 
-  @RelationId(
-    (trs_activity_vehicle_driver: trsActivityVehicleDriver) =>
-      trs_activity_vehicle_driver.driver
+  @ManyToOne(
+    () => slcSupplyItem,
+    (slc_supply_item) => slc_supply_item.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
   )
-  driver2: number | null;
+  @JoinColumn([{ name: "vehicle_item_id", referencedColumnName: "id" }])
+  vehicle_item: slcSupplyItem;
 
-  @RelationId(
-    (trs_activity_vehicle_driver: trsActivityVehicleDriver) =>
-      trs_activity_vehicle_driver.vehicle
+  @ManyToOne(
+    () => trsAccidentActivityForm,
+    (trs_accident_activity_form) =>
+      trs_accident_activity_form.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
   )
-  vehicle2: number | null;
+  @JoinColumn([{ name: "accident_activity_form", referencedColumnName: "id" }])
+  accident_activity_form: trsAccidentActivityForm;
+
+  @ManyToOne(
+    () => trsWhileActivityForm,
+    (trs_while_activity_form) =>
+      trs_while_activity_form.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "while_activity_form", referencedColumnName: "id" }])
+  while_activity_form: trsWhileActivityForm;
+
+  @ManyToOne(
+    () => trsAfterActivityForm,
+    (trs_after_activity_form) =>
+      trs_after_activity_form.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "after_activity_form", referencedColumnName: "id" }])
+  after_activity_form: trsAfterActivityForm;
+
+  @ManyToOne(
+    () => trsBeforeActivityForm,
+    (trs_before_activity_form) =>
+      trs_before_activity_form.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "before_activity_form", referencedColumnName: "id" }])
+  before_activity_form: trsBeforeActivityForm;
+
+  @ManyToOne(
+    () => trsActivity,
+    (trs_activity) => trs_activity.trs_activity_vehicle_drivers,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
+  activity: trsActivity;
 }

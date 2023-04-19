@@ -6,7 +6,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { trsActivity } from "./TrsActivity.entity";
 import { trsActivityRoute } from "./TrsActivityRoute.entity";
@@ -30,9 +29,12 @@ export class trsActivityConvoy {
   @Column("nvarchar", { name: "color", nullable: true, length: 255 })
   color: string | null;
 
+  @Column("nvarchar", { name: "detail", nullable: true })
+  detail: string | null;
+
   @ManyToOne(
     () => trsActivity,
-    (trs_activity) => trs_activity.convoy,
+    (trs_activity) => trs_activity.trs_activity_convoys,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
@@ -49,9 +51,4 @@ export class trsActivityConvoy {
     (trs_activity_vehicle_driver) => trs_activity_vehicle_driver.convoy
   )
   trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
-
-  @RelationId(
-    (trs_activity_convoy: trsActivityConvoy) => trs_activity_convoy.activity
-  )
-  activity2: number | null;
 }

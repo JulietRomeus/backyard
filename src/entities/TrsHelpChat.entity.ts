@@ -34,6 +34,6 @@ export class trsHelpChat {
   @JoinColumn([{ name: "activity", referencedColumnName: "id" }])
   activity: trsActivity;
 
-  @RelationId((trs_help_chat: trsHelpChat) => trs_help_chat.activity)
-  activity2: number | null;
+  // @RelationId((trs_help_chat: trsHelpChat) => trs_help_chat.activity)
+  // activity2: number | null;
 }
