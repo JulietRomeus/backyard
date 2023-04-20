@@ -81,8 +81,15 @@ export class LedgerController {
   @Get('option/obstacle')
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะที่ว่างอยู่' })
-  findObstacleOption() {
-    return this.ledgerService.findObstacleOption();
+  findObstacleOption(@Query() query: any) {
+    return this.ledgerService.findObstacleOption(query);
+  }
+
+  @Get('option/obstacleType')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะที่ว่างอยู่' })
+  findObstacleTypeOption() {
+    return this.ledgerService.findObstacleTypeOption();
   }
 
   @Get(':id')

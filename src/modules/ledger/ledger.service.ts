@@ -250,11 +250,21 @@ export class LedgerService {
     }
   }
 
-  async findObstacleOption() {
+  async findObstacleOption(query: any) {
     try {
       return await this.trsVehicleRepo.query(
-        `select * from trs_obstacle where is_active=1`,
+        `select * from trs_obstacle where is_active=1 ${
+          (query.type && `and obstacle_type_id=${query.type}`) || ''
+        } ${(query.status && `and obstacle_status=${query.status}`) || ''}`,
       );
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async findObstacleTypeOption() {
+    try {
+      return await this.trsVehicleRepo.query(`select * from trs_obstacle_type`);
     } catch (error) {
       return error;
     }
