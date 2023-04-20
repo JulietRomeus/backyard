@@ -28,6 +28,10 @@ export class CreateLedgerDto extends RequestByDto {
   @IsOptional()
   vehicle: Array<any>;
 
+  @IsArray()
+  @IsOptional()
+  obstacle: Array<any>;
+
   is_active: boolean;
   create_by: string;
   create_by_id: string;

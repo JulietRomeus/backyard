@@ -46,7 +46,7 @@ export class LedgerController {
   }
 
   @Get('option/driver')
-  findPersonOption(@Query() query:any) {
+  findPersonOption(@Query() query: any) {
     return this.ledgerService.findPersonOption(query);
   }
 
@@ -71,6 +71,18 @@ export class LedgerController {
   @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะที่ว่างอยู่' })
   findVehicleOption(@Query() query: any) {
     return this.ledgerService.findVehicleOption(query);
+  }
+
+  @Get('obstacle/:id')
+  findObstacle(@Param('id') id: number) {
+    return this.ledgerService.findObstacle(id);
+  }
+
+  @Get('option/obstacle')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะที่ว่างอยู่' })
+  findObstacleOption() {
+    return this.ledgerService.findObstacleOption();
   }
 
   @Get(':id')
