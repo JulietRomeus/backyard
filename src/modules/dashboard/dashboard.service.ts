@@ -28,7 +28,6 @@ export class DashboardService {
     private trsActivityRepo: Repository<trsActivity>,
   ) {}
 
-  
   async getdriver(id: any, request_by: any) {
     const vehicle_resource = `[dbo].[Db_Trs_Vehicle]
         @unit_nos= ${id},
@@ -36,37 +35,33 @@ export class DashboardService {
     const vehicle_data: TrsDashboard[] = await this.trsrepository.query(
       vehicle_resource,
     );
-console.log('vehicle_data',vehicle_data)
+    console.log('vehicle_data', vehicle_data);
     const label = vehicle_data?.map((r: any) => r.supply_name);
     console.log('label', label);
     const tempvehicle = vehicle_data?.filter(
-      (r: any) => r?.status == 'ใช้ราชการได้'
+      (r: any) => r?.status == 'ใช้ราชการได้',
     );
-    console.log('tempvehicle',tempvehicle)
+    console.log('tempvehicle', tempvehicle);
     const valuefree = tempvehicle?.map((r: any) => r.amount);
-console.log('valuefree',valuefree)
+    console.log('valuefree', valuefree);
 
     const tempvehicleinpro = vehicle_data?.filter(
       (r: any) => r.status == 'inprogress',
     );
-    const valueinpro= tempvehicleinpro?.map((r: any) => r.amount);
+    const valueinpro = tempvehicleinpro?.map((r: any) => r.amount);
 
     const oveallfree = [
-    
       {
         name: 'ชำรุด',
         data: [],
-       
       },
       {
         name: 'ปฏิบัติภารกิจ',
         data: valueinpro,
-       
       },
       {
         name: 'ใช้ราชการได้',
         data: valuefree,
-      
       },
     ];
 
@@ -128,10 +123,9 @@ console.log('valuefree',valuefree)
     const inprogress = driver_status_data?.map((r: any) => r?.inprogress);
     const available = driver_status_data?.map((r: any) => r?.available);
     const total = inprogress[0] + available[0];
-    const percent = ((available[0]) * 100) / total;
+    const percent = (available[0] * 100) / total;
     const overalldriverstatus = [inprogress[0], available[0], total, [percent]];
     // console.log('overalldriverstatus', overalldriverstatus);
-
 
     const amount_vehicle = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= ${id},
@@ -139,10 +133,7 @@ console.log('valuefree',valuefree)
     const amount_vehicle_data: TrsDashboard[] = await this.trsrepository.query(
       amount_vehicle,
     );
-    const overallvehicle = 
-
-
-    console.log('overall',amount_vehicle_data)
+    const overallvehicle = console.log('overall', amount_vehicle_data);
     // const driverstarus = `[dbo].[disDash_TrsDashboard]
     //     @unit_nos= ${id},
     //     @dataset_name = N'DriverStauts'`;
@@ -190,8 +181,8 @@ console.log('valuefree',valuefree)
       vehicle_activity: overall_vehicle_activity,
       vehicle_driver_resource: overalldriver,
       license: overalllicense,
-      amount_vehicle:amount_vehicle_data,
-      driver_status:overalldriverstatus
+      amount_vehicle: amount_vehicle_data,
+      driver_status: overalldriverstatus,
 
       // driver_data: driver_rank,
       // driverstatus_data: neeew,
@@ -200,27 +191,16 @@ console.log('valuefree',valuefree)
     };
   }
 
-  async missionAll(body:any) {
-    console.log('body',body)
+  async missionAll(body: any) {
+    console.log('body', body);
     // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
     // console.log(unit_no)
     return await this.trsActivityConvoy
       .createQueryBuilder('tac')
-      .leftJoinAndSelect(
-        'tac.trs_activity_vehicle_drivers',
-        'tavd',
-      )
-      .leftJoinAndSelect(
-        'tac.trs_activity_routes',
-        'tar',
-      )
-      .leftJoinAndSelect(
-        'tac.activity',
-        'ta',
-      )
+      .leftJoinAndSelect('tac.trs_activity_vehicle_drivers', 'tavd')
+      .leftJoinAndSelect('tac.trs_activity_routes', 'tar')
+      .leftJoinAndSelect('tac.activity', 'ta')
 
       .getMany();
   }
-
-
 }

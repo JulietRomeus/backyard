@@ -20,7 +20,6 @@ export class MaintenanceService {
     @InjectRepository(trsVehicle, 'MSSQL_CONNECTION')
     private trsVehicleRepo: Repository<trsVehicle>,
   ) {}
-  
 
   // async create(createDriverDto: any) {
   //   console.log('createDriverDtoooooo', createDriverDto);
@@ -53,8 +52,11 @@ export class MaintenanceService {
   // }
 
   async findAll(body: any) {
-    console.log('body',body.request_by.units?.map((r:any)=>r.code ))
-    const unit_no=body.request_by.units?.map((r:any)=>r.code)
+    console.log(
+      'body',
+      body.request_by.units?.map((r: any) => r.code),
+    );
+    const unit_no = body.request_by.units?.map((r: any) => r.code);
     return await this.trsVehicleRepo.query(`
     select rm.*,ss.supply_name as supply , ss.id as supply_id ,sss.name as spec,rrrm.repair_methode ,rrmpt.period_type ,srsg.group_name
 ,rrs.status_name as status_name, rrs.id as status_id
@@ -75,8 +77,7 @@ left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id
 where srsg.id = 5 and srssd.[key] =1 and rm.is_active =1 and ssi.is_active =1 
 and sss.is_active =1 and rrrm.is_active =1 and rrmpt.is_active =1 and srsg.is_active =1 and ssiav.is_active =1
 and ssia.is_active =1 and smak.is_active =1 and ss.is_active =1 and srsst.is_active =1 and srssd.is_active =1
-and ma_unit_no in (${unit_no})`
-    )
+and ma_unit_no in (${unit_no})`);
   }
 
   // async findAllLicense() {

@@ -12,10 +12,11 @@ import { VehicleModule } from './modules/vehicle/vehicle.module';
 import { RegisterModule } from './modules/register/register.module';
 import { DriverModule } from './modules/driver/driver.module';
 import { ObstacleModule } from './modules/obstacle/obstacle.module';
+import { LedgerModule } from './modules/ledger/ledger.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities/Index';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
-import {MaintenanceModule} from './modules/maintenance/maintenance.module'
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 
 import { Role } from './entities/role.entity';
 import { User } from './entities/user.entity';
@@ -53,6 +54,7 @@ import { Unit } from './entities/unit.entity';
     MaintenanceModule,
 
     TransactionModule,
+    LedgerModule,
 
     TypeOrmModule.forRootAsync({
       name: 'MSSQL_CONNECTION',
@@ -82,16 +84,16 @@ import { Unit } from './entities/unit.entity';
 
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-      entities: [User, Role,Unit],
-      // migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
-      host: configService.get<string>('POSTGRES_MASTER_HOST'),
-      port: configService.get<number>('POSTGRES_MASTER_PORT'),
-      username: configService.get<string>('POSTGRES_USER'),
-      password: configService.get<string>('POSTGRES_PASSWORD'),
-      database: configService.get<string>('POSTGRES_DB'),
-      // cli: {
-      //   migrationsDir: 'src/migrations',
-      // },
+        entities: [User, Role, Unit],
+        // migrations: [__dirname + ['/**/migrations/*.{.ts,.js}']],
+        host: configService.get<string>('POSTGRES_MASTER_HOST'),
+        port: configService.get<number>('POSTGRES_MASTER_PORT'),
+        username: configService.get<string>('POSTGRES_USER'),
+        password: configService.get<string>('POSTGRES_PASSWORD'),
+        database: configService.get<string>('POSTGRES_DB'),
+        // cli: {
+        //   migrationsDir: 'src/migrations',
+        // },
 
         // entities: [...Entities],
 

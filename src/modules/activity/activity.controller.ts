@@ -34,7 +34,7 @@ export class ActivityController {
   @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
-  findAll(@Body() body: any, @Query() query: any) {
+  findAll(@Body() body: RequestByDto, @Query() query: any) {
     return this.activityService.findAll(body, query);
   }
 
