@@ -6,13 +6,13 @@ import { DriverController } from './driver.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from '../../entities/Index';
 
-
 @Module({
   controllers: [DriverController],
   providers: [DriverService],
 
-  imports: [TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),TypeOrmModule.forFeature([User], 'PROGRESS')],
-
-
+  imports: [
+    TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
+    TypeOrmModule.forFeature([User], 'PROGRESS'),
+  ],
 })
 export class DriverModule {}

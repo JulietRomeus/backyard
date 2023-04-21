@@ -62,9 +62,9 @@ export class ObstacleService {
 
   async findAllj() {
     return await this.trsObstacleRepo
-    .createQueryBuilder('d')
-    .where('d.is_active = 1')
-    .getMany();
+      .createQueryBuilder('d')
+      .where('d.is_active = 1')
+      .getMany();
   }
 
   async findOne(id: number) {

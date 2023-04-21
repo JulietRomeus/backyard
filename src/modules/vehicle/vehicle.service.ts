@@ -21,15 +21,16 @@ export class VehicleService {
     private slcSupplyRepo: Repository<slcSupply>,
   ) {}
 
-  async findAll(body:any) {
-    console.log('body',body)
-    const unit_no=body.request_by.units?.map((r:any)=>`${r.code}`)
-    console.log(unit_no)
+  async findAll(body: any) {
+    // console.log('body', body);
+    // const unit_no=body.request_by.units?.map((r:any)=>`${r.code}`)
+    const unit_no = body?.request_by?.activeUnit?.code || '';
+
     return await this.trsVehicleRepo.query(
       `select  srsis.status as status,srsis.id as status_id,srst.id as source_id,srst.[type] as source,
       min(smit.id) as images,min(df.id ) as img
            ,df.description ,ssiav.attribute_value as license,
-            ssi.name as item,ssi.id as item_id ,ssi.unit_no as unit_no,sss.name as spec,
+            ssi.name as item,ssi.id as id ,ssi.unit_no as unit_no,sss.name as spec,
             sss.id as spec_id ,ss.id as type_id, ss.supply_name as type from dbo.slc_supply_item ssi 
             left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id 
             left join dbo.slc_supply ss on sss.supply_id = ss.id 
@@ -117,8 +118,8 @@ export class VehicleService {
   //     .getMany();
   // }
 
-  async optiongen(ssid: any,parentid:any) {
-    console.log(ssid,parentid)
+  async optiongen(ssid: any, parentid: any) {
+    console.log(ssid, parentid);
     return await this.trsVehicleRepo.query(
       `select smat.id as att_id,smat.[type] as att_type,smatd.id as att_value_id,smatd.[type] as att_value,smatd2.id as parent_id,ss.id as supply_id,ss.supply_name as supply_name from slc_master_attribute_type smat 
       left join slc_master_attribute_type_detail smatd on smatd.master_attribute_type_id = smat.id

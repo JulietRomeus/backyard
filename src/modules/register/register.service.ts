@@ -276,7 +276,6 @@ export class RegisterService {
     );
     console.log('finalItemssss', finalItems);
 
-    
     console.log('dfff', finalItems);
     const dbRes = await this.trsRegisRepo.save(finalItems);
     console.log('dbRes', dbRes);
@@ -350,7 +349,7 @@ export class RegisterService {
     // delete dataObj.trs_regis_detail_no;
     // delete dataObj.files;
     //---------------------------------
-  
+
     //----------------------------------
     // const final = this.trsRegisRepo.create({...subItems})
 
@@ -389,8 +388,6 @@ export class RegisterService {
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
 
- 
-   
     delete dataObj.trs_regis_detail_no;
 
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
@@ -431,8 +428,6 @@ export class RegisterService {
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
-
- 
 
     delete dataObj.trs_regis_detail_no;
     const dbRes = await this.trsRegisRepo.update(id, finalItems);

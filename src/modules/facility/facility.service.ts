@@ -45,7 +45,6 @@ export class FacilityService {
     return await this.trsFacilityRepo.find({ where: { is_active: true } });
   }
 
-
   async facility() {
     return await this.trsFacilityRepo.query(
       `select mrs.id as station_id,mra.resource_attribute_name,mrav.value as facility_name,mrs.loc_x as long,mrs.loc_y as lat,mrs.province ,
@@ -55,15 +54,15 @@ export class FacilityService {
       left join mob_resource_type mrt on mrt.id = mrs.resource_type_id 
       where mra.id  in(3,13,42,45,63,84,108,136,147,192,237,282,327,372,395,420,
       447,449,469,475,488,500,506,509,517,518,521,522,554,557,577,585,587,599,613,618,636,637,659,710,718,727,813,828,875,879,914,919,930,949,960,985
-      )`
-    )
-  } 
+      )`,
+    );
+  }
 
   async option() {
     return await this.trsFacilityRepo.query(
       `select mrt.id as id,mrt.type_name_th ,mrt.group_name from mob_resource_type mrt
-      where id in (1,5,6,8,12,13,14,15,17,19,21,22,23,24,25,28,29,31,40,42,43,45,49,50,51,52,53,57,58,60,62,63)`
-    )
+      where id in (1,5,6,8,12,13,14,15,17,19,21,22,23,24,25,28,29,31,40,42,43,45,49,50,51,52,53,57,58,60,62,63)`,
+    );
   }
 
   async findOne(id: any) {

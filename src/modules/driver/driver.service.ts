@@ -61,10 +61,10 @@ export class DriverService {
     return dbRes;
   }
 
-  async findAll(body:any) {
-    console.log('body',body)
-    const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
-    console.log(unit_no)
+  async findAll(body: any) {
+    console.log('body', body);
+    const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
+    console.log(unit_no);
     return await this.trsDriverRepo
       .createQueryBuilder('d')
       .where(`d.is_active = 1 and d.unit_no in (${unit_no})`)
@@ -112,7 +112,7 @@ export class DriverService {
       .getOne();
   }
 
-  async useremail(body:any) {
+  async useremail(body: any) {
     const user = await this.user();
     const driver = await this.findAll(body);
 
