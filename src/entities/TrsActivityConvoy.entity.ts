@@ -44,11 +44,11 @@ export class trsActivityConvoy {
     () => trsActivityRoute,
     (trs_activity_route) => trs_activity_route.convoy
   )
-  trs_activity_routes: trsActivityRoute[];
+  route: trsActivityRoute[];
 
   @OneToMany(
     () => trsActivityVehicleDriver,
     (trs_activity_vehicle_driver) => trs_activity_vehicle_driver.convoy
   )
-  trs_activity_vehicle_drivers: trsActivityVehicleDriver[];
+  vehicle_driver: trsActivityVehicleDriver[];
 }

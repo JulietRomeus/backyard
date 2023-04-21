@@ -56,7 +56,7 @@ export class trsActivityRoute {
 
   @ManyToOne(
     () => trsActivityConvoy,
-    (trs_activity_convoy) => trs_activity_convoy.trs_activity_routes,
+    (trs_activity_convoy) => trs_activity_convoy.route,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "convoy", referencedColumnName: "id" }])

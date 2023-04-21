@@ -1,3 +1,4 @@
+import { trsActivityHelp } from './TrsActivityHelp.entity';
 import { trsRegisFiles } from './TrsRegisFiles.entity';
 import { trsAccidentActivityFormFiles } from './TrsAccidentActivityFormFiles.entity';
 import { trsAccidentPersonHelper } from './TrsAccidentPersonHelper.entity';
@@ -71,7 +72,6 @@ import { trsFacility } from "./TrsFacility.entitly";
 import { trsTransactionType } from './TrsTransactionType.entity';
 import { slcSupplyItem } from './SlcSupplyItem.entity';
 import { trsRegisDetail } from './TrsRegisDetail.entity';
-
 
 export {
   trsDriverFiles,
@@ -154,7 +154,9 @@ export {
   trsAccidentPersonGov,
   trsAccidentPersonHelper,
   trsAccidentActivityFormFiles,
-  trsRegisFiles
+  trsRegisFiles,
+  trsActivityHelp
+  
 
 };
 
@@ -243,6 +245,7 @@ export default [
   trsAccidentPersonHelper,
   trsAccidentActivityForm,
   trsAccidentActivityFormFiles,
-  trsRegisFiles
-
+  trsRegisFiles,
+  trsActivityHelp,
+trsActivityVehicleDriver
 ];

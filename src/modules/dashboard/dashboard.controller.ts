@@ -23,17 +23,15 @@ export class DashboardController {
      return this.dashboardService.missionAll(body);
    }
 
-  @Get(':id') //
+  @Post('data') //
 //   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'Get ' })
   async getdriver(
-    @Param('id') id: any,
-    @Body() request_by: any,
+    @Body() body: any
   ): Promise<any> {
     const response: any = await this.dashboardService.getdriver(
-      +id,
-      request_by,
+      body
     );
     return {
       status: HttpStatus.OK,

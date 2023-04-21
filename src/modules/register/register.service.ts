@@ -310,6 +310,7 @@ export class RegisterService {
     }
 
     let subItems = new trsRegis();
+    subItems.id=+id
     Object.keys(dataObj)?.map((keys) => {
       subItems[keys] = dataObj[keys] || null;
     });
@@ -327,26 +328,34 @@ export class RegisterService {
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
     //---------------------------------
-    const files = dataObj.files?.map((r: any) => {
+    const files:trsRegisFiles[] = dataObj.files?.map( (r: any) => {
       let tempfiles = new trsRegisFiles();
-
-      tempfiles.directus_files_id = r.directus_files_id;
+      // let file:any =  this.directusFilesRepo.create({...r.directus_files_id})
+      let file = new directusFiles()
+      file.id = r.directus_files_id.id
+      tempfiles.directus_files_id = file//r.directus_files_id;
+      console.log('tempfiles',file)
       return tempfiles;
     });
+
+    
     subItems.trs_regis_files = files;
-    console.log('finalItems',subItems)
-    // finalItems.files = files.trsRegisFiles;
+    console.log('files',files)
+
+    finalItems.trs_regis_files = files;
     
     //----------------------------------
+    console.log('finalItems',subItems)
 
     // delete dataObj.trs_regis_detail_no;
     // delete dataObj.files;
     //---------------------------------
   
     //----------------------------------
+    // const final = this.trsRegisRepo.create({...subItems})
 
-    const dbRes = await this.trsRegisRepo.save(finalItems);
-    console.log('dbRes', dbRes);
+    const dbRes = await this.trsRegisRepo.save(subItems);
+    // console.log('dbRes', dbRes);
     return await this.findOne(id);
   }
 

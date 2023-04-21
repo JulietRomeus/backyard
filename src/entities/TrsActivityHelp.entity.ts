@@ -53,12 +53,12 @@ export class trsActivityHelp {
   @Column("int", { name: "status", nullable: true })
   status: number | null;
 
-  // @ManyToOne(
-  //   () => trsActivityVehicleDriver,
-  //   (trs_activity_vehicle_driver) =>
-  //     trs_activity_vehicle_driver.trs_activity_helps,
-  //   { onDelete: "SET NULL" }
-  // )
-  // @JoinColumn([{ name: "mission_form", referencedColumnName: "id" }])
-  // mission_form: trsActivityVehicleDriver;
+  @ManyToOne(
+    () => trsActivityVehicleDriver,
+    (trs_activity_vehicle_driver) =>
+      trs_activity_vehicle_driver.trs_activity_helps,
+    { onDelete: "SET NULL" }
+  )
+  @JoinColumn([{ name: "mission_form", referencedColumnName: "id" }])
+  mission_form: trsActivityVehicleDriver;
 }
