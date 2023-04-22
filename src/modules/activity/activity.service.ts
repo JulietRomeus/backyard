@@ -33,7 +33,7 @@ const vehicleDriverFields = `vehicle_driver.unit_code,vehicle_driver.unit_name,v
 const convoyMainDriverFields = `convoy.vehicle_driver.vehicle.main_driver.id,convoy.vehicle_driver.vehicle.main_driver.driver_id,convoy.vehicle_driver.vehicle.main_driver.driver_name`;
 const convoyVehicleFields = `convoy.vehicle_driver.vehicle.id,convoy.vehicle_driver.vehicle.vehicle_type,convoy.vehicle_driver.vehicle.is_available,convoy.vehicle_driver.vehicle.license_plate,${convoyMainDriverFields}`;
 const convoyDriverFields = `convoy.vehicle_driver.driver.id,convoy.vehicle_driver.driver.driver_id,convoy.vehicle_driver.driver.driver_name,convoy.vehicle_driver.driver.firstname,convoy.vehicle_driver.driver.lastname,convoy.vehicle_driver.driver.driver_license`;
-const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,convoy.vehicle_driver.before_activity_form.*,convoy.vehicle_driver.help_activity_form.*,convoy.vehicle_driver.after_activity_form.*,convoy.vehicle_driver.lat,convoy.vehicle_driver.long,convoy.vehicle_driver.client_id,convoy.vehicle_driver.last_location_date,${convoyVehicleFields},${convoyDriverFields}`;
+const convoyVehicleDriverFields = `convoy.vehicle_driver.id,convoy.vehicle_driver.controller,convoy.vehicle_driver.oil_type,convoy.vehicle_driver.oil_coupon,convoy.vehicle_driver.vehicle_license,convoy.vehicle_driver.vehicle_item_id,convoy.vehicle_driver.vehicle_supply_id,convoy.vehicle_driver.before_activity_form.*,convoy.vehicle_driver.help_activity_form.*,convoy.vehicle_driver.after_activity_form.*,convoy.vehicle_driver.lat,convoy.vehicle_driver.long,convoy.vehicle_driver.client_id,convoy.vehicle_driver.last_location_date,${convoyVehicleFields},${convoyDriverFields}`;
 
 const unitResFields = `unit_response.status.*`;
 const formFields = `*.*,${vehicleDriverFields},${convoyVehicleDriverFields},files.files.*,files.files.directus_files_id.*,convoy.activity.id,convoy.activity.name,convoy.route.*,${unitResFields}`;
@@ -109,6 +109,10 @@ export class ActivityService {
           ],
         },
       ];
+      // ---- add new
+      filterObj['unit_response_code'] = {
+        _eq: userUnit,
+      };
     } else {
       // รายการร้องขอ
       // console.log('req');
@@ -606,7 +610,8 @@ export class ActivityService {
       updateActivityDto['resp_update_date'] = now();
     } else {
       delete updateActivityDto.unit_response;
-      updateActivityDto.activity_status = 'pending_req_review';
+      updateActivityDto.activity_status =
+        query.type === 'cmd' ? 'pending_cmd_review' : 'pending_req_review';
       updateActivityDto['req_update_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_update_by_name'] =
@@ -615,6 +620,10 @@ export class ActivityService {
     }
 
     delete updateActivityDto.request_by;
+    console.log(
+      '>>>>,updateActivityDto.activity_status',
+      updateActivityDto.activity_status,
+    );
     try {
       const result = await firstValueFrom(
         this.httpService.patch(`/items/trs_activity/${id}`, updateActivityDto),
@@ -726,7 +735,8 @@ export class ActivityService {
       updateActivityDto['resp_review_date'] = now();
     } else {
       delete updateActivityDto.unit_response;
-      updateActivityDto.activity_status = 'pending_req_approve';
+      updateActivityDto.activity_status =
+        query.type === 'cmd' ? 'pending_cmd_approve' : 'pending_req_approve';
       updateActivityDto['req_review_by'] =
         updateActivityDto?.request_by?.id || '';
       updateActivityDto['req_review_by_name'] =
