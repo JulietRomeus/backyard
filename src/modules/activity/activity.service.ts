@@ -1108,7 +1108,7 @@ export class ActivityService {
     left join slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
     left join slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
     left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-    where srsst.id =9 and smak.id =21 ${
+    where ss.is_active=1 and srsst.id =9 and smak.id =21 ${
       (query.unit && `and ssi.unit_no ='${query.unit}'`) ||
       `and ssi.unit_no ='${
         body?.request_by?.activeUnit?.code ||
@@ -1124,7 +1124,7 @@ export class ActivityService {
       left join slc_toa st on ss.toa_id = st.id 
       left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
       left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
-      where srsst.id = 9 and srssd.[key] =1`);
+      where srsst.id = 9 and srssd.[key]=1 and srssd.id=4 and ss.is_active=1`);
   }
 
   async oilType() {
