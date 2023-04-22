@@ -15,25 +15,23 @@ export class DashboardController {
    {}
 
 
-   @Get('mission')
+   @Get('mission/:id')
   //  @Permission({ route: 'activity-mission', action: 'view' })
    @ApiBearerAuth('JWT')
    @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
-   missionAll(@Body() body: any, @Query() query: any) {
-     return this.dashboardService.missionAll(body);
+   missionAll(@Param('id') id: any,@Body() body: any, @Query() query: any) {
+     return this.dashboardService.missionAll(id);
    }
 
-  @Get(':id') //
+  @Post('data') //
 //   @Permission({ route: defaultRoute, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'Get ' })
   async getdriver(
-    @Param('id') id: any,
-    @Body() request_by: any,
+    @Body() body: any
   ): Promise<any> {
     const response: any = await this.dashboardService.getdriver(
-      +id,
-      request_by,
+      body
     );
     return {
       status: HttpStatus.OK,

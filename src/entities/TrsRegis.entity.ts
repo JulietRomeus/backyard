@@ -68,8 +68,8 @@ export class trsRegis {
 
   @Column("datetime", { name: "approve_date", nullable: true })
   approve_date: Date | null;
-
-  @Column("varchar", { name: "approve_by", nullable: true, length: 100 })
+  
+  @Column("nvarchar", { name: "approve_by", nullable: true, length: 100 })
   approve_by: string | null;
 
   @Column("nvarchar", { name: "approve_by_id", nullable: true, length: 100 })
