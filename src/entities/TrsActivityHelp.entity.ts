@@ -56,7 +56,7 @@ export class trsActivityHelp {
   @ManyToOne(
     () => trsActivityVehicleDriver,
     (trs_activity_vehicle_driver) =>
-      trs_activity_vehicle_driver.trs_activity_helps,
+      trs_activity_vehicle_driver.help_activity_form,
     { onDelete: "SET NULL" }
   )
   @JoinColumn([{ name: "mission_form", referencedColumnName: "id" }])

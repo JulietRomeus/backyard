@@ -27,8 +27,28 @@ export class DashboardService {
     @InjectRepository(trsActivity, 'MSSQL_CONNECTION')
     private trsActivityRepo: Repository<trsActivity>,
   ) {}
+
+  async missionAll(id: any) {
+    console.log('id', id);
+    // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
+    // console.log(unit_no)
+    return await this.trsActivityConvoy
+      .createQueryBuilder('tac')
+      .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
+      .leftJoinAndSelect('tac.route', 'tar')
+      .leftJoinAndSelect('tac.activity', 'ta')
+      .leftJoinAndSelect('tavd.driver', 'td')
+      .leftJoinAndSelect('tavd.help_activity_form', 'tah')
+
+      // .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
+      //   unit: `${id}`,
+      // })
+      // .getQuery()
+      .getMany();
+  }
   //--------------------------------------------------------------------------------------
   //gettype
+
   async getdriver( body: any) {
 
     console.log('body',body)
@@ -134,7 +154,7 @@ export class DashboardService {
     const totalactivity = vehicle_activity_data
       ?.map((r: any) => r.amount)
       .reduce((accum: any, cur: any) => accum + cur, 0);
-    console.log('totalactivity', totalactivity);
+    // console.log('totalactivity', totalactivity);
     const overall_vehicle_activity = vehicle_activity_data?.map((r: any) => ({
       title: r.name,
       image: r.img,
@@ -145,7 +165,7 @@ export class DashboardService {
       status: r.status == 0 ? 'ว่าง' : 'ไม่ว่าง',
     }));
     // console.log('totalactivity', totalactivity);
-    console.log('vehicle_activity_data', overall_vehicle_activity);
+    // console.log('vehicle_activity_data', overall_vehicle_activity);
 
     //--------------------------------------------------------------------------------------
     //vehicle status
@@ -155,14 +175,14 @@ export class DashboardService {
     const vehicle_status_data: TrsDashboard[] = await this.trsrepository.query(
       vehicle_status,
     );
-    console.log('vehicle_status_data', vehicle_status_data);
+    // console.log('vehicle_status_data', vehicle_status_data);
 
     const avai = vehicle_status_data?.map((r: any) => r?.free);
     const inpro = vehicle_status_data?.map((r: any) => r?.inpro);
     const totalall = inpro[0] + avai[0];
     const percentage = Math.floor((avai[0] * 100) / totalall);
     const overallvehiclestatus = [inpro[0], avai[0], totalall, [percentage]];
-    console.log('overallvehiclestatus', overallvehiclestatus);
+    // console.log('overallvehiclestatus', overallvehiclestatus);
 
     //--------------------------------------------------------------------------------------
     //driver resource
@@ -221,9 +241,9 @@ export class DashboardService {
     @dataset_name = N'helplist',
     @start_date  =  '${body?.start_date}',
 	  @end_date  =  '${body?.end_date}'`;
-console.log('help',help)
+// console.log('help',help)
     const help_data: TrsDashboard[] = await this.trsrepository.query(help);
-    console.log('help', help_data);
+    // console.log('help', help_data);
     const overallhelp = help_data?.map((r: any) => ({
       title: ` ${r.note} ${r.activity_name}  ${r.convoy_name}`,
       description: `พลขับ ${r.firstname} ${r.lastname} ตำแหน่ง ${r.lat} ${r.long}`,
@@ -231,7 +251,7 @@ console.log('help',help)
       status: r.help_status,
       warning: '!',
     }));
-    console.log('overallhelp', overallhelp);
+    // console.log('overallhelp', overallhelp);
     //------------------------------------------------------------------------------//
 
     const activitylist = `[dbo].[Db_Trs_Vehicle]
@@ -247,7 +267,7 @@ console.log('help',help)
       description: `พลขับ ${r.firstname} ${r.lastname} ตำแหน่ง ${r.lat} ${r.long}`,
       image: `/images/Disaster/mapIcons/mapkey_operation.png`,
     }));
-    console.log('overallactivitylist', overallactivitylist);
+    // console.log('overallactivitylist', overallactivitylist);
     //------------------------------------------------------------------------------//
     const activitycard = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
@@ -275,7 +295,7 @@ console.log('help',help)
     const activitybymonth_data: TrsDashboard[] = await this.trsrepository.query(
       activitybymonth,
     );
-    console.log('activitybymonth_data', activitybymonth_data);
+    // console.log('activitybymonth_data', activitybymonth_data);
     const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
     const activitybymonthall = month.map((num) => {
@@ -297,7 +317,7 @@ console.log('help',help)
     const fuelbymonth_data: TrsDashboard[] = await this.trsrepository.query(
       fuelbymonth,
     );
-    console.log('activitybymonth_data', fuelbymonth_data);
+    // console.log('activitybymonth_data', fuelbymonth_data);
 
     const fuelbymonthall = month.map((num) => {
       const valuedisoObj: any = fuelbymonth_data.find(
@@ -309,7 +329,7 @@ console.log('help',help)
         return 0;
       }
     });
-    console.log('fuelbymonthall', fuelbymonthall);
+    // console.log('fuelbymonthall', fuelbymonthall);
     const overallbymonth = [
       {
         name: 'เชื้อเพลิง',
@@ -341,7 +361,7 @@ console.log('help',help)
     @dataset_name = N'activitytimeline'`;
     const activitytimeline_data: TrsDashboard[] =
       await this.trsrepository.query(activitytimeline);
-    console.log('activitytimeline_data', activitytimeline_data);
+    // console.log('activitytimeline_data', activitytimeline_data);
 
 
     //------------------------------------------------------------------------------//
@@ -365,20 +385,5 @@ console.log('help',help)
     };
   }
 
-  async missionAll(body: any) {
-    console.log('body', body);
-    // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
-    // console.log(unit_no)
-    return await this.trsActivityConvoy
-      .createQueryBuilder('tac')
-      .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
-      .leftJoinAndSelect('tac.route', 'tar')
-      .leftJoinAndSelect('tac.activity', 'ta')
-      .leftJoinAndSelect('tavd.driver', 'td')
-      .leftJoinAndSelect('tavd.trs_activity_helps', 'tah')
-      .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
-        unit: '6360000000',
-      })
-      .getMany();
-  }
+
 }

@@ -22,37 +22,10 @@ import Entities from '../../entities/Index';
       }),
       inject: [ConfigService],
     }),
-<<<<<<< HEAD
   
      TypeOrmModule.forFeature([...Entities,TrsDashboard], 'MSSQL_CONNECTION')
     ],
      
-=======
-
-    TypeOrmModule.forRootAsync({
-      name: 'MSSQL_CONNECTION_HOST',
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'mssql',
-        host: configService.get('MSSQL_CONNECTION_HOST'),
-        // port: 1433,
-        database: configService.get('MSSQL_DATABASE_NAME'),
-        username: configService.get('MSSQL_USERNAME'),
-        password: configService.get('MSSQL_PASSWORD'),
-        entities: [__dirname + './entities/*.entity{.ts,.js}'],
-        synchronize: false, //DONOT set to true
-        extra: {
-          trustServerCertificate: true,
-        },
-      }),
-    }),
-
-    TypeOrmModule.forFeature([TrsDashboard], 'MSSQL_CONNECTION_HOST'),
-    TypeOrmModule.forFeature([...Entities], 'MSSQL_CONNECTION'),
-  ],
-
->>>>>>> master
   controllers: [DashboardController],
   providers: [DashboardService],
 })

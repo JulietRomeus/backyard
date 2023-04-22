@@ -27,11 +27,17 @@ export class VehicleService {
     const unit_no = body?.request_by?.activeUnit?.code || '';
 
     return await this.trsVehicleRepo.query(
-      `select  srsis.status as status,srsis.id as status_id,srst.id as source_id,srst.[type] as source,
+      `select  ssi.id as item_id,srsis.status as status,srsis.id as status_id,srst.id as source_id,srst.[type] as source,
       min(smit.id) as images,min(df.id ) as img
            ,df.description ,ssiav.attribute_value as license,
             ssi.name as item,ssi.id as id ,ssi.unit_no as unit_no,sss.name as spec,
-            sss.id as spec_id ,ss.id as type_id, ss.supply_name as type from dbo.slc_supply_item ssi 
+            sss.id as spec_id ,ss.id as type_id, ss.supply_name as type ,
+(case when ac.start_date like '%%' then '1' else '0' end) as stat  
+            from dbo.slc_supply_item ssi 
+            left join (select tavd.vehicle_item_id , CONVERT (Date,ta.activity_start_date) as start_date ,CONVERT (DATE, GETDATE()) as date 
+from trs_activity_vehicle_driver tavd 
+left join trs_activity ta on tavd.activity = ta.id 
+where CONVERT (Date,ta.activity_start_date)=CONVERT (DATE, GETDATE())) ac on ac.vehicle_item_id = ssi.id
             left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id 
             left join dbo.slc_supply ss on sss.supply_id = ss.id 
             left join dbo.slc_toa st on st.id = ss.toa_id 
@@ -46,9 +52,9 @@ export class VehicleService {
             left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
             left join dbo.slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
             left join dbo.slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-            where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no in (${unit_no})
+            where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no in ('${unit_no}')
             group by ssiav.attribute_name,srsis.status,srsis.id,df.description,ssiav.attribute_value,ssi.name,
-            ssi.id,sss.name,sss.id,ss.id,ss.supply_name,srst.id,srst.[type] ,ssi.unit_no`,
+            ssi.id,sss.name,sss.id,ss.id,ss.supply_name,srst.id,srst.[type] ,ssi.unit_no,ac.start_date`,
     );
   }
 

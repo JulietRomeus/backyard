@@ -70,7 +70,7 @@ export class trsActivityVehicleDriver {
     () => trsActivityHelp,
     (trs_activity_help) => trs_activity_help.mission_form
   )
-  trs_activity_helps: trsActivityHelp[];
+  help_activity_form: trsActivityHelp[];
 
   // @OneToMany(
   //   () => trsActivityStopover,

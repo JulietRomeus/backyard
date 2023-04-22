@@ -358,17 +358,26 @@ export class RegisterService {
     return await this.findOne(id);
   }
 
+//------------------------------------------------------------
+
   async review(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
     console.log('query', query);
     let timeNow = now();
     let user = updateRegisterDto.request_by;
     let dataObj = updateRegisterDto;
-    const finalItems = dataObj;
+    // const finalItems = dataObj;
+
+    let subItems = new trsRegis();
+    subItems.id=+id
+    Object.keys(dataObj)?.map((keys) => {
+      subItems[keys] = dataObj[keys] || null;
+    });
+
     if (query.type == 'req') {
-      finalItems.trs_regis_statusform_no.id = 'pending_approve';
+      subItems.trs_regis_statusform_no.id = 'pending_approve';
     } else {
-      finalItems.trs_regis_statusform_no.id = 'res_pending_approve';
+      subItems.trs_regis_statusform_no.id = 'res_pending_approve';
     }
     if (query.type == 'req') {
       dataObj['review_by_id'] = user.id;
@@ -383,17 +392,35 @@ export class RegisterService {
       dataObj['res_review_date'] = timeNow;
       dataObj['res_review_by'] = user.displayname;
     }
-    console.log('finalItems', finalItems);
+    console.log('subItems', subItems);
+
+   
+
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
 
-    delete dataObj.trs_regis_detail_no;
+    // delete dataObj.trs_regis_detail_no;
 
-    const dbRes = await this.trsRegisRepo.update(id, finalItems);
+    //----------------------------------------------
+    const files:trsRegisFiles[] = dataObj.files?.map( (r: any) => {
+      let tempfiles = new trsRegisFiles();
+      // let file:any =  this.directusFilesRepo.create({...r.directus_files_id})
+      let file = new directusFiles()
+      file.id = r.directus_files_id.id
+      tempfiles.directus_files_id = file//r.directus_files_id;
+      console.log('tempfiles',file)
+      return tempfiles;
+    });  
+    // subItems.trs_regis_files = files;
+    console.log('files',files)
+    subItems.trs_regis_files = files;
+    const dbRes = await this.trsRegisRepo.save(subItems);
     console.log('dbRes', dbRes);
     return await this.findOne(id);
   }
+
+  //------------------------------------------------------------
 
   async approve(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
@@ -430,6 +457,7 @@ export class RegisterService {
     );
 
     delete dataObj.trs_regis_detail_no;
+    delete dataObj.files;
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
     return await this.findOne(id);
   }

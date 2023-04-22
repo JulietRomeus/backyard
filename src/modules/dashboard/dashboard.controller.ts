@@ -15,12 +15,12 @@ export class DashboardController {
    {}
 
 
-   @Get('mission')
+   @Get('mission/:id')
   //  @Permission({ route: 'activity-mission', action: 'view' })
    @ApiBearerAuth('JWT')
    @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
-   missionAll(@Body() body: any, @Query() query: any) {
-     return this.dashboardService.missionAll(body);
+   missionAll(@Param('id') id: any,@Body() body: any, @Query() query: any) {
+     return this.dashboardService.missionAll(id);
    }
 
   @Post('data') //
