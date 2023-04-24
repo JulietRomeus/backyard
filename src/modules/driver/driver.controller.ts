@@ -29,6 +29,14 @@ export class DriverController {
 
 
 
+  @Get('activity')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  findactivity(@Body() body: any) {
+    return this.driverService.findactivity(body);
+  }
+
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')

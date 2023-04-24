@@ -6,6 +6,7 @@ import {
   trsDriver,
   trsDriverLicenseList,
   trsDrivingLicenseType,
+  trsActivityVehicleDriver
 } from '../../entities/Index';
 import { User } from './../../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,6 +24,8 @@ export class DriverService {
   constructor(
     @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
     private trsDriverRepo: Repository<trsDriver>,
+    @InjectRepository(trsActivityVehicleDriver, 'MSSQL_CONNECTION')
+    private trsActivityVehicleDriverRepo: Repository<trsActivityVehicleDriver>,
     @InjectRepository(trsDriverLicenseList, 'MSSQL_CONNECTION')
     private trsDriverLicenseListRepo: Repository<trsDriverLicenseList>,
     @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
@@ -73,11 +76,34 @@ export class DriverService {
         'tdll',
         'tdll.is_active = 1',
       )
-      
       .leftJoinAndSelect('d.driver_status', 'tds')
       // .getQuery();
       .getMany();
+
   }
+
+  async findactivity(body: any) {
+    console.log('body', body);
+    const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
+    console.log(unit_no);
+    return await this.trsActivityVehicleDriverRepo
+      .createQueryBuilder('d')
+      .leftJoinAndSelect(
+        'd.activity',
+        'a',
+        // 'r.name = "driver"'
+      )
+      .leftJoinAndSelect(
+        'd.driver',
+        'dd',
+        // 'r.name = "driver"'
+      )
+      .where(` d.unit_code in (${unit_no}) and CONVERT (Date,a.activity_start_date)=CONVERT (DATE, GETDATE())`)
+      .getMany();
+
+  }
+
+
 
   async findAllLicense() {
     return await this.trsDrivingLicenseTypeRepo.find();
