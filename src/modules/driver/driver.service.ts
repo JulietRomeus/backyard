@@ -121,7 +121,7 @@ export class DriverService {
         'r',
         // 'r.name = "driver"'
       )
-      .where('r.name = :dri', { dri: 'driver' })
+      // .where('r.name = :dri', { dri: 'driver' })
       .leftJoinAndSelect('d.units', 'u')
 
       .getMany();

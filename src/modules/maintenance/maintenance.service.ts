@@ -56,28 +56,45 @@ export class MaintenanceService {
       'body',
       body.request_by.units?.map((r: any) => r.code),
     );
-    const unit_no = body.request_by.units?.map((r: any) => r.code);
+    const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
     return await this.trsVehicleRepo.query(`
-    select rm.*,ss.supply_name as supply , ss.id as supply_id ,sss.name as spec,rrrm.repair_methode ,rrmpt.period_type ,srsg.group_name
-,rrs.status_name as status_name, rrs.id as status_id
-from rep_maintenance rm 
-left join dbo.rep_repair_status rrs on rrs.id = rm.repair_status_id 
-left join dbo.rep_ref_repair_method rrrm ON repair_method_id = rrrm.id 
-left join dbo.rep_ref_ma_period_type rrmpt on rrmpt.id = rm.supply_ma_period_id 
-left join dbo.slc_refs_supply_group srsg on srsg.id = rm.supply_group_id 
-left join dbo.slc_supply_item ssi  on ssi.id  = rm.supply_item_id 
-left join slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
-left join slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
-left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-left join slc_supply_spec sss on sss.id = ssi.supply_spec_id 
-left join slc_supply ss on ss.id = sss.supply_id 
-left join slc_toa st on ss.toa_id = st.id 
-left join slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
-left join slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
-where srsg.id = 5 and srssd.[key] =1 and rm.is_active =1 and ssi.is_active =1 
-and sss.is_active =1 and rrrm.is_active =1 and rrmpt.is_active =1 and srsg.is_active =1 and ssiav.is_active =1
-and ssia.is_active =1 and smak.is_active =1 and ss.is_active =1 and srsst.is_active =1 and srssd.is_active =1
-and ma_unit_no in (${unit_no})`);
+    SELECT rm.ma_no
+    ,rm.id
+    ,rm.supply_item_name
+    ,rm.supply_group_name
+    ,rm.repair_type_id
+    ,rm.supply_ma_period_name
+    ,rm.ma_period_type_id
+    ,(SELECT period_type FROM rep_ref_ma_period_type WHERE id = rm.ma_period_type_id) as period_type
+    ,rm.appoint_start_date
+    ,rm.appoint_end_date
+    ,(SELECT repair_type FROM rep_ref_repair_type WHERE id = rm.repair_type_id) as repair_type
+    ,rm.ma_start_date
+    ,rm.ma_end_date
+    ,rm.repair_status_id
+    ,rrs.status_name
+    ,rm.supply_item_id
+    , sp.attribute1 as spec_attribute_1 --ขื่อคุณลักษณะ 1
+    , spec_attribute_value_1 = (CASE WHEN sp.data_type_1_id  = 7 OR  sp.data_type_1_id  = 10 THEN (select smatd.type from slc_master_attribute_type_detail as smatd where smatd.id = sp.attribute_value_1 ) ELSE sp.attribute_value_1  END) --ค่าคุณลักษณะ 1
+    , sp.attribute2 as spec_attribute_2 --ชื่อคุณลักษณะ 2
+    , spec_attribute_value_2 = (CASE WHEN sp.data_type_2_id  = 7 OR  sp.data_type_2_id  = 10 THEN (select smatd.type from slc_master_attribute_type_detail as smatd where smatd.id = sp.attribute_value_2 )  ELSE sp.attribute_value_2  END) --ค่าคุณลักษณะ 2
+    , si.attribute1 as item_attribute_1     --ชื่อหมายเลขเฉพาะ 1
+    , item_attribute_value_1 = (CASE WHEN si.data_type_1_id = 7 OR  si.data_type_1_id  = 10 THEN (select smatd.type from slc_master_attribute_type_detail as smatd where smatd.id = si.attribute_value1 ) ELSE si.attribute_value1  END) --ค่าหมายเลขเฉพาะ 1
+    , si.attribute2 as item_attribute_2     --ชื่อหมายเลขเฉพาะ 2
+    , item_attribute_value_2 = (CASE WHEN si.data_type_2_id = 7 OR  si.data_type_2_id  = 10 THEN (select smatd.type from slc_master_attribute_type_detail as smatd where smatd.id = si.attribute_value2 ) ELSE si.attribute_value2 END) --ค่าหมายเลขเฉพาะ 2
+ , sp.supply_group_id,
+ rm.unit_no
+FROM rep_maintenance rm
+    LEFT JOIN slc_supply_item as si ON rm.supply_item_id = si.id
+    LEFT JOIN rep_repair_status rrs ON rrs.id = rm.repair_status_id
+    LEFT JOIN slc_supply_spec as sp ON rm.supply_spec_id = sp.id --อุปกรณ์ระดับ 3 spec
+    LEFT JOIN slc_supply as s ON sp.supply_id = s.id --อุปกรณ์ระดับ 2
+ --LEFT JOIN slc_toa as t on s.toa_id = t.id
+    LEFT JOIN slc_supply_item_attribute ssia ON ssia.id = rm.supply_item_id
+    LEFT JOIN slc_master_attribute_type_detail as matd ON matd.id = ssia.master_attribute_type_id --master ข้อมูล attribute item value
+WHERE rm.is_active = 1 and rm.unit_no in (${unit_no})
+ AND sp.supply_group_id =5 
+ORDER BY rm.id DESC`);
   }
 
   // async findAllLicense() {

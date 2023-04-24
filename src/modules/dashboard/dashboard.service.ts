@@ -44,14 +44,16 @@ export class DashboardService {
       .leftJoinAndSelect('tavd.driver', 'td')
       .leftJoinAndSelect('tavd.help_activity_form', 'tah')
 
-      .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
+      .where('(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)', {
         unit: `${query.unit_no}`,
       })
       .andWhere(
-        ' CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)<=CONVERT(date, GETDATE())',
+        '(CONVERT(date,ta.activity_start_date)=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)=CONVERT(date, GETDATE()))',
       )
       // .getQuery()
-      .getMany()}
+         .getMany()
+    }
+      // .getMany()}
       else {
         console.log('query.start_date',query.start_date)
         return await this.trsActivityConvoy
@@ -62,11 +64,11 @@ export class DashboardService {
         .leftJoinAndSelect('tavd.driver', 'td')
         .leftJoinAndSelect('tavd.help_activity_form', 'tah')
   
-        .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
+        .where('(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)', {
           unit: `${query.unit_no}`,
         })
         .andWhere(
-          `(CONVERT(date,ta.activity_start_date)=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)=CONVERT(date,'${query.end_date}'))`,
+          `(CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))`,
         )
         // .getQuery()
         .getMany()
@@ -279,20 +281,18 @@ export class DashboardService {
     // console.log('overallhelp', overallhelp);
     //------------------------------------------------------------------------------//
 
-    const activitylist = `[dbo].[Db_Trs_Vehicle]
+    const oiltype = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
-    @dataset_name = N'activitylist',
+    @dataset_name = N'oiltype',
     @start_date  =  '${body.start_date}',
 	  @end_date  =  '${body.end_date}'`;
-    const activitylist_data: TrsDashboard[] = await this.trsrepository.query(
-      activitylist,
+    const oiltype_data: TrsDashboard[] = await this.trsrepository.query(
+      oiltype,
     );
-    const overallactivitylist = activitylist_data?.map((r: any) => ({
-      title: ` ${r.note} ${r.activity_name}  ${r.convoy_name}`,
-      description: `พลขับ ${r.firstname} ${r.lastname} ตำแหน่ง ${r.lat} ${r.long}`,
-      image: `/images/Disaster/mapIcons/mapkey_operation.png`,
-    }));
-    // console.log('overallactivitylist', overallactivitylist);
+    console.log('oiltype_data',oiltype_data)
+    const oiltypeoverall = [oiltype_data?.map((r:any)=>r.type),oiltype_data?.map((r:any)=>r.refuel)]
+
+    // console.log('oiltypeoverall', oiltypeoverall);
     //------------------------------------------------------------------------------//
     const activitycard = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
@@ -399,13 +399,13 @@ export class DashboardService {
       // license: overalllicense,
       driver_status: overalldriverstatus,
       helplist: overallhelp,
-      activity_list: overallactivitylist,
       activitycard: activitycard_data?.map((r: any) => [
         r.help,
         r.accident,
         r.all_activity,
       ])[0],
       overallbymonth: overallbymonth,
+      oiltypeoverall:oiltypeoverall
     };
   }
 }
