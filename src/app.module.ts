@@ -69,7 +69,7 @@ import { Unit } from './entities/unit.entity';
         password: configService.get('MSSQL_PASSWORD'),
 
         entities: [...Entities],
-
+// logging:true,
         synchronize: false, //DONOT set to true
         // migrationsRun: true,
         extra: {
