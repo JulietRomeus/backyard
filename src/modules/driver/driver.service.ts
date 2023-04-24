@@ -185,7 +185,7 @@ export class DriverService {
       .leftJoinAndSelect('d.driver_status', 'tds')
       .leftJoin('d.trs_activity_vehicle_drivers', 'tavs')
       .addSelect('tavs.id')
-      .leftJoin('tavs.activity', 'tavsa', 'tavsa.is_active =1')
+      .leftJoin('tavs.activity', 'tavsa', 'tavsa.is_delete =0')
       .addSelect('tavsa.id')
       .addSelect('tavsa.activity_start_date')
       .addSelect('tavsa.activity_end_date')
