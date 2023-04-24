@@ -217,7 +217,7 @@ export class ActivityController {
   }
 
   @Patch('start/:id')
-  @Permission({ route: route, action: 'approve' })
+  @Permission({ route: 'activity-mission', action: 'start' })
   @ApiBearerAuth('JWT')
   @ApiOperation({
     summary: 'อนุมัติอนุมัติข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย',
