@@ -95,9 +95,13 @@ export class trsDriver {
 
   @Column('nvarchar', { name: 'race', nullable: true, length: 255 })
   race: string | null;
-
+  
   @Column('nvarchar', { name: 'organization', nullable: true, length: 255 })
   organization: string | null;
+
+  @Column('int', { name: 'organization_id', nullable: true})
+  organization_id: number | null;
+
 
   @Column('nvarchar', { name: 'unit_no', nullable: true, length: 255 })
   unit_no: string | null;
