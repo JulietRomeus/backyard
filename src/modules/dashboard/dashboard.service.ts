@@ -29,13 +29,14 @@ export class DashboardService {
     private trsActivityRepo: Repository<trsActivity>,
   ) {}
 
-  async missionAll(id: string, query: any) {
-    console.log('id', id);
-console.log('query.type', query?.type)
-    console.log(query)
+  async missionAll(query: any) {
+    console.log('id', query);
+    // console.log('query.type', query?.type);
+    // console.log(query);
     // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
     // console.log(unit_no)
-    return await this.trsActivityConvoy
+    if(!query.start_date)
+    {return await this.trsActivityConvoy
       .createQueryBuilder('tac')
       .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
       .leftJoinAndSelect('tac.route', 'tar')
@@ -44,13 +45,32 @@ console.log('query.type', query?.type)
       .leftJoinAndSelect('tavd.help_activity_form', 'tah')
 
       .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
-        unit: `${id}`,
+        unit: `${query.unit_no}`,
       })
       .andWhere(
         ' CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)<=CONVERT(date, GETDATE())',
       )
       // .getQuery()
-      .getMany();
+      .getMany()}
+      else {
+        console.log('query.start_date',query.start_date)
+        return await this.trsActivityConvoy
+        .createQueryBuilder('tac')
+        .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
+        .leftJoinAndSelect('tac.route', 'tar')
+        .leftJoinAndSelect('tac.activity', 'ta')
+        .leftJoinAndSelect('tavd.driver', 'td')
+        .leftJoinAndSelect('tavd.help_activity_form', 'tah')
+  
+        .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
+          unit: `${query.unit_no}`,
+        })
+        .andWhere(
+          `(CONVERT(date,ta.activity_start_date)=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)=CONVERT(date,'${query.end_date}'))`,
+        )
+        // .getQuery()
+        .getMany()
+      }
   }
   //--------------------------------------------------------------------------------------
   //gettype
