@@ -15,7 +15,7 @@ import { trsDriverFiles } from "./TrsDriverFiles.entity";
 import { trsDriverFiles_1 } from "./TrsDriverFiles_1.entity";
 import { trsDriver } from "./TrsDriver.entity";
 import { trsRegisFiles } from "./TrsRegisFiles.entity";
-
+import { trsDriverTemplate } from "./TreDriverTemplate.entity";
 @Index("directus_files_pkey", ["id"], { unique: true })
 @Entity("directus_files", { schema: "dbo" })
 export class directusFiles {
@@ -99,6 +99,12 @@ export class directusFiles {
     (trs_regis_files) => trs_regis_files.directus_files_id
   )
   trs_regis_files: trsRegisFiles[];
+
+  @OneToMany(
+    () => trsDriverTemplate,
+    (trs_regis_files) => trs_regis_files.file
+  )
+  trs_driver_templates: trsRegisFiles[];
 
   // @RelationId((directus_files: directusFiles) => directus_files.folder)
   // folder2: string | null;

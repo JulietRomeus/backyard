@@ -6,7 +6,7 @@ import {
   trsDriver,
   trsDriverLicenseList,
   trsDrivingLicenseType,
-  trsActivityVehicleDriver
+  trsDriverTemplate
 } from '../../entities/Index';
 import { User } from './../../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,19 +19,23 @@ import genPayload, {
   ACTIONTYPE,
   ForbiddenException,
 } from 'src/utils/payload';
+import { trsActivityVehicleDriver } from '../../entities/Index';
 @Injectable()
 export class DriverService {
   constructor(
     @InjectRepository(trsDriver, 'MSSQL_CONNECTION')
     private trsDriverRepo: Repository<trsDriver>,
-    @InjectRepository(trsActivityVehicleDriver, 'MSSQL_CONNECTION')
-    private trsActivityVehicleDriverRepo: Repository<trsActivityVehicleDriver>,
     @InjectRepository(trsDriverLicenseList, 'MSSQL_CONNECTION')
     private trsDriverLicenseListRepo: Repository<trsDriverLicenseList>,
     @InjectRepository(trsDrivingLicenseType, 'MSSQL_CONNECTION')
     private trsDrivingLicenseTypeRepo: Repository<trsDrivingLicenseType>,
     @InjectRepository(User, 'PROGRESS')
     private userRepo: Repository<User>,
+    @InjectRepository(trsDriverTemplate,'MSSQL_CONNECTION')
+    private templateRepo: Repository<trsDriverTemplate>,
+    @InjectRepository(trsActivityVehicleDriver,'MSSQL_CONNECTION')
+    private trsActivityVehicleDriverRepo: Repository<trsDriverTemplate>,
+
   ) {}
 
   async create(createDriverDto: any) {
@@ -68,7 +72,7 @@ export class DriverService {
     console.log('body', body);
     const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
     console.log(unit_no);
-    return await this.trsDriverRepo
+    let data =  await this.trsDriverRepo
       .createQueryBuilder('d')
       .where(`d.is_active = 1 and d.unit_no in (${unit_no})`)
       .leftJoinAndSelect(
@@ -77,32 +81,31 @@ export class DriverService {
         'tdll.is_active = 1',
       )
       .leftJoinAndSelect('d.driver_status', 'tds')
+      .leftJoin('d.trs_activity_vehicle_drivers', 'tavs')
+      .addSelect('tavs.id')
+      .leftJoin('tavs.activity', 'tavsa')
+      .addSelect('tavsa.id')
+      .addSelect('tavsa.activity_start_date')
+      .addSelect('tavsa.activity_end_date')
       // .getQuery();
       .getMany();
-
+      const finalItem = data.map(rec=>({
+        ...rec,
+        is_busy:rec.trs_activity_vehicle_drivers.some(r=>r?.activity?.is_inprogress) || false
+      }))
+      return finalItem
   }
 
-  async findactivity(body: any) {
-    console.log('body', body);
-    const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
-    console.log(unit_no);
-    return await this.trsActivityVehicleDriverRepo
-      .createQueryBuilder('d')
-      .leftJoinAndSelect(
-        'd.activity',
-        'a',
-        // 'r.name = "driver"'
-      )
-      .leftJoinAndSelect(
-        'd.driver',
-        'dd',
-        // 'r.name = "driver"'
-      )
-      .where(` d.unit_code in (${unit_no}) and CONVERT (Date,a.activity_start_date)=CONVERT (DATE, GETDATE())`)
+
+  async findBusy(body) {
+
+    return await this
+    .trsActivityVehicleDriverRepo.createQueryBuilder('atd')
+    .leftJoinAndSelect('atd.activity','a','a.is_delete = 0')
+    .leftJoinAndSelect('atd.driver','d','d.is_active = 1')
+    
       .getMany();
-
   }
-
 
 
   async findAllLicense() {
@@ -157,7 +160,7 @@ export class DriverService {
 
   async findOne(id: any) {
     console.log(id);
-    return await this.trsDriverRepo
+    const data =  await this.trsDriverRepo
       .createQueryBuilder('d')
       .leftJoinAndSelect(
         'd.trs_driver_license_lists',
@@ -166,7 +169,19 @@ export class DriverService {
       )
       .where('d.id =:id', { id: id })
       .leftJoinAndSelect('d.driver_status', 'tds')
-      .getOne();
+      .leftJoin('d.trs_activity_vehicle_drivers', 'tavs')
+      .addSelect('tavs.id')
+      .leftJoin('tavs.activity', 'tavsa')
+      .addSelect('tavsa.id')
+      .addSelect('tavsa.activity_start_date')
+      .addSelect('tavsa.activity_end_date')
+      // .getQuery();
+      .getOne();      
+        let finalItem:any =data
+        finalItem.is_busy =data?.trs_activity_vehicle_drivers?.some(r=>r?.activity?.is_inprogress) || false
+    
+     
+      return data
   }
 
   async update(id: any, updateDriverDto: any) {
@@ -217,7 +232,13 @@ export class DriverService {
     console.log(db);
     return db;
   }
+
+  async getTemplate(){
+    return await this.templateRepo.find({ where:{is_active:true}})
+  }
 }
+
+
 
 // async update_x(id: number, updateDriverDto: any) {
 //   console.log(updateDriverDto)
