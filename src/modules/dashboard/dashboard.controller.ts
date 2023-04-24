@@ -20,7 +20,7 @@ export class DashboardController {
    @ApiBearerAuth('JWT')
    @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
    missionAll(@Param('id') id: any,@Body() body: any, @Query() query: any) {
-     return this.dashboardService.missionAll(id);
+     return this.dashboardService.missionAll(id,query);
    }
 
   @Post('data') //

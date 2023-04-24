@@ -6,6 +6,7 @@ import { TrsDashboard } from './entities/dashboard.entity';
 import { RmqRecord } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
+import now from '../../utils/now';
 import {
   trsActivity,
   trsActivityConvoy,
@@ -28,8 +29,10 @@ export class DashboardService {
     private trsActivityRepo: Repository<trsActivity>,
   ) {}
 
-  async missionAll(id: any) {
+  async missionAll(id: string, query: any) {
     console.log('id', id);
+console.log('query.type', query?.type)
+    console.log(query)
     // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
     // console.log(unit_no)
     return await this.trsActivityConvoy
@@ -40,25 +43,27 @@ export class DashboardService {
       .leftJoinAndSelect('tavd.driver', 'td')
       .leftJoinAndSelect('tavd.help_activity_form', 'tah')
 
-      // .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
-      //   unit: `${id}`,
-      // })
+      .where('ta.unit_request_code  =:unit or ta.unit_response_code =:unit', {
+        unit: `${id}`,
+      })
+      .andWhere(
+        ' CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)<=CONVERT(date, GETDATE())',
+      )
       // .getQuery()
       .getMany();
   }
   //--------------------------------------------------------------------------------------
   //gettype
 
-  async getdriver( body: any) {
-
-    console.log('body',body)
+  async getdriver(body: any) {
+    // console.log('body', body);
     const vehicle_type = `[dbo].[Db_Trs_Vehicle]
       @unit_nos= '${body.unit_no}',
       @dataset_name = N'vehicle_type'`;
     const vehicle_type_data: TrsDashboard[] = await this.trsrepository.query(
       vehicle_type,
     );
-    console.log('vehicle_type_data', vehicle_type_data);
+    // console.log('vehicle_type_data', vehicle_type_data);
     const type = vehicle_type_data?.map((r: any) => r.supply_id);
     const label = vehicle_type_data?.map((r: any) => r.supply_name);
     // console.log('label', label);
@@ -241,7 +246,7 @@ export class DashboardService {
     @dataset_name = N'helplist',
     @start_date  =  '${body?.start_date}',
 	  @end_date  =  '${body?.end_date}'`;
-// console.log('help',help)
+    // console.log('help',help)
     const help_data: TrsDashboard[] = await this.trsrepository.query(help);
     // console.log('help', help_data);
     const overallhelp = help_data?.map((r: any) => ({
@@ -274,7 +279,7 @@ export class DashboardService {
     @dataset_name = N'activitycard',
     @start_date  =  '${body?.start_date}',
 	  @end_date  =  '${body?.end_date}'`;
-    console.log('activitycard',activitycard)
+    console.log('activitycard', activitycard);
     const activitycard_data: TrsDashboard[] = await this.trsrepository.query(
       activitycard,
     );
@@ -334,11 +339,11 @@ export class DashboardService {
       {
         name: 'เชื้อเพลิง',
 
-        data: fuelbymonthall,
+        data: [{ data: fuelbymonthall }],
       },
       {
         name: 'ภารกิจ',
-        data: activitybymonthall,
+        data: [{ data: activitybymonthall }],
       },
     ];
 
@@ -363,7 +368,6 @@ export class DashboardService {
       await this.trsrepository.query(activitytimeline);
     // console.log('activitytimeline_data', activitytimeline_data);
 
-
     //------------------------------------------------------------------------------//
     return {
       vehicle_resource: [oveallfree, label, allsum, type],
@@ -371,7 +375,7 @@ export class DashboardService {
       vehicle_driver_resource: overalldriver,
       vehicle_status: overallvehiclestatus,
       overallfueltype: [fuelbytypelabel, fuelbytypedata],
-      timeline:activitytimeline_data,
+      timeline: activitytimeline_data,
       // license: overalllicense,
       driver_status: overalldriverstatus,
       helplist: overallhelp,
@@ -384,6 +388,4 @@ export class DashboardService {
       overallbymonth: overallbymonth,
     };
   }
-
-
 }
