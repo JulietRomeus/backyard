@@ -290,9 +290,9 @@ export class DashboardService {
       oiltype,
     );
     console.log('oiltype_data',oiltype_data)
-    const oiltypeoverall = [oiltype_data?.map((r:any)=>r.type),oiltype_data?.map((r:any)=>r.refuel)]
+    const oiltypeoverall = [oiltype_data?.map((r:any)=>r.type != null ? r.type:0),oiltype_data?.map((r:any)=>r.refuel != null ? r.refuel:0  )]
 
-    // console.log('oiltypeoverall', oiltypeoverall);
+    console.log('oiltypeoverall', oiltypeoverall);
     //------------------------------------------------------------------------------//
     const activitycard = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',

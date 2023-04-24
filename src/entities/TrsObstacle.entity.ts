@@ -86,6 +86,10 @@ export class trsObstacle {
 
   @Column("int", { name: "obstacle_type_id", nullable: true })
   obstacle_type_id: number | null;
+
+
+  @Column("nvarchar", { name: "mooban_code", nullable: true, length: 255 })
+  mooban_code: string | null;
   
   // @ManyToOne(
   //   () => trsObstacleType,

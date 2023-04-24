@@ -109,7 +109,7 @@ export class TransactionService {
         left join dbo.slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
         left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
         where srssd.[key] = 1 and srsst.id = 9 and smak.id =21 
-        and (tt.transaction_status ='send' or  ssi.unit_no =${unit_no})
+        and (tt.transaction_status ='send' or  ssi.unit_no in (${unit_no}))
         and tt.renewal_date <= DATEADD(day,15,GETDATE()) and tt.status = 1`,
       );
     } else {
