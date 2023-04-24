@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   Column,
   Entity,
   Index,
@@ -16,7 +17,7 @@ import { trsActivityUnitResponse } from "./TrsActivityUnitResponse.entity";
 import { trsActivityVehicleDriver } from "./TrsActivityVehicleDriver.entity";
 import { trsHelpChat } from "./TrsHelpChat.entity";
 import { trsVehicle } from "./TrsVehicle.entity";
-
+import now from "src/utils/now";
 @Index("PK__trs_acti__3213E83FE09C4E05", ["id"], { unique: true })
 @Entity("trs_activity", { schema: "dbo" })
 export class trsActivity {
@@ -245,4 +246,20 @@ export class trsActivity {
 
   @OneToMany(() => trsVehicle, (trs_vehicle) => trs_vehicle.activity)
   trs_vehicles: trsVehicle[];
+
+
+
+  is_inprogress:boolean|null
+
+  now:Date
+
+  @AfterLoad()
+  isInprogress() {
+    this.is_inprogress = ((this.activity_start_date < now()) && (this.activity_end_date > now()))
+  }
+
+  @AfterLoad()
+  getNow() {
+    this.now = now()
+  }
 }

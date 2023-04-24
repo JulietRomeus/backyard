@@ -38,6 +38,15 @@ export class DriverController {
     return this.driverService.findAll(body);
   }
 
+  @Get('busy')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  busy(@Body() body: any) {
+
+    return this.driverService.findBusy(body);
+  }
+
   @Get('useremail')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
@@ -62,6 +71,14 @@ export class DriverController {
     return this.driverService.userbyid(id);
   }
 
+  @Get('template')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  getDriverTemplate() {
+    return this.driverService.getTemplate()
+  }
+
 
   @Get('option/license')
   // @Permission({ route: route, action: 'view' })
@@ -72,8 +89,10 @@ export class DriverController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: any) {
-    console.log(id)
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiBearerAuth('JWT')
+  findOne(@Param('id') id: number) {
+    // console.log(id)
     return this.driverService.findOne(id);
   }
 
