@@ -72,7 +72,7 @@ import { trsFacility } from "./TrsFacility.entitly";
 import { trsTransactionType } from './TrsTransactionType.entity';
 import { slcSupplyItem } from './SlcSupplyItem.entity';
 import { trsRegisDetail } from './TrsRegisDetail.entity';
-
+import { trsDriverTemplate } from './TreDriverTemplate.entity';
 export {
   trsDriverFiles,
   trsRegisStatus,
@@ -84,7 +84,7 @@ export {
   trsActivityFilesFiles,
   trsActivityConvoy,
   trsRegis,
-
+  trsDriverTemplate,
   trsActivity,
 
   trsActivityFiles,
@@ -167,7 +167,7 @@ export default [
   trsRegisVehicleImg,
   trsRegisStatusform,
   trsActivityType,
-
+  trsDriverTemplate,
   trsActivityFilesFiles,
   trsActivityConvoy,
   trsRegis,

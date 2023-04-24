@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
+  Req
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Permission } from 'src/decorators/permission.decorator';
@@ -13,6 +15,9 @@ import { DriverService } from './driver.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
 import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
+// import { ImportDriverChunkDto } from './dto/import-driver.dto';
+import { Response,Request } from 'express';
+import { HttpException } from '@nestjs/common';
 // import actio
 // const route = 'driver';
 
@@ -29,6 +34,14 @@ export class DriverController {
 
 
 
+  // @Get('activity')
+  // // @Permission({ route: route, action: 'view' })
+  // @ApiBearerAuth('JWT')
+  // @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  // findactivity(@Body() body: any) {
+  //   return this.driverService.findactivity(body);
+  // }
+
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
@@ -36,6 +49,15 @@ export class DriverController {
   findAll(@Body() body: any) {
 
     return this.driverService.findAll(body);
+  }
+
+  @Get('busy')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  busy(@Body() body: any) {
+
+    return this.driverService.findBusy(body);
   }
 
   @Get('useremail')
@@ -62,6 +84,41 @@ export class DriverController {
     return this.driverService.userbyid(id);
   }
 
+  @Get('template')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  getDriverTemplate() {
+    return this.driverService.getTemplate()
+  }
+
+
+  @Post('import')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  async importDriver(@Res({passthrough:true}) res:Response,@Req() req:Request, @Body() body: any) {
+    // try{
+
+      const data = await this.driverService.importDriver(req,body)
+      return {
+        // data:data,
+        message:`Import success`
+      }
+      
+    // }
+
+    
+    // catch (e){
+    //   res.status(500)
+      
+    //   return {
+    //     message:`Import Fail, ${e}`
+    //   }
+      
+    // }
+
+  }
 
   @Get('option/license')
   // @Permission({ route: route, action: 'view' })
@@ -72,8 +129,10 @@ export class DriverController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: any) {
-    console.log(id)
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiBearerAuth('JWT')
+  findOne(@Param('id') id: number) {
+    // console.log(id)
     return this.driverService.findOne(id);
   }
 

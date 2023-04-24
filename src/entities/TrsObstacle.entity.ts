@@ -44,11 +44,11 @@ export class trsObstacle {
   @Column("nvarchar", { name: "tambon_name", nullable: true, length: 127 })
   tambon_name: string | null;
 
-  @Column("nvarchar", { name: "lat", nullable: true, length: 225 })
-  lat: string | null;
+  @Column("float", { name: "lat", nullable: true, precision: 53 })
+  lat: number | null;
 
-  @Column("nvarchar", { name: "long", nullable: true, length: 225 })
-  long: string | null;
+  @Column("float", { name: "long", nullable: true, precision: 53 })
+  long: number | null;
 
   @Column("nvarchar", { name: "detail", nullable: true, length: 127 })
   detail: string | null;
@@ -86,6 +86,10 @@ export class trsObstacle {
 
   @Column("int", { name: "obstacle_type_id", nullable: true })
   obstacle_type_id: number | null;
+
+
+  @Column("nvarchar", { name: "mooban_code", nullable: true, length: 255 })
+  mooban_code: string | null;
   
   // @ManyToOne(
   //   () => trsObstacleType,
