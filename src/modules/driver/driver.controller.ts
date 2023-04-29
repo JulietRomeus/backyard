@@ -98,25 +98,25 @@ export class DriverController {
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
   async importDriver(@Res({passthrough:true}) res:Response,@Req() req:Request, @Body() body: any) {
-    try{
+    // try{
 
       const data = await this.driverService.importDriver(req,body)
       return {
-        data:data,
+        // data:data,
         message:`Import success`
       }
       
-    }
+    // }
 
     
-    catch (e){
-      res.status(500)
+    // catch (e){
+    //   res.status(500)
       
-      return {
-        message:`Import Fail, ${e}`
-      }
+    //   return {
+    //     message:`Import Fail, ${e}`
+    //   }
       
-    }
+    // }
 
   }
 

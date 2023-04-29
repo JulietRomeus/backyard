@@ -263,10 +263,30 @@ export class DriverService {
       rec.request_by = body.request_by
       rec.id_card = String(rec?.id_card)
       rec.unit_no = String(rec?.unit_no)
+      rec.organization_id = parseInt(rec.organization_id) || null
+      rec.tel = String(rec?.tel || '')
       // rec.unit_code = String(rec?.unit_no)
 
       // delete rec?.unit_no
       rec.driver_name = rec.firstname + ' ' + rec.lastname
+
+      
+      const tempLicense = []
+
+
+      if (typeof rec?.license_type_id1 == 'number') tempLicense.push({
+        license_id: parseInt(rec?.license_type_id1),
+        ...(rec?.license_issue_date1 ? { issue_date: parse(rec?.license_issue_date1, formatString, new Date()) } : {}),
+        ...(rec?.license_expire_date1 ? { expire_date: parse(rec?.license_expire_date1, formatString, new Date()) } : {})
+
+      })
+      if (typeof rec?.license_type_id2 == 'number') tempLicense.push({
+        license_id: parseInt(rec?.license_type_id2),
+        ...(rec?.license_issue_date2 ? { issue_date: parse(rec?.license_issue_date2, formatString, new Date()) } : {}),
+        ...(rec?.license_expire_date2 ? { expire_date: parse(rec?.license_expire_date2, formatString, new Date()) } : {})
+      })
+
+      rec.trs_driver_license_lists = tempLicense
 
       let user:any = {}
       let haveUser = false
@@ -334,30 +354,15 @@ export class DriverService {
         rec.driver_id = res.id
         // let res = await firstValueFrom(this.httpService.post(`/user`,user))
         console.log(res)
+
         //
       }
       else{
         console.log('no email provided')
       }
 
-
-      const tempLicense = []
-
-
-      if (typeof rec?.license_type_id1 == 'number') tempLicense.push({
-        license_id: parseInt(rec?.license_type_id1),
-        ...(rec?.license_issue_date1 ? { issue_date: parse(rec?.license_issue_date1, formatString, new Date()) } : {}),
-        ...(rec?.license_expire_date1 ? { expire_date: parse(rec?.license_expire_date1, formatString, new Date()) } : {})
-
-      })
-      if (typeof rec?.license_type_id2 == 'number') tempLicense.push({
-        license_id: parseInt(rec?.license_type_id2),
-        ...(rec?.license_issue_date2 ? { issue_date: parse(rec?.license_issue_date2, formatString, new Date()) } : {}),
-        ...(rec?.license_expire_date2 ? { expire_date: parse(rec?.license_expire_date2, formatString, new Date()) } : {})
-      })
-
-      rec.trs_driver_license_lists = tempLicense
       await this.create(rec)
+
       return rec
     })
 
