@@ -37,7 +37,7 @@ export class RegisterService {
     console.log('body', body.request_by);
     console.log('query', query);
     const unit_no = body.request_by.units?.map((r: any) => r.code);
-    console.log(unit_no);
+    console.log('unitno',unit_no);
 
     if (query.type == 'req') {
       let filterObj = {
@@ -74,38 +74,71 @@ export class RegisterService {
         return {};
       }
     } else {
-      let filterObj = {
-        is_active: { _eq: 1 },
-        trs_regis_statusform_no: {
-          id: {
-            _in: [
-              'res_approved',
-              'approved',
-              'res_review',
-              'res_pending_approve',
-              'res_approved',
-              'res_diapproved',
-            ],
+      if (unit_no?.includes('6360000000')) {
+        let filterObj = {
+          is_active: { _eq: 1 },
+          trs_regis_statusform_no: {
+            id: {
+              _in: [
+                'res_approved',
+                'approved',
+                'res_review',
+               
+              ],
+            },
           },
-        },
-        unit_no: { _in: unit_no },
+          unit_no: { _in: unit_no },
 
-        // filter ข้อมูลที่ยังไม่ถูกลบ
-      };
+          // filter ข้อมูลที่ยังไม่ถูกลบ
+        };
+        const filterString = JSON.stringify(filterObj);
+        console.log('filterObj', filterString);
+        const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
+        console.log(this.httpService.get(`/items/${getQuery}`));
+        try {
+          const result = await firstValueFrom(
+            this.httpService.get(`/items/${getQuery}`),
+          );
+          console.log(result.data);
+          return result?.data?.data || [];
+        } catch (error) {
+          console.log('error get status', error);
+          return {};
+        }
+      }
+      else{
+        let filterObj = {
+          is_active: { _eq: 1 },
+          trs_regis_statusform_no: {
+            id: {
+              _in: [
+                'res_approved',
+                'res_pending_approve',
+                'res_approved',
+                'res_diapproved',
+              ],
+            },
+          },
+          unit_no: { _in: unit_no },
 
-      const filterString = JSON.stringify(filterObj);
-      console.log('filterObj', filterString);
-      const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
-      console.log(this.httpService.get(`/items/${getQuery}`));
-      try {
-        const result = await firstValueFrom(
-          this.httpService.get(`/items/${getQuery}`),
-        );
-        console.log(result.data);
-        return result?.data?.data || [];
-      } catch (error) {
-        console.log('error get status', error);
-        return {};
+          // filter ข้อมูลที่ยังไม่ถูกลบ
+        };
+        const filterString = JSON.stringify(filterObj);
+        console.log('filterObj', filterString);
+        const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
+        console.log(this.httpService.get(`/items/${getQuery}`));
+        try {
+          const result = await firstValueFrom(
+            this.httpService.get(`/items/${getQuery}`),
+          );
+          console.log(result.data);
+          return result?.data?.data || [];
+        } catch (error) {
+          console.log('error get status', error);
+          return {};
+        }
+
+
       }
     }
   }
@@ -309,7 +342,7 @@ export class RegisterService {
     }
 
     let subItems = new trsRegis();
-    subItems.id=+id
+    subItems.id = +id;
     Object.keys(dataObj)?.map((keys) => {
       subItems[keys] = dataObj[keys] || null;
     });
@@ -327,24 +360,23 @@ export class RegisterService {
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
     //---------------------------------
-    const files:trsRegisFiles[] = dataObj.files?.map( (r: any) => {
+    const files: trsRegisFiles[] = dataObj.files?.map((r: any) => {
       let tempfiles = new trsRegisFiles();
       // let file:any =  this.directusFilesRepo.create({...r.directus_files_id})
-      let file = new directusFiles()
-      file.id = r.directus_files_id.id
-      tempfiles.directus_files_id = file//r.directus_files_id;
-      console.log('tempfiles',file)
+      let file = new directusFiles();
+      file.id = r.directus_files_id.id;
+      tempfiles.directus_files_id = file; //r.directus_files_id;
+      console.log('tempfiles', file);
       return tempfiles;
     });
 
-    
     subItems.trs_regis_files = files;
-    console.log('files',files)
+    console.log('files', files);
 
     finalItems.trs_regis_files = files;
-    
+
     //----------------------------------
-    console.log('finalItems',subItems)
+    console.log('finalItems', subItems);
 
     // delete dataObj.trs_regis_detail_no;
     // delete dataObj.files;
@@ -358,7 +390,7 @@ export class RegisterService {
     return await this.findOne(id);
   }
 
-//------------------------------------------------------------
+  //------------------------------------------------------------
 
   async review(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
@@ -369,7 +401,7 @@ export class RegisterService {
     // const finalItems = dataObj;
 
     let subItems = new trsRegis();
-    subItems.id=+id
+    subItems.id = +id;
     Object.keys(dataObj)?.map((keys) => {
       subItems[keys] = dataObj[keys] || null;
     });
@@ -394,8 +426,6 @@ export class RegisterService {
     }
     console.log('subItems', subItems);
 
-   
-
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
     );
@@ -403,17 +433,17 @@ export class RegisterService {
     // delete dataObj.trs_regis_detail_no;
 
     //----------------------------------------------
-    const files:trsRegisFiles[] = dataObj.files?.map( (r: any) => {
+    const files: trsRegisFiles[] = dataObj.files?.map((r: any) => {
       let tempfiles = new trsRegisFiles();
       // let file:any =  this.directusFilesRepo.create({...r.directus_files_id})
-      let file = new directusFiles()
-      file.id = r.directus_files_id.id
-      tempfiles.directus_files_id = file//r.directus_files_id;
-      console.log('tempfiles',file)
+      let file = new directusFiles();
+      file.id = r.directus_files_id.id;
+      tempfiles.directus_files_id = file; //r.directus_files_id;
+      console.log('tempfiles', file);
       return tempfiles;
-    });  
+    });
     // subItems.trs_regis_files = files;
-    console.log('files',files)
+    console.log('files', files);
     subItems.trs_regis_files = files;
     const dbRes = await this.trsRegisRepo.save(subItems);
     console.log('dbRes', dbRes);

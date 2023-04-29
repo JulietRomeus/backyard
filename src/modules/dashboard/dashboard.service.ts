@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TrsDashboard } from './entities/dashboard.entity';
-import { RmqRecord } from '@nestjs/microservices';
+import { ClientGrpcProxy, RmqRecord } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import now from '../../utils/now';
@@ -35,44 +35,53 @@ export class DashboardService {
     // console.log(query);
     // const unit_no=body.request_by.units?.map((r:any)=>`'${r.code}'`)
     // console.log(unit_no)
-    if(!query.start_date)
-    {return await this.trsActivityConvoy
-      .createQueryBuilder('tac')
-      .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
-      .leftJoinAndSelect('tac.route', 'tar')
-      .leftJoinAndSelect('tac.activity', 'ta')
-      .leftJoinAndSelect('tavd.driver', 'td')
-      .leftJoinAndSelect('tavd.help_activity_form', 'tah')
-
-      .where('(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)', {
-        unit: `${query.unit_no}`,
-      })
-      .andWhere(
-        '(CONVERT(date,ta.activity_start_date)=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)=CONVERT(date, GETDATE()))',
-      )
-      // .getQuery()
-         .getMany()
-    }
-      // .getMany()}
-      else {
-        console.log('query.start_date',query.start_date)
-        return await this.trsActivityConvoy
+    if (!query.start_date) {
+      return await this.trsActivityConvoy
         .createQueryBuilder('tac')
         .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
         .leftJoinAndSelect('tac.route', 'tar')
         .leftJoinAndSelect('tac.activity', 'ta')
         .leftJoinAndSelect('tavd.driver', 'td')
         .leftJoinAndSelect('tavd.help_activity_form', 'tah')
-  
-        .where('(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)', {
-          unit: `${query.unit_no}`,
-        })
+
+        .where(
+          '(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)',
+          {
+            unit: `${query.unit_no}`,
+          },
+        )
         .andWhere(
-          `(CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))`,
+          '(CONVERT(date,ta.activity_start_date)=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)<=CONVERT(date, GETDATE()))',
         )
         // .getQuery()
-        .getMany()
-      }
+        .getMany();
+    }
+    // .getMany()}
+    else {
+      console.log('query.start_date', query.start_date);
+      return await this.trsActivityConvoy
+        .createQueryBuilder('tac')
+        .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
+        .leftJoinAndSelect('tac.route', 'tar')
+        .leftJoinAndSelect('tac.activity', 'ta')
+        .leftJoinAndSelect('tavd.driver', 'td')
+        .leftJoinAndSelect('tavd.help_activity_form', 'tah')
+
+        .where(
+          '(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)',
+          {
+            unit: `${query.unit_no}`,
+          },
+        )
+        .andWhere(
+          `(CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))
+          or
+          (CONVERT(date,ta.activity_start_date)<=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))
+          `,
+        )
+        // .getQuery()
+        .getMany();
+    }
   }
   //--------------------------------------------------------------------------------------
   //gettype
@@ -289,10 +298,13 @@ export class DashboardService {
     const oiltype_data: TrsDashboard[] = await this.trsrepository.query(
       oiltype,
     );
-    console.log('oiltype_data',oiltype_data)
-    const oiltypeoverall = [oiltype_data?.map((r:any)=>r.type != null ? r.type:0),oiltype_data?.map((r:any)=>r.refuel != null ? r.refuel:0  )]
+    // console.log('oiltype_data', oiltype_data);
+    const oiltypeoverall = [
+      oiltype_data?.map((r: any) => (r.type != null ? r.type : 0)),
+      oiltype_data?.map((r: any) => (r.refuel != null ? r.refuel : 0)),
+    ];
 
-    console.log('oiltypeoverall', oiltypeoverall);
+    // console.log('oiltypeoverall', oiltypeoverall);
     //------------------------------------------------------------------------------//
     const activitycard = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
@@ -303,14 +315,14 @@ export class DashboardService {
     const activitycard_data: TrsDashboard[] = await this.trsrepository.query(
       activitycard,
     );
-    console.log(
-      'activitycard_data',
-      activitycard_data?.map((r: any) => [
-        r.help,
-        r.accident,
-        r.all_activity,
-      ])[0],
-    );
+    // console.log(
+    //   'activitycard_data',
+    //   activitycard_data?.map((r: any) => [
+    //     r.help,
+    //     r.accident,
+    //     r.all_activity,
+    //   ])[0],
+    // );
 
     //------------------------------------------------------------------------------//
     //activitybymonth
@@ -333,7 +345,7 @@ export class DashboardService {
         return 0;
       }
     });
-    console.log(activitybymonthall);
+    // console.log(activitybymonthall);
 
     //fuelbymonth
     const fuelbymonth = `[dbo].[Db_Trs_Vehicle]
@@ -389,7 +401,216 @@ export class DashboardService {
     // console.log('activitytimeline_data', activitytimeline_data);
 
     //------------------------------------------------------------------------------//
+    //dailyactivity
+    const dailyactivity = `[dbo].[Db_Trs_Vehicle]
+    @unit_nos= '${body.unit_no}',
+    @dataset_name = N'dailyactivity'`;
+    const dailyactivity_data: TrsDashboard[] = await this.trsrepository.query(
+      dailyactivity,
+    );
+    //jan//
+    const daily = [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    ];
+    const janmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 1);
+    const valuejan = daily?.map((num) => {
+      const matchingObj: any = janmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuejan', valuejan);
+    //Feb//
+    const febmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 2);
+    const valuefeb = daily?.map((num) => {
+      const matchingObj: any = febmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuefeb', valuefeb);
+    //Mar//
+    const marmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 3);
+    const valuemar = daily?.map((num) => {
+      const matchingObj: any = marmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuemar', valuemar);
+    //April//
+    const aprilmonthdaily = dailyactivity_data?.filter(
+      (r: any) => r.month == 4,
+    );
+    const valueapi = daily?.map((num) => {
+      const matchingObj: any = aprilmonthdaily.find(
+        (obj: any) => obj.day == num,
+      );
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valueapi', valueapi);
+
+    //May//
+    const maymonthdaily = dailyactivity_data?.filter((r: any) => r.month == 5);
+    const valuemay = daily?.map((num) => {
+      const matchingObj: any = maymonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuemay', valuemay);
+    //jun//
+    const junmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 6);
+    const valuejun = daily?.map((num) => {
+      const matchingObj: any = junmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuejun', valuejun);
+
+    //july//
+    const julymonthdaily = dailyactivity_data?.filter((r: any) => r.month == 7);
+    const valuejuly = daily?.map((num) => {
+      const matchingObj: any = julymonthdaily.find(
+        (obj: any) => obj.day == num,
+      );
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuejuly', valuejuly);
+
+    //aug//
+    const augmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 8);
+    const valueaug = daily?.map((num) => {
+      const matchingObj: any = augmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valueaug', valueaug);
+
+    //sep//
+    const sepmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 9);
+    const valuesep = daily?.map((num) => {
+      const matchingObj: any = sepmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuesep', valuesep);
+
+    //oct//
+    const octmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 10);
+    const valueoct = daily?.map((num) => {
+      const matchingObj: any = octmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valueoct', valueoct);
+
+    //nov//
+    const novmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 11);
+    const valuenov = daily?.map((num) => {
+      const matchingObj: any = novmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuenov', valuenov);
+
+    //dec//
+    const decmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 12);
+    const valuedec = daily?.map((num) => {
+      const matchingObj: any = decmonthdaily.find((obj: any) => obj.day == num);
+      if (matchingObj) {
+        return matchingObj.amount;
+      } else {
+        return 0;
+      }
+    });
+    // console.log('valuedec', valuedec);
+
+    const datadaily = [ {
+      name: 'มค',
+      data: valuejan,
+    },
+    {
+      name: 'กพ',
+      data: valuefeb,
+    },
+    {
+      name: 'มีค',
+      data: valuemar,
+    },
+    {
+      name: 'เมย',
+      data: valueapi,
+    },
+    {
+      name: 'พค',
+      data: valuemay,
+    },
+    {
+      name: 'มย',
+      data: valuejun,
+    },
+    {
+      name: 'กค',
+      data: valuejuly,
+    },
+    {
+      name: 'สค',
+      data: valueaug,
+    },
+    {
+      name: 'กย',
+      data: valuesep,
+    },
+    {
+      name: 'ตค',
+      data: valueoct,
+    },
+    {
+      name: 'พย',
+      data: valuenov,
+    },
+    {
+      name: 'ธค',
+      data: valuedec,
+    },
+  ];
+  console.log('datadaily',datadaily)
+
     return {
+      datadaily:datadaily,
       vehicle_resource: [oveallfree, label, allsum, type],
       vehicle_activity: overall_vehicle_activity,
       vehicle_driver_resource: overalldriver,
@@ -405,7 +626,7 @@ export class DashboardService {
         r.all_activity,
       ])[0],
       overallbymonth: overallbymonth,
-      oiltypeoverall:oiltypeoverall
+      oiltypeoverall: oiltypeoverall,
     };
   }
 }

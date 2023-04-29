@@ -91,10 +91,10 @@ export class TransactionService {
     //     'sst.id =9'
     //   )
     const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
-    console.log('unitttt',unit_no);
+    // console.log('unitttt',unit_no);
    
     if (unit_no.includes("'6360000000'")) {
-      console.log(unit_no.includes("'6360000000'"))
+      // console.log(unit_no.includes("'6360000000'"))
       return await this.trsTransactionRepo.query(
         `select tt.*,ttt.name,ttt.name_en,ssiav.attribute_value as license,ssi.name as item,
         sss.name as spec,ss.supply_name as type,ss.id as typeid,ssi.unit_no as unit from dbo.trs_transaction tt 
@@ -113,7 +113,7 @@ export class TransactionService {
         and tt.renewal_date <= DATEADD(day,15,GETDATE()) and tt.status = 1`,
       );
     } else {
-      console.log('first')
+      // console.log('first')
       return await this.trsTransactionRepo.query(
         `select tt.*,ttt.name,ttt.name_en,ssiav.attribute_value as license,ssi.name as item,
 sss.name as spec,ss.supply_name as type,ss.id as typeid,ssi.unit_no as unit from dbo.trs_transaction tt 
@@ -205,8 +205,8 @@ and tt.renewal_date <= DATEADD(day,15,GETDATE()) and tt.status = 1`,
       { id: In(finalItems.set) },
       { transaction_status: finalItems.data },
     );
-    console.log('dbResssss', dbRes);
-    // return await this.trsTransactionRepo.find({where:{id : In(finalItems.set)}});
+    // console.log('dbResssss', dbRes);
+    return await this.trsTransactionRepo.find({where:{id : In(finalItems.set)}});
   }
 
   // async update(id: any, updateDriverDto: any) {
