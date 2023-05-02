@@ -111,8 +111,8 @@ export class DashboardService {
     const tempvehicle = vehicle_data?.filter(
       (r: any) => r?.status == 'ใช้ราชการได้',
     );
-    const valuefree = label.map((num) => {
-      const matchingObj: any = tempvehicle.find(
+    const valuefree = label?.map((num) => {
+      const matchingObj: any = tempvehicle?.find(
         (obj: any) => obj.supply_name == num,
       );
       if (matchingObj) {
@@ -129,7 +129,7 @@ export class DashboardService {
       (r: any) => r.status == 'inprogress',
     );
     const valueinpro = label.map((num) => {
-      const valueinproObj: any = tempvehicleinpro.find(
+      const valueinproObj: any = tempvehicleinpro?.find(
         (obj: any) => obj.supply_name == num,
       );
       if (valueinproObj) {
@@ -150,7 +150,7 @@ export class DashboardService {
       (r: any) => r.status == 'ชำรุด',
     );
     const valuedis = label.map((num) => {
-      const valuedisoObj: any = tempvehicledis.find(
+      const valuedisoObj: any = tempvehicledis?.find(
         (obj: any) => obj.supply_name == num,
       );
       if (valuedisoObj) {
@@ -336,7 +336,7 @@ export class DashboardService {
     const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
     const activitybymonthall = month.map((num) => {
-      const valuedisoObj: any = activitybymonth_data.find(
+      const valuedisoObj: any = activitybymonth_data?.find(
         (obj: any) => obj.month == num,
       );
       if (valuedisoObj) {
@@ -357,7 +357,7 @@ export class DashboardService {
     // console.log('activitybymonth_data', fuelbymonth_data);
 
     const fuelbymonthall = month.map((num) => {
-      const valuedisoObj: any = fuelbymonth_data.find(
+      const valuedisoObj: any = fuelbymonth_data?.find(
         (obj: any) => obj.month == num,
       );
       if (valuedisoObj) {
@@ -415,7 +415,7 @@ export class DashboardService {
     ];
     const janmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 1);
     const valuejan = daily?.map((num) => {
-      const matchingObj: any = janmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = janmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -426,7 +426,7 @@ export class DashboardService {
     //Feb//
     const febmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 2);
     const valuefeb = daily?.map((num) => {
-      const matchingObj: any = febmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = febmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -437,7 +437,7 @@ export class DashboardService {
     //Mar//
     const marmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 3);
     const valuemar = daily?.map((num) => {
-      const matchingObj: any = marmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = marmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -450,7 +450,7 @@ export class DashboardService {
       (r: any) => r.month == 4,
     );
     const valueapi = daily?.map((num) => {
-      const matchingObj: any = aprilmonthdaily.find(
+      const matchingObj: any = aprilmonthdaily?.find(
         (obj: any) => obj.day == num,
       );
       if (matchingObj) {
@@ -464,7 +464,7 @@ export class DashboardService {
     //May//
     const maymonthdaily = dailyactivity_data?.filter((r: any) => r.month == 5);
     const valuemay = daily?.map((num) => {
-      const matchingObj: any = maymonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = maymonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -475,7 +475,7 @@ export class DashboardService {
     //jun//
     const junmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 6);
     const valuejun = daily?.map((num) => {
-      const matchingObj: any = junmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = junmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -487,7 +487,7 @@ export class DashboardService {
     //july//
     const julymonthdaily = dailyactivity_data?.filter((r: any) => r.month == 7);
     const valuejuly = daily?.map((num) => {
-      const matchingObj: any = julymonthdaily.find(
+      const matchingObj: any = julymonthdaily?.find(
         (obj: any) => obj.day == num,
       );
       if (matchingObj) {
@@ -501,7 +501,7 @@ export class DashboardService {
     //aug//
     const augmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 8);
     const valueaug = daily?.map((num) => {
-      const matchingObj: any = augmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = augmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -513,7 +513,7 @@ export class DashboardService {
     //sep//
     const sepmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 9);
     const valuesep = daily?.map((num) => {
-      const matchingObj: any = sepmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = sepmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -525,7 +525,7 @@ export class DashboardService {
     //oct//
     const octmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 10);
     const valueoct = daily?.map((num) => {
-      const matchingObj: any = octmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = octmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -537,7 +537,7 @@ export class DashboardService {
     //nov//
     const novmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 11);
     const valuenov = daily?.map((num) => {
-      const matchingObj: any = novmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = novmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -549,7 +549,7 @@ export class DashboardService {
     //dec//
     const decmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 12);
     const valuedec = daily?.map((num) => {
-      const matchingObj: any = decmonthdaily.find((obj: any) => obj.day == num);
+      const matchingObj: any = decmonthdaily?.find((obj: any) => obj.day == num);
       if (matchingObj) {
         return matchingObj.amount;
       } else {
