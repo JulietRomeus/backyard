@@ -51,7 +51,7 @@ export class DashboardService {
           },
         )
         .andWhere(
-          '(CONVERT(date,ta.activity_start_date)=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)<=CONVERT(date, GETDATE()))',
+          '(CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)>=CONVERT(date, GETDATE()))',
         )
         // .getQuery()
         .getMany();
@@ -74,9 +74,9 @@ export class DashboardService {
           },
         )
         .andWhere(
-          `(CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))
+          `(CONVERT(date,ta.activity_start_date)<=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)>=CONVERT(date,'${query.end_date}'))
           or
-          (CONVERT(date,ta.activity_start_date)<=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))
+          (CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))
           `,
         )
         // .getQuery()
@@ -298,13 +298,13 @@ export class DashboardService {
     const oiltype_data: TrsDashboard[] = await this.trsrepository.query(
       oiltype,
     );
-    // console.log('oiltype_data', oiltype_data);
+    console.log('oiltype_data', oiltype_data);
     const oiltypeoverall = [
       oiltype_data?.map((r: any) => (r.type != null ? r.type : 0)),
       oiltype_data?.map((r: any) => (r.refuel != null ? r.refuel : 0)),
     ];
 
-    // console.log('oiltypeoverall', oiltypeoverall);
+    console.log('oiltypeoverall', oiltypeoverall);
     //------------------------------------------------------------------------------//
     const activitycard = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
@@ -390,7 +390,7 @@ export class DashboardService {
     const fuelbytypelabel = fuelbytype_data?.map((r: any) => r.type);
     const fuelbytypedata = fuelbytype_data?.map((r: any) => r.amount);
 
-    // console.log('activitybymonth_data', [fuelbytypelabel, fuelbytypedata]);
+    // consoxx/le.log('activitybymonth_data', [fuelbytypelabel, fuelbytypedata]);
     //------------------------------------------------------------------------------//
     //activitytimeline
     const activitytimeline = `[dbo].[Db_Trs_Vehicle]
@@ -607,7 +607,7 @@ export class DashboardService {
       data: valuedec,
     },
   ];
-  console.log('datadaily',datadaily)
+  // console.log('datadaily',datadaily)
 
     return {
       datadaily:datadaily,

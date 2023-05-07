@@ -218,6 +218,14 @@ export class trsRegis {
   @Column("int", { name: "contract_id", nullable: true })
   contract_id: number | null;
 
+  @Column("nvarchar", { name: "sendback_by", nullable: true, length: 255 })
+  sendback_by: string | null;
+
+  @Column("nvarchar", { name: "sendback_by_id", nullable: true, length: 255 })
+  sendback_by_id: string | null;
+
+  @Column("datetime2", { name: "sendback_date", nullable: true })
+  sendback_date: Date | null;
 
   @OneToMany(
     () => trsRegisFiles,
@@ -225,5 +233,21 @@ export class trsRegis {
     {cascade:true}
   )
   trs_regis_files: trsRegisFiles[];
+
+  @Column("nvarchar", { name: "sendback_comment", nullable: true })
+  sendback_comment: string | null;
+
+  @Column("nvarchar", { name: "comment", nullable: true })
+  comment: string | null;
+  
+  @Column("nvarchar", { name: "disapprove_by", nullable: true, length: 255 })
+  disapprove_by: string | null;
+
+  @Column("nvarchar", { name: "disapprove_by_id", nullable: true, length: 255 })
+  disapprove_by_id: string | null;
+
+  @Column("datetime2", { name: "disapprove_date", nullable: true })
+  disapprove_date: Date | null;
+
 
 }

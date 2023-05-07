@@ -22,7 +22,6 @@ import {
 } from '@nestjs/swagger';
 import now from '../../utils/now';
 
-
 import { Permission } from 'src/decorators/permission.decorator';
 const route = 'register-request';
 
@@ -30,8 +29,29 @@ const route = 'register-request';
 export class RegisterController {
   constructor(private readonly registerService: RegisterService) {}
 
+  @Get('option/vehicle-type')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  vehicleTypeOption(@Body() body: any, @Query() query: any) {
+    return this.registerService.vehicleTypeOption(body);
+  }
 
+  @Get('option/vehicle-spec/:id')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  vehiclespecOption(@Param('id') id: any, @Body() body: any) {
+    return this.registerService.vehiclespecOption(id);
+  }
 
+  @Get('option/vehicle-spec')
+  // @Permission({ route: route, action: 'view' })
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  vehiclespecOptionall(@Body() body: any) {
+    return this.registerService.vehiclespecOptionall();
+  }
 
   @Post()
   create(@Body() createRegisterDto: any) {
@@ -54,7 +74,7 @@ export class RegisterController {
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
-  getvehicle(@Param('id') id: any,@Body() body: any) {
+  getvehicle(@Param('id') id: any, @Body() body: any) {
     return this.registerService.getvehicle(id);
   }
 
@@ -112,6 +132,15 @@ export class RegisterController {
     return this.registerService.approve(id, updateRegisterDto, query);
   }
 
+  @Patch('back/:id')
+  back(
+    @Param('id') id: any,
+    @Body() updateRegisterDto: any,
+    @Query() query: any,
+  ) {
+    return this.registerService.back(id, updateRegisterDto, query);
+  }
+
   @Delete(':id')
   remove(
     @Param('id') id: any,
@@ -121,6 +150,14 @@ export class RegisterController {
     return this.registerService.remove(id, updateRegisterDto, query);
   }
 
+  @Patch('disapprove/:id')
+  disapprove(
+    @Param('id') id: any,
+    @Body() updateRegisterDto: any,
+    @Query() query: any,
+  ) {
+    return this.registerService.disapprove(id, updateRegisterDto, query);
+  }
 
   //----------------getobstacle-------------------//
 }
