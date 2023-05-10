@@ -1254,7 +1254,6 @@ export class ActivityService {
 
     //2. use Repo
     let filterObj = {
-      is_delete: false, // filter ข้อมูลที่ยังไม่ถูกลบ
       is_active: true,
     };
     if (query.unit) {
