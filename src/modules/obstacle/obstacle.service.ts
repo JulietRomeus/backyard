@@ -32,12 +32,12 @@ export class ObstacleService {
     return await this.trsObstacleTypeRepo.createQueryBuilder('d').getMany();
   }
 
-  async create(CreateObstacleDto: any) {
+  async create(CreateObstacleDto: CreateObstacleDto) {
     console.log('CreateRegisterDto', CreateObstacleDto);
     let timeNow = now();
     let user = CreateObstacleDto.request_by;
     let dataObj = CreateObstacleDto;
-    dataObj.create_by = CreateObstacleDto;
+    // dataObj.create_by = CreateObstacleDto;
     // dataObj['create_by_id'] = user.id;
     dataObj['create_by'] = user.displayname;
     dataObj['create_date'] = timeNow;
@@ -75,7 +75,7 @@ export class ObstacleService {
       .getOne();
   }
 
-  async update(id: number, UpdateObstacleDto: any): Promise<any> {
+  async update(id: number, UpdateObstacleDto: UpdateObstacleDto): Promise<any> {
     console.log('updateRegisterDto', UpdateObstacleDto);
     // console.log('query', query);
     let timeNow = now();

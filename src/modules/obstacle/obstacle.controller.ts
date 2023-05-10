@@ -14,13 +14,15 @@ export class ObstacleController {
 
   @Get('option')
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionอุปสรรคเส้นทางทั้งหมด' })
   option() {
     return this.obstacleService.option();
 
 
   }
   @Post()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'บันทึกข้อมูลอุปสรรคเส้นทาง' })
   create(@Body() createDriverDto: any) {
     console.log('createDriverDto',createDriverDto)
     return this.obstacleService.create(createDriverDto);
@@ -29,7 +31,7 @@ export class ObstacleController {
   @Get('dis')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลอุปสรรคเส้นทางทั้งหมดจากdisaster' })
   findAlldis() {
     return this.obstacleService.findAlldis();
   }
@@ -37,23 +39,29 @@ export class ObstacleController {
   @Get('j')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลอุปสรรคเส้นทางทั้งหมด' })
   findAllj() {
     return this.obstacleService.findAllj();
   }
 
   @Get(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'บันทึกข้อมูลอุปสรรคเส้นทางรายid' })
   findOne(@Param('id') id: any) {
     return this.obstacleService.findOne(id);
   }
 
 
   @Patch(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดตข้อมูลอุปสรรคเส้นทาง' })
   update(@Param('id') id: string, @Body() UpdateObstacleDto: any) {
     return this.obstacleService.update(+id, UpdateObstacleDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ลบข้อมูลอุปสรรคเส้นทาง' })
   remove(@Param('id') id: any) {
     return this.obstacleService.remove(id);
   }

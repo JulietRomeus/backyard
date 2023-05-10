@@ -30,7 +30,7 @@ export class TransactionController {
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลการทำธุรกรรมทั้งหมด' })
   findAll(@Body() body: any) {
     return this.transactionService.findAll(body);
   }
@@ -38,7 +38,7 @@ export class TransactionController {
   @Get('option')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลใบขับขี่ทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionการทำธุรกรรมทั้งหมด' })
   findOptiontype() {
     return this.transactionService.findOptiontype();
   }
@@ -46,11 +46,15 @@ export class TransactionController {
  
 
   @Get(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลการทำธุรกรรมรายid' })
   findOne(@Param('id') id: string) {
     return this.transactionService.findOne(+id);
   }
 
   @Patch()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดตข้อมูลการทำธุรกรรม' })
  async update( @Body() updatetransactionDto: any) {
     console.log('updateController',updatetransactionDto)
    const data = await this.transactionService.update(updatetransactionDto);
@@ -58,6 +62,8 @@ export class TransactionController {
   }
 
   @Patch('status')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดตข้อมูลstatusการทำธุรกรรม' })
   async updatestatus( @Body() updatetransactionDto: any) {
      console.log('updateController',updatetransactionDto)
     const data = await this.transactionService.updatestatus(updatetransactionDto);

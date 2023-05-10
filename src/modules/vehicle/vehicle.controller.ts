@@ -16,7 +16,7 @@ export class VehicleController {
 
   @Get()
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะทั้งหมด' })
   findAll(@Body() body: any) {
     return this.vehicleService.findAll(body);
   }
@@ -78,4 +78,7 @@ export class VehicleController {
   // remove(@Param('id') id: string) {
   //   return this.vehicleService.remove(+id);
   // }
+
+
+  
 }

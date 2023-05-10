@@ -20,18 +20,19 @@ export class FacilityService {
     @InjectRepository(trsFacility, 'MSSQL_CONNECTION')
     private trsFacilityRepo: Repository<trsFacility>,
   ) {}
-  async create(CreateFacilityDto: any) {
+  async create(CreateFacilityDto: CreateFacilityDto) {
     console.log('CreateRegisterDto', CreateFacilityDto);
     let timeNow = now();
     let user = CreateFacilityDto.request_by;
-    let dataObj = CreateFacilityDto;
-    dataObj.create_by = CreateFacilityDto;
+    let dataObj= CreateFacilityDto;
+    // dataObj.create_by = CreateFacilityDto;
     dataObj['create_by_id'] = user.id;
     dataObj['create_by'] = user.displayname;
     dataObj['create_date'] = timeNow;
     dataObj['update_by_id'] = user.id;
     dataObj['update_by'] = user.displayname;
     dataObj['update_date'] = timeNow;
+    console.log('dataObj',dataObj)
     const finalItems = this.trsFacilityRepo.create(dataObj);
     console.log('finalItems', finalItems);
     //------creatsubitem---------//
@@ -72,7 +73,7 @@ export class FacilityService {
       .getOne();
   }
 
-  async update(id: number, UpdateFacilityDto: any): Promise<any> {
+  async update(id: number, UpdateFacilityDto: UpdateFacilityDto): Promise<any> {
     console.log('updateRegisterDto', UpdateFacilityDto);
     // console.log('query', query);
     let timeNow = now();

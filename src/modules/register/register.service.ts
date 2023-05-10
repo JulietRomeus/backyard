@@ -237,7 +237,7 @@ export class RegisterService {
     let timeNow = now();
     let user = CreateRegisterDto.request_by;
     let dataObj = CreateRegisterDto;
-    dataObj.create_by = CreateRegisterDto;
+    // dataObj.create_by = CreateRegisterDto;
     dataObj['create_by_id'] = user.id;
     dataObj['create_by'] = user.displayname;
     dataObj['create_date'] = timeNow;
@@ -517,12 +517,13 @@ export class RegisterService {
     dataObj['sendback_date'] = timeNow;
     dataObj['sendback_by'] = user.displayname;
     const finalItems = dataObj;
-    if(query.type == 'req'){
-      finalItems.trs_regis_statusform_no.id = 'review'
-    }
-    else {
-      finalItems.trs_regis_statusform_no.id = 'res_review'
-    }
+    finalItems.trs_regis_statusform_no.id = 'review'
+    // if(query.type == 'req'){
+    
+    // }
+    // else {
+    //   finalItems.trs_regis_statusform_no.id = 'review'
+    // }
    
     delete dataObj.trs_regis_detail_no;
     delete dataObj.files;

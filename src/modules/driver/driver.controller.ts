@@ -26,6 +26,8 @@ export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
   @Post()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'บันทึกข้อมูลพลขับ' })
   async create(@Body() createDriverDto: any) {
     console.log('createDriverDto',createDriverDto)
     const data = await this.driverService.create(createDriverDto);
@@ -54,7 +56,7 @@ export class DriverController {
   @Get('busy')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับและความพร้อมทั้งหมด' })
   busy(@Body() body: any) {
 
     return this.driverService.findBusy(body);
@@ -63,7 +65,7 @@ export class DriverController {
   @Get('useremail')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับemailทั้งหมด' })
   useremail(@Body() body: any) {
     return this.driverService.useremail(body);
   }
@@ -71,7 +73,7 @@ export class DriverController {
   @Get('user')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับจากuserทั้งหมด' })
   user() {
     return this.driverService.user();
   }
@@ -79,7 +81,7 @@ export class DriverController {
   @Get('user/:id')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับรายidทั้งหมด' })
   userbyid(@Param('id') id: any) {
     return this.driverService.userbyid(id);
   }
@@ -87,7 +89,7 @@ export class DriverController {
   @Get('template')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับtemplateทั้งหมด' })
   getDriverTemplate() {
     return this.driverService.getTemplate()
   }
@@ -96,7 +98,7 @@ export class DriverController {
   @Post('import')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'บันทึกข้อมูลพลขับimportทั้งหมด' })
   async importDriver(@Res({passthrough:true}) res:Response,@Req() req:Request, @Body() body: any) {
     // try{
 
@@ -129,7 +131,7 @@ export class DriverController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลพลขับรายid' })
   @ApiBearerAuth('JWT')
   findOne(@Param('id') id: number) {
     // console.log(id)
@@ -137,12 +139,16 @@ export class DriverController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'อัพเดตข้อมูลพลขับรายid' })
+  @ApiBearerAuth('JWT')
   update(@Param('id') id: string, @Body() updateDriverDto: any) {
     console.log('updateDriverDto',updateDriverDto)
     return this.driverService.update(+id, updateDriverDto);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'ลบข้อมูลพลขับรายid' })
+  @ApiBearerAuth('JWT')
   remove(@Param('id') id: string) {
     return this.driverService.remove(+id);
   }

@@ -45,20 +45,20 @@ export class DashboardService {
         .leftJoinAndSelect('tavd.help_activity_form', 'tah')
 
         .where(
-          '(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)',
-          {
-            unit: `${query.unit_no}`,
-          },
+          'CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)>=CONVERT(date, GETDATE())',
         )
         .andWhere(
-          '(CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)>=CONVERT(date, GETDATE()))',
+          `(ta.unit_request_code  ='${query.unit_no}' or ta.unit_response_code ='${query.unit_no}')`,
+          // {
+          //   unit: query.unit_no,
+          // },
         )
         // .getQuery()
         .getMany();
     }
     // .getMany()}
     else {
-      console.log('query.start_date', query.start_date);
+      console.log('query.start_date', query.unit_no);
       return await this.trsActivityConvoy
         .createQueryBuilder('tac')
         .leftJoinAndSelect('tac.vehicle_driver', 'tavd')
@@ -68,18 +68,18 @@ export class DashboardService {
         .leftJoinAndSelect('tavd.help_activity_form', 'tah')
 
         .where(
-          '(ta.unit_request_code  =:unit or ta.unit_response_code =:unit)',
-          {
-            unit: `${query.unit_no}`,
-          },
+          `(ta.unit_request_code  ='${query.unit_no}' or ta.unit_response_code ='${query.unit_no}')`,
+          // {
+          //   unit: query.unit_no,
+          // },
         )
         .andWhere(
-          `(CONVERT(date,ta.activity_start_date)<=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)>=CONVERT(date,'${query.end_date}'))
+          `((CONVERT(date,ta.activity_start_date)<=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)>=CONVERT(date,'${query.end_date}'))
           or
-          (CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}'))
+          (CONVERT(date,ta.activity_start_date)>=CONVERT(date, '${query.start_date}') and  CONVERT(date,ta.activity_end_date)<=CONVERT(date,'${query.end_date}')))
           `,
         )
-        // .getQuery()
+        // .getSql()
         .getMany();
     }
   }
@@ -311,7 +311,7 @@ export class DashboardService {
     @dataset_name = N'activitycard',
     @start_date  =  '${body?.start_date}',
 	  @end_date  =  '${body?.end_date}'`;
-    console.log('activitycard', activitycard);
+    // console.log('activitycard', activitycard);
     const activitycard_data: TrsDashboard[] = await this.trsrepository.query(
       activitycard,
     );
@@ -387,10 +387,18 @@ export class DashboardService {
       fuelbytype,
     );
 
-    const fuelbytypelabel = fuelbytype_data?.map((r: any) => r.type);
-    const fuelbytypedata = fuelbytype_data?.map((r: any) => r.amount);
+    console.log('fuelbytype_data',fuelbytype_data)
 
-    // consoxx/le.log('activitybymonth_data', [fuelbytypelabel, fuelbytypedata]);
+    const fuelbytypelabel = fuelbytype_data?.map((r: any) =>
+      r.type != null ? r.type : 0,
+    );
+    const fuelbytypedata = fuelbytype_data?.map((r: any) =>
+      r.amount != null ? r.amount : 0,
+    );
+
+    
+
+    console.log('activitybymonth_data', [fuelbytypelabel, fuelbytypedata]);
     //------------------------------------------------------------------------------//
     //activitytimeline
     const activitytimeline = `[dbo].[Db_Trs_Vehicle]
@@ -415,7 +423,9 @@ export class DashboardService {
     ];
     const janmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 1);
     const valuejan = daily?.map((num) => {
-      const matchingObj: any = janmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = janmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -426,7 +436,9 @@ export class DashboardService {
     //Feb//
     const febmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 2);
     const valuefeb = daily?.map((num) => {
-      const matchingObj: any = febmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = febmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -437,7 +449,9 @@ export class DashboardService {
     //Mar//
     const marmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 3);
     const valuemar = daily?.map((num) => {
-      const matchingObj: any = marmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = marmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -464,7 +478,9 @@ export class DashboardService {
     //May//
     const maymonthdaily = dailyactivity_data?.filter((r: any) => r.month == 5);
     const valuemay = daily?.map((num) => {
-      const matchingObj: any = maymonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = maymonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -475,7 +491,9 @@ export class DashboardService {
     //jun//
     const junmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 6);
     const valuejun = daily?.map((num) => {
-      const matchingObj: any = junmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = junmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -501,7 +519,9 @@ export class DashboardService {
     //aug//
     const augmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 8);
     const valueaug = daily?.map((num) => {
-      const matchingObj: any = augmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = augmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -513,7 +533,9 @@ export class DashboardService {
     //sep//
     const sepmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 9);
     const valuesep = daily?.map((num) => {
-      const matchingObj: any = sepmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = sepmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -525,7 +547,9 @@ export class DashboardService {
     //oct//
     const octmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 10);
     const valueoct = daily?.map((num) => {
-      const matchingObj: any = octmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = octmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -537,7 +561,9 @@ export class DashboardService {
     //nov//
     const novmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 11);
     const valuenov = daily?.map((num) => {
-      const matchingObj: any = novmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = novmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -549,7 +575,9 @@ export class DashboardService {
     //dec//
     const decmonthdaily = dailyactivity_data?.filter((r: any) => r.month == 12);
     const valuedec = daily?.map((num) => {
-      const matchingObj: any = decmonthdaily?.find((obj: any) => obj.day == num);
+      const matchingObj: any = decmonthdaily?.find(
+        (obj: any) => obj.day == num,
+      );
       if (matchingObj) {
         return matchingObj.amount;
       } else {
@@ -558,59 +586,60 @@ export class DashboardService {
     });
     // console.log('valuedec', valuedec);
 
-    const datadaily = [ {
-      name: 'มค',
-      data: valuejan,
-    },
-    {
-      name: 'กพ',
-      data: valuefeb,
-    },
-    {
-      name: 'มีค',
-      data: valuemar,
-    },
-    {
-      name: 'เมย',
-      data: valueapi,
-    },
-    {
-      name: 'พค',
-      data: valuemay,
-    },
-    {
-      name: 'มย',
-      data: valuejun,
-    },
-    {
-      name: 'กค',
-      data: valuejuly,
-    },
-    {
-      name: 'สค',
-      data: valueaug,
-    },
-    {
-      name: 'กย',
-      data: valuesep,
-    },
-    {
-      name: 'ตค',
-      data: valueoct,
-    },
-    {
-      name: 'พย',
-      data: valuenov,
-    },
-    {
-      name: 'ธค',
-      data: valuedec,
-    },
-  ];
-  // console.log('datadaily',datadaily)
+    const datadaily = [
+      {
+        name: 'มค',
+        data: valuejan,
+      },
+      {
+        name: 'กพ',
+        data: valuefeb,
+      },
+      {
+        name: 'มีค',
+        data: valuemar,
+      },
+      {
+        name: 'เมย',
+        data: valueapi,
+      },
+      {
+        name: 'พค',
+        data: valuemay,
+      },
+      {
+        name: 'มย',
+        data: valuejun,
+      },
+      {
+        name: 'กค',
+        data: valuejuly,
+      },
+      {
+        name: 'สค',
+        data: valueaug,
+      },
+      {
+        name: 'กย',
+        data: valuesep,
+      },
+      {
+        name: 'ตค',
+        data: valueoct,
+      },
+      {
+        name: 'พย',
+        data: valuenov,
+      },
+      {
+        name: 'ธค',
+        data: valuedec,
+      },
+    ];
+    // console.log('datadaily',datadaily)
 
     return {
-      datadaily:datadaily,
+      datadaily: datadaily,
       vehicle_resource: [oveallfree, label, allsum, type],
       vehicle_activity: overall_vehicle_activity,
       vehicle_driver_resource: overalldriver,

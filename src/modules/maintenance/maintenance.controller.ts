@@ -31,7 +31,7 @@ export class MaintenanceController {
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลปรนนิบัติบำรุงทั้งหมด' })
   findAll(@Body() body: any, @Query() query: any) {
     return this.maintenanceService.findAll(body);
   }

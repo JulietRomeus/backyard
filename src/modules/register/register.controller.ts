@@ -32,7 +32,7 @@ export class RegisterController {
   @Get('option/vehicle-type')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  @ApiOperation({ summary: 'ดึงข้อมูลoptiontypeจด/ปลดยานพาหนะ' })
   vehicleTypeOption(@Body() body: any, @Query() query: any) {
     return this.registerService.vehicleTypeOption(body);
   }
@@ -40,7 +40,7 @@ export class RegisterController {
   @Get('option/vehicle-spec/:id')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionspecจด/ปลดยานพาหนะรายid' })
   vehiclespecOption(@Param('id') id: any, @Body() body: any) {
     return this.registerService.vehiclespecOption(id);
   }
@@ -48,12 +48,14 @@ export class RegisterController {
   @Get('option/vehicle-spec')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionspecจด/ปลดยานพาหนะ' })
   vehiclespecOptionall(@Body() body: any) {
     return this.registerService.vehiclespecOptionall();
   }
 
   @Post()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'บันทึกข้อมูลจด/ปลดยานพาหนะ' })
   create(@Body() createRegisterDto: any) {
     console.log(
       'this.registerService.create(createRegisterDto)',
@@ -73,7 +75,7 @@ export class RegisterController {
   @Get('vehicle/:id')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
+  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะรายid' })
   getvehicle(@Param('id') id: any, @Body() body: any) {
     return this.registerService.getvehicle(id);
   }
@@ -81,7 +83,7 @@ export class RegisterController {
   @Get('optioncontract')
   //@Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูล' })
+  @ApiOperation({ summary: 'ดึงข้อมูลสัญญา' })
   findOptioncontract(@Body() body: any, @Query() query: any) {
     console.log(body, query);
     return this.registerService.findOptioncontract();
@@ -90,18 +92,22 @@ export class RegisterController {
   @Get(':id')
   //@Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลกิจกรรมการขนส่งเคลื่อนย้าย' })
+  @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะรายid' })
   findOne(@Param('id') id: any, @Body() body: any, @Query() query: any) {
     return this.registerService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดตข้อมูลจด/ปลดยานพาหนะรายid' })
   update(@Param('id') id: string, @Body() updateRegisterDto: any) {
     console.log(updateRegisterDto);
     return this.registerService.update(+id, updateRegisterDto);
   }
 
   @Patch('send/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเตตstatus sendข้อมูลจด/ปลดยานพาหนะรายid' })
   send(
     @Param('id') id: any,
     @Body() updateRegisterDto: any,
@@ -115,6 +121,8 @@ export class RegisterController {
   }
 
   @Patch('review/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเตตstatus reviewข้อมูลจด/ปลดยานพาหนะรายid' })
   review(
     @Param('id') id: any,
     @Body() updateRegisterDto: any,
@@ -124,6 +132,8 @@ export class RegisterController {
   }
 
   @Patch('approve/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเตตstatus approveข้อมูลจด/ปลดยานพาหนะรายid' })
   approve(
     @Param('id') id: any,
     @Body() updateRegisterDto: any,
@@ -133,6 +143,8 @@ export class RegisterController {
   }
 
   @Patch('back/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเตตstatus sendbackข้อมูลจด/ปลดยานพาหนะรายid' })
   back(
     @Param('id') id: any,
     @Body() updateRegisterDto: any,
@@ -142,6 +154,8 @@ export class RegisterController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ลบข้อมูลจด/ปลดยานพาหนะรายid' })
   remove(
     @Param('id') id: any,
     @Body() updateRegisterDto: any,
@@ -151,6 +165,8 @@ export class RegisterController {
   }
 
   @Patch('disapprove/:id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเตตstatus disapproveข้อมูลจด/ปลดยานพาหนะรายid' })
   disapprove(
     @Param('id') id: any,
     @Body() updateRegisterDto: any,

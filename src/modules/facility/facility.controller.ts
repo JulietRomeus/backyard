@@ -12,6 +12,8 @@ export class FacilityController {
   constructor(private readonly facilityService: FacilityService) {}
 
   @Post()
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'บันทึกข้อมูลสิ่งอำนวยความสะดวก' })
   create(@Body() CreateFacilityDto: any) {
     console.log('CreateFacilityDto',CreateFacilityDto)
     return this.facilityService.create(CreateFacilityDto);
@@ -20,7 +22,7 @@ export class FacilityController {
   @Get()
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลสิ่งอำนวยความสะดวกทั้งหมด' })
   findAll() {
     return this.facilityService.findAll();
   }
@@ -28,7 +30,7 @@ export class FacilityController {
   @Get('facility')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
+  @ApiOperation({ summary: 'ดึงข้อมูลสิ่งอำนวยความสะดวกจากmob' })
   facility() {
     return this.facilityService.facility();
   }
@@ -36,7 +38,7 @@ export class FacilityController {
   @Get('optionfac')
   // @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'ดึงข้อมูล' })
+  @ApiOperation({ summary: 'ดึงข้อมูลoptionสิ่งอำนวยความสะดวก' })
   option() {
     return this.facilityService.option();
   }
@@ -51,17 +53,23 @@ export class FacilityController {
   // }
 
   @Get(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ดึงข้อมูลสิ่งอำนวยความสะดวกรายid' })
   findOne(@Param('id') id: any) {
     return this.facilityService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'อัพเดตข้อมูลสิ่งอำนวยความสะดวกรายid' })
   update(@Param('id') id: string, @Body() updateFacilityDto: any) {
     console.log('updateFacilityDto',updateFacilityDto)
     return this.facilityService.update(+id, updateFacilityDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'ลบข้อมูลสิ่งอำนวยความสะดวกรายid' })
   remove(@Param('id') id: any, @Body() UpdateFacilityDto: any,@Query() query: any){
     console.log('id',id)
     console.log('UpdateFacilityDto',UpdateFacilityDto)

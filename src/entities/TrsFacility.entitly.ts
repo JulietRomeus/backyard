@@ -10,7 +10,7 @@ export class trsFacility {
   facility_name: string | null;
 
   @Column("int", { name: "facility_type" })
-  facility_type: string | null;
+  facility_type: number | null;
 
   @Column("float", { name: "lat", nullable: true, precision: 53 })
   lat: number | null;
