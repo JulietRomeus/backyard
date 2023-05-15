@@ -43,16 +43,17 @@ export class DashboardService {
         .leftJoinAndSelect('tac.activity', 'ta')
         .leftJoinAndSelect('tavd.driver', 'td')
         .leftJoinAndSelect('tavd.help_activity_form', 'tah')
-
         .where(
-          'CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)>=CONVERT(date, GETDATE())',
+          `(ta.unit_request_code  ='${query.unit_no}' or ta.unit_response_code ='${query.unit_no}')`,
         )
         .andWhere(
-          `(ta.unit_request_code  ='${query.unit_no}' or ta.unit_response_code ='${query.unit_no}')`,
-          // {
-          //   unit: query.unit_no,
-          // },
+          '(CONVERT(date,ta.activity_start_date)<=CONVERT(date, GETDATE()) and  CONVERT(date,ta.activity_end_date)>=CONVERT(date, GETDATE()))',
         )
+
+        // {
+        //   unit: query.unit_no,
+        // },
+
         // .getQuery()
         .getMany();
     }
@@ -298,13 +299,13 @@ export class DashboardService {
     const oiltype_data: TrsDashboard[] = await this.trsrepository.query(
       oiltype,
     );
-    console.log('oiltype_data', oiltype_data);
+    // console.log('oiltype_data', oiltype_data);
     const oiltypeoverall = [
       oiltype_data?.map((r: any) => (r.type != null ? r.type : 0)),
       oiltype_data?.map((r: any) => (r.refuel != null ? r.refuel : 0)),
     ];
 
-    console.log('oiltypeoverall', oiltypeoverall);
+    // console.log('oiltypeoverall', oiltypeoverall);
     //------------------------------------------------------------------------------//
     const activitycard = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
@@ -347,6 +348,43 @@ export class DashboardService {
     });
     // console.log(activitybymonthall);
 
+    //------------------------------------------------------------------------------//
+    //forecast
+    const forecast = `[dbo].[Db_Trs_Vehicle]
+    @unit_nos= '${body.unit_no}',
+    @dataset_name = N'forecast'`;
+    // console.log('forecast', forecast);
+    const forecast_data: TrsDashboard[] = await this.trsrepository.query(
+      forecast,
+    );
+    // console.log('forecast_data', forecast_data);
+    // const fuelrate = forecast_data[1]?.amount / forecast_data[0]?.amount;
+    // const budgetrate = forecast_data[2]?.amount / forecast_data[0]?.amount;
+    // console.log(fuelrate, budgetrate);
+    const d = new Date();
+    let monthnow = d.getMonth() + 1;
+    // console.log('monthnow', monthnow);
+    const fuelforecaste = activitybymonthall?.map(( r: any,i: number) => {
+      // console.log(i,r,monthnow)
+      if (i+1 <= monthnow) {
+       return 0
+      } else
+      return r * forecast_data[1]?.amount / forecast_data[0]?.amount;
+    });
+    // console.log('fuelforecaste', fuelforecaste);
+
+    const budgetforecaste = activitybymonthall?.map(( r: any,i: number) => {
+      // console.log(i,r,monthnow)
+      if (i+1 <= monthnow) {
+       return 0
+      } else
+      return r * forecast_data[2]?.amount / forecast_data[0]?.amount;
+    });
+    // console.log('budgetforecaste', budgetforecaste);
+
+
+    //------------------------------------------------------------------------------//
+
     //fuelbymonth
     const fuelbymonth = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
@@ -387,7 +425,7 @@ export class DashboardService {
       fuelbytype,
     );
 
-    console.log('fuelbytype_data',fuelbytype_data)
+    // console.log('fuelbytype_data',fuelbytype_data)
 
     const fuelbytypelabel = fuelbytype_data?.map((r: any) =>
       r.type != null ? r.type : 0,
@@ -396,9 +434,7 @@ export class DashboardService {
       r.amount != null ? r.amount : 0,
     );
 
-    
-
-    console.log('activitybymonth_data', [fuelbytypelabel, fuelbytypedata]);
+    // console.log('activitybymonth_data', [fuelbytypelabel, fuelbytypedata]);
     //------------------------------------------------------------------------------//
     //activitytimeline
     const activitytimeline = `[dbo].[Db_Trs_Vehicle]
@@ -656,6 +692,7 @@ export class DashboardService {
       ])[0],
       overallbymonth: overallbymonth,
       oiltypeoverall: oiltypeoverall,
+      forecast:[budgetforecaste,fuelforecaste]
     };
   }
 }

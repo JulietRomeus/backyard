@@ -60,7 +60,6 @@ export class RegisterService {
       where srssd.[key] = 1  and sss.is_active = 1`);
   }
 
-
   async findAll(body, query) {
     console.log('body', body.request_by);
     console.log('query', query);
@@ -102,38 +101,59 @@ export class RegisterService {
         return {};
       }
     } else {
-      console.log('first');
-      let filterObj = {
-        is_active: { _eq: 1 },
-        trs_regis_statusform_no: {
-          id: {
-            _in: [
-              'approved',
-              'res_review',
-              'res_approved',
-              'res_pending_approve',
-              'res_approved',
-              'res_disapproved',
-            ],
+      if (unit_no.includes('6140000000')) {
+        console.log('กบ')
+        let filterObj = {
+          is_active: { _eq: 1 },
+          trs_regis_statusform_no: {
+            id: {
+              _in: ['approved', 'res_review'],
+            },
           },
-        },
-        // unit_no: { _in: unit_no },
-
-        // filter ข้อมูลที่ยังไม่ถูกลบ
-      };
-      const filterString = JSON.stringify(filterObj);
-      console.log('filterObj', filterString);
-      const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
-      console.log(this.httpService.get(`/items/${getQuery}`));
-      try {
-        const result = await firstValueFrom(
-          this.httpService.get(`/items/${getQuery}`),
-        );
-        console.log(result.data);
-        return result?.data?.data || [];
-      } catch (error) {
-        console.log('error get status', error);
-        return {};
+        };
+        const filterString = JSON.stringify(filterObj);
+        console.log('filterObj', filterString);
+        const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
+        console.log(this.httpService.get(`/items/${getQuery}`));
+        try {
+          const result = await firstValueFrom(
+            this.httpService.get(`/items/${getQuery}`),
+          );
+          console.log(result.data);
+          return result?.data?.data || [];
+        } catch (error) {
+          console.log('error get status', error);
+          return {};
+        }
+      } else {
+        console.log('ยบ')
+        let filterObj = {
+          is_active: { _eq: 1 },
+          trs_regis_statusform_no: {
+            id: {
+              _in: [
+                'res_review',
+                'res_approved',
+                'res_pending_approve',
+                'res_disapproved',
+              ],
+            },
+          },
+        };
+        const filterString = JSON.stringify(filterObj);
+        console.log('filterObj', filterString);
+        const getQuery = `trs_regis?filter=${filterString}&fields=${listFields}`;
+        console.log(this.httpService.get(`/items/${getQuery}`));
+        try {
+          const result = await firstValueFrom(
+            this.httpService.get(`/items/${getQuery}`),
+          );
+          console.log(result.data);
+          return result?.data?.data || [];
+        } catch (error) {
+          console.log('error get status', error);
+          return {};
+        }
       }
     }
   }
@@ -408,7 +428,6 @@ export class RegisterService {
       delete dataObj.id;
       subItems['review_date'] = timeNow;
       subItems['review_by'] = user.displayname;
-
     } else {
       subItems.trs_regis_statusform_no.id = 'res_pending_approve';
       subItems['res_review_by_id'] = user.id;
@@ -417,8 +436,6 @@ export class RegisterService {
       subItems['res_review_date'] = timeNow;
       subItems['res_review_by'] = user.displayname;
     }
-   
-   
 
     dataObj.trs_regis_detail_no.map((d: trsRegisDetail) =>
       this.trsRegisDetailRepo.save({ ...d, regis_no: id }),
@@ -486,8 +503,6 @@ export class RegisterService {
     return await this.findOne(id);
   }
 
-
-
   async remove(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
     let timeNow = now();
@@ -517,21 +532,25 @@ export class RegisterService {
     dataObj['sendback_date'] = timeNow;
     dataObj['sendback_by'] = user.displayname;
     const finalItems = dataObj;
-    finalItems.trs_regis_statusform_no.id = 'review'
+    finalItems.trs_regis_statusform_no.id = 'review';
     // if(query.type == 'req'){
-    
+
     // }
     // else {
     //   finalItems.trs_regis_statusform_no.id = 'review'
     // }
-   
+
     delete dataObj.trs_regis_detail_no;
     delete dataObj.files;
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
     return await this.findOne(id);
   }
 
-  async disapprove(id: number, updateRegisterDto: any, query: any): Promise<any> {
+  async disapprove(
+    id: number,
+    updateRegisterDto: any,
+    query: any,
+  ): Promise<any> {
     console.log('updateRegisterDto', updateRegisterDto);
     let timeNow = now();
     let user = updateRegisterDto.request_by;
@@ -542,13 +561,12 @@ export class RegisterService {
     dataObj['disapprove_date'] = timeNow;
     dataObj['disapprove_by'] = user.displayname;
     const finalItems = dataObj;
-    finalItems.trs_regis_statusform_no.id = 'disapproved'
+    finalItems.trs_regis_statusform_no.id = 'disapproved';
     delete dataObj.trs_regis_detail_no;
     delete dataObj.files;
     const dbRes = await this.trsRegisRepo.update(id, finalItems);
     return await this.findOne(id);
   }
-
 
   async getvehicle(id: any) {
     return await this.trsRegisRepo.query(
