@@ -372,6 +372,7 @@ export class DashboardService {
       return r * forecast_data[1]?.amount / forecast_data[0]?.amount;
     });
     // console.log('fuelforecaste', fuelforecaste);
+    console.log('fuelforecaste', forecast_data);
 
     const budgetforecaste = activitybymonthall?.map(( r: any,i: number) => {
       // console.log(i,r,monthnow)
