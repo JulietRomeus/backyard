@@ -353,7 +353,7 @@ export class DashboardService {
     const forecast = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
     @dataset_name = N'forecast'`;
-    // console.log('forecast', forecast);
+    console.log('forecast', forecast);
     const forecast_data: TrsDashboard[] = await this.trsrepository.query(
       forecast,
     );
