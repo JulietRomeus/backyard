@@ -364,6 +364,7 @@ export class DashboardService {
     const d = new Date();
     let monthnow = d.getMonth() + 1;
     // console.log('monthnow', monthnow);
+    console.log('forecast_data>>>>', forecast_data);
     const fuelforecaste = activitybymonthall?.map(( r: any,i: number) => {
       // console.log(i,r,monthnow)
       if (i+1 <= monthnow) {
@@ -372,7 +373,7 @@ export class DashboardService {
       return r * forecast_data[1]?.amount / forecast_data[0]?.amount;
     });
     // console.log('fuelforecaste', fuelforecaste);
-    console.log('fuelforecaste', forecast_data);
+    
 
     const budgetforecaste = activitybymonthall?.map(( r: any,i: number) => {
       // console.log(i,r,monthnow)
