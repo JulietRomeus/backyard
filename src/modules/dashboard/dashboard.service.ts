@@ -353,7 +353,7 @@ export class DashboardService {
     const forecast = `[dbo].[Db_Trs_Vehicle]
     @unit_nos= '${body.unit_no}',
     @dataset_name = N'forecast'`;
-    // console.log('forecast', forecast);
+    console.log('forecast', forecast);
     const forecast_data: TrsDashboard[] = await this.trsrepository.query(
       forecast,
     );
@@ -364,6 +364,7 @@ export class DashboardService {
     const d = new Date();
     let monthnow = d.getMonth() + 1;
     // console.log('monthnow', monthnow);
+    console.log('forecast_data>>>>', forecast_data);
     const fuelforecaste = activitybymonthall?.map(( r: any,i: number) => {
       // console.log(i,r,monthnow)
       if (i+1 <= monthnow) {
@@ -372,6 +373,7 @@ export class DashboardService {
       return r * forecast_data[1]?.amount / forecast_data[0]?.amount;
     });
     // console.log('fuelforecaste', fuelforecaste);
+    
 
     const budgetforecaste = activitybymonthall?.map(( r: any,i: number) => {
       // console.log(i,r,monthnow)
