@@ -4,7 +4,10 @@ import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
+import { Permission } from 'src/decorators/permission.decorator';
 
+
+const route = 'trsvehicle';
 @Controller('vehicle')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
@@ -15,6 +18,7 @@ export class VehicleController {
   // }
 
   @Get()
+  @Permission({ route: route,action:'create'})
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลยานพาหนะทั้งหมด' })
   findAll(@Body() body: any) {

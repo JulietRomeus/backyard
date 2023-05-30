@@ -65,7 +65,7 @@ export class RegisterController {
   }
 
   @Get()
-  // @Permission({ route: route, action: 'view' })
+  @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลจด/ปลดยานพาหนะ' })
   findAll(@Body() body: any, @Query() query: any) {

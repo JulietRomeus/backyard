@@ -79,7 +79,7 @@ export class PermissionGuard {
       throw new UnauthorizedException(
         result.data.error || 'authorization invalid',
       );
-
+console.log(data)
     try {
       if (
         !(

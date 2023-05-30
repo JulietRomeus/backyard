@@ -14,7 +14,7 @@ import { CreatetransactionDto } from './dto/create-transaction.dto';
 import { UpdatetransactionDto } from './dto/update-transaction.dto';
 import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload';
 // import actio
-// const route = 'driver';
+const route = 'transaction';
 
 @Controller('transaction')
 export class TransactionController {
@@ -28,7 +28,7 @@ export class TransactionController {
   // }
 
   @Get()
-  // @Permission({ route: route, action: 'view' })
+  @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลการทำธุรกรรมทั้งหมด' })
   findAll(@Body() body: any) {

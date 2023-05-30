@@ -19,7 +19,7 @@ import genPayload,{stamp,ACTIONTYPE,ForbiddenException} from 'src/utils/payload'
 import { Response,Request } from 'express';
 import { HttpException } from '@nestjs/common';
 // import actio
-// const route = 'driver';
+const route = 'trsdriver';
 
 @Controller('driver')
 export class DriverController {
@@ -45,7 +45,7 @@ export class DriverController {
   // }
 
   @Get()
-  // @Permission({ route: route, action: 'view' })
+  @Permission({ route: route, action: 'view' })
   @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'ดึงข้อมูลพลขับทั้งหมด' })
   findAll(@Body() body: any) {

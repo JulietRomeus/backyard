@@ -22,10 +22,14 @@ export class VehicleService {
   ) {}
 
   async findAll(body: any) {
-    // console.log('body', body);
-    // const unit_no=body.request_by.units?.map((r:any)=>`${r.code}`)
     const unit_no = body?.request_by?.activeUnit?.code || '';
-
+    const permission = body?.request_by?.data_permission?.trs?.trsvehicle;
+    console.log(
+      'bdata_permissionody',
+      body?.request_by?.data_permission?.trs?.trsvehicle,
+    );
+    if (permission?.unit_child){
+    console.log('unit_child') 
     return await this.trsVehicleRepo.query(
       `select  ssi.id as item_id,srsis.status as status,srsis.id as status_id,srst.id as source_id,srst.[type] as source,
       min(smit.id) as images,min(df.id ) as img
@@ -52,10 +56,44 @@ where CONVERT (Date,ta.activity_start_date)=CONVERT (DATE, GETDATE())) ac on ac.
             left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
             left join dbo.slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
             left join dbo.slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-            where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no in ('${unit_no}')
+            where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no like SUBSTRING('${unit_no}',1,3)+'%'
             group by ssiav.attribute_name,srsis.status,srsis.id,df.description,ssiav.attribute_value,ssi.name,
-            ssi.id,sss.name,sss.id,ss.id,ss.supply_name,srst.id,srst.[type] ,ssi.unit_no,ac.start_date`,
-    );
+            ssi.id,sss.name,sss.id,ss.id,ss.supply_name,srst.id,srst.[type] ,ssi.unit_no,ac.start_date`
+            );
+    } else if (permission?.self) {
+      return await this.trsVehicleRepo.query(
+        `select  ssi.id as item_id,srsis.status as status,srsis.id as status_id,srst.id as source_id,srst.[type] as source,
+        min(smit.id) as images,min(df.id ) as img
+             ,df.description ,ssiav.attribute_value as license,
+              ssi.name as item,ssi.id as id ,ssi.unit_no as unit_no,sss.name as spec,
+              sss.id as spec_id ,ss.id as type_id, ss.supply_name as type ,
+  (case when ac.start_date like '%%' then '1' else '0' end) as stat  
+              from dbo.slc_supply_item ssi 
+              left join (select tavd.vehicle_item_id , CONVERT (Date,ta.activity_start_date) as start_date ,CONVERT (DATE, GETDATE()) as date 
+  from trs_activity_vehicle_driver tavd 
+  left join trs_activity ta on tavd.activity = ta.id 
+  where CONVERT (Date,ta.activity_start_date)=CONVERT (DATE, GETDATE())) ac on ac.vehicle_item_id = ssi.id
+              left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id 
+              left join dbo.slc_supply ss on sss.supply_id = ss.id 
+              left join dbo.slc_toa st on st.id = ss.toa_id 
+              left join dbo.slc_refs_supply_sub_type srsst on st.supply_sub_type_id = srsst.id 
+              left join dbo.slc_supply_item_files_1 ssif on ssif.slc_supply_item_id = ssi.id 
+              left join dbo.directus_files df on df.id = ssif.directus_files_id 
+              left join dbo.slc_master_image_type smit on smit.id = ssif.master_image_type_id 
+              left join dbo.slc_refs_supply_item_status srsis on srsis.id = ssi.supply_item_status_id 
+              left join dbo.slc_supply_source sss2 on sss2.supply_item_id = ssi.id 
+              left join dbo.slc_refs_source_type srst on srst.id = sss2.source_type_id 
+              left join dbo.slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id  
+              left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
+              left join dbo.slc_supply_item_attribute ssia on ssia.id = ssiav.supply_item_attribute_id 
+              left join dbo.slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
+              where srsst.id = 9 and ssi.is_active = 1 and srssd.[key] =1 and smak.id =21 and ssi.unit_no in ('${unit_no}')
+              group by ssiav.attribute_name,srsis.status,srsis.id,df.description,ssiav.attribute_value,ssi.name,
+              ssi.id,sss.name,sss.id,ss.id,ss.supply_name,srst.id,srst.[type] ,ssi.unit_no,ac.start_date`,
+      );
+
+
+    }
   }
 
   // async findsupply() {

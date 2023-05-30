@@ -82,12 +82,18 @@ export class DriverService {
   }
 
   async findAll(body: any) {
-    // console.log('body', body);
-    const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
-    // console.log(unit_no);
-    let data = await this.trsDriverRepo
+    console.log('body', body);
+    const unit_no = body?.request_by?.activeUnit?.code || '';
+    console.log(
+      'bdata_permissionody',
+      body?.request_by?.data_permission?.trs?.trsdriver
+    );
+    const permission =  body?.request_by?.data_permission?.trs?.trsdriver;
+    if (permission?.unit_child){
+      console.log('unit_child')
+      let data = await this.trsDriverRepo
       .createQueryBuilder('d')
-      .where(`d.is_active = 1 and d.unit_no in (${unit_no})`)
+      .where(`d.is_active = 1 and d.unit_no like SUBSTRING('${unit_no}',1,3)+'%'`)
       .leftJoinAndSelect(
         'd.trs_driver_license_lists',
         'tdll',
@@ -110,6 +116,41 @@ export class DriverService {
         ) || false,
     }));
     return finalItem;
+    }
+    else{
+      console.log('self')
+      let data = await this.trsDriverRepo
+      .createQueryBuilder('d')
+      .where(`d.is_active = 1 and d.unit_no = '${unit_no}'`)
+      .leftJoinAndSelect(
+        'd.trs_driver_license_lists',
+        'tdll',
+        'tdll.is_active = 1',
+      )
+      .leftJoinAndSelect('d.driver_status', 'tds')
+      .leftJoin('d.trs_activity_vehicle_drivers', 'tavs')
+      .addSelect('tavs.id')
+      .leftJoin('tavs.activity', 'tavsa', 'tavsa.is_delete =0')
+      .addSelect('tavsa.id')
+      .addSelect('tavsa.activity_start_date')
+      .addSelect('tavsa.activity_end_date')
+      // .getQuery();
+      .getMany();
+    const finalItem = data.map((rec) => ({
+      ...rec,
+      is_busy:
+        rec.trs_activity_vehicle_drivers.some(
+          (r) => r?.activity?.is_inprogress,
+        ) || false,
+    }));
+    return finalItem;
+
+
+
+    }
+
+
+ 
   }
 
   async findBusy(body) {

@@ -61,12 +61,15 @@ export class RegisterService {
   }
 
   async findAll(body, query) {
-    console.log('body', body.request_by);
-    console.log('query', query);
+    // console.log('bodyrole', body?.request_by?.roles);
+    // console.log('body', body.request_by);
+    // console.log('query', query?.type);
     const unit_no = body.request_by.units?.map((r: any) => r.code);
     console.log('unitno', unit_no);
-
+    const role = body?.request_by?.roles?.map((r: any) => r?.id);
+    console.log('role', role);
     if (query.type == 'req') {
+      console.log('request');
       let filterObj = {
         is_active: { _eq: 1 },
         trs_regis_statusform_no: {
@@ -79,11 +82,12 @@ export class RegisterService {
               'approved',
               'disapproved',
               'res_approved',
+              'res_pending_approve',
             ],
           },
         },
         unit_no: { _in: unit_no },
-        // filter ข้อมูลที่ยังไม่ถูกลบ
+       
       };
 
       const filterString = JSON.stringify(filterObj);
@@ -101,13 +105,12 @@ export class RegisterService {
         return {};
       }
     } else {
-      if (unit_no.includes('6140000000')) {
-        console.log('กบ')
+      if (role.includes('11398a7e-f15e-4486-8fe2-749df31fe80d')) {
         let filterObj = {
           is_active: { _eq: 1 },
           trs_regis_statusform_no: {
             id: {
-              _in: ['approved', 'res_review'],
+              _in: ['approved', 'res_review','res_pending_approve',],
             },
           },
         };
@@ -126,7 +129,6 @@ export class RegisterService {
           return {};
         }
       } else {
-        console.log('ยบ')
         let filterObj = {
           is_active: { _eq: 1 },
           trs_regis_statusform_no: {
@@ -323,12 +325,26 @@ export class RegisterService {
       (d: trsRegisDetail) => this.trsRegisDetailRepo.create({ ...d }),
     );
     console.log('finalItemssss', finalItems);
-
+    //-------------------------------------------//
+    const files: trsRegisFiles[] = dataObj.files?.map((r: any) => {
+      let tempfiles = new trsRegisFiles();
+      // let file:any =  this.directusFilesRepo.create({...r.directus_files_id})
+      let file = new directusFiles();
+      file.id = r.directus_files_id.id;
+      tempfiles.directus_files_id = file; //r.directus_files_id;
+      console.log('tempfiles', file);
+      return tempfiles;
+    });
+    finalItems.trs_regis_files = files;
+    console.log('files', files);
+    finalItems.trs_regis_files = files;
     console.log('dfff', finalItems);
     const dbRes = await this.trsRegisRepo.save(finalItems);
     console.log('dbRes', dbRes);
     return await this.findOne(id);
   }
+
+
 
   async send(id: number, updateRegisterDto: any, query: any): Promise<any> {
     console.log('send');

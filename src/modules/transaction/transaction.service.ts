@@ -90,11 +90,16 @@ export class TransactionService {
     //     'sst',
     //     'sst.id =9'
     //   )
-    const unit_no = body.request_by.units?.map((r: any) => `'${r.code}'`);
-    // console.log('unitttt',unit_no);
+    console.log('body',body)
+    const unit_no = body?.request_by?.activeUnit?.code || '';
+    const permission = body?.request_by?.data_permission?.trs?.transaction;
+    console.log(
+      'bdata_permissionody',
+      body?.request_by?.data_permission?.trs?.transaction,
+    );
    
     if (unit_no.includes("'6360000000'")) {
-      // console.log(unit_no.includes("'6360000000'"))
+      console.log(unit_no.includes("'6360000000'"))
       return await this.trsTransactionRepo.query(
         `select tt.*,ttt.name,ttt.name_en,ssiav.attribute_value as license,ssi.name as item,
         sss.name as spec,ss.supply_name as type,ss.id as typeid,ssi.unit_no as unit from dbo.trs_transaction tt 
@@ -112,8 +117,8 @@ export class TransactionService {
         and (tt.transaction_status ='send' or  ssi.unit_no in (${unit_no}))
         and tt.renewal_date <= DATEADD(day,15,GETDATE()) and tt.status = 1`,
       );
-    } else {
-      // console.log('first')
+    } else if (permission?.unit_child) {
+      console.log('unitchild')
       return await this.trsTransactionRepo.query(
         `select tt.*,ttt.name,ttt.name_en,ssiav.attribute_value as license,ssi.name as item,
 sss.name as spec,ss.supply_name as type,ss.id as typeid,ssi.unit_no as unit from dbo.trs_transaction tt 
@@ -127,10 +132,35 @@ left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ss
 left join dbo.slc_supply_item_attribute ssia on ssiav.supply_item_attribute_id = ssia.id 
 left join dbo.slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
 left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
-where srssd.[key] = 1 and srsst.id = 9 and smak.id =21 and ssi.unit_no in  (${unit_no})
+where srssd.[key] = 1 and srsst.id = 9 and smak.id =21 and ssi.unit_no like SUBSTRING('${unit_no}',1,3)+'%'
 and tt.renewal_date <= DATEADD(day,15,GETDATE()) and tt.status = 1`,
       );
     }
+    else {
+      console.log('self')
+      return await this.trsTransactionRepo.query(
+        `select tt.*,ttt.name,ttt.name_en,ssiav.attribute_value as license,ssi.name as item,
+sss.name as spec,ss.supply_name as type,ss.id as typeid,ssi.unit_no as unit from dbo.trs_transaction tt 
+left join dbo.slc_supply_item ssi on tt.supply_item  = ssi.id 
+left join dbo.slc_supply_spec sss on ssi.supply_spec_id = sss.id 
+LEFT join dbo.slc_supply ss on ss.id = sss.supply_id 
+left join dbo.slc_toa st on st.id = ss.toa_id 
+left join dbo.slc_refs_supply_sub_type srsst on srsst.id = st.supply_sub_type_id 
+left join dbo.trs_transaction_type ttt on tt.transaction_type = ttt.id 
+left join dbo.slc_supply_item_attribute_value ssiav on ssiav.supply_item_id = ssi.id 
+left join dbo.slc_supply_item_attribute ssia on ssiav.supply_item_attribute_id = ssia.id 
+left join dbo.slc_refs_supply_sub_detail srssd on srssd.sub_type_id = srsst.id 
+left join slc_master_attribute_keyword smak on smak.id = ssia.attribute_keyword_id 
+where srssd.[key] = 1 and srsst.id = 9 and smak.id =21 and ssi.unit_no = '${unit_no}'
+and tt.renewal_date <= DATEADD(day,15,GETDATE()) and tt.status = 1`,
+      );
+    }
+
+
+
+
+
+
   }
 
   // .getMany();
