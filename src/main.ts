@@ -41,7 +41,7 @@ async function bootstrap() {
 
     /* --------------------------------- Swagger -------------------------------- */
     const options = new DocumentBuilder()
-      .setTitle('Docs: Transport Service')
+      .setTitle('Docs: Template Service')
       .setVersion('1.0')
       .addBearerAuth(
         { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },

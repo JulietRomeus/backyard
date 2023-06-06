@@ -7,7 +7,6 @@ import { PermissionGuard } from './guards/permission.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Entities from './entities/Index';
 
-
 import { Role } from './entities/role.entity';
 import { User } from './entities/user.entity';
 import { Unit } from './entities/unit.entity';
@@ -26,10 +25,6 @@ import { ExampleModule } from './modules/example/example.module';
     // Import Modules
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
     {
       provide: APP_GUARD,
       useClass: PermissionGuard,

@@ -48,7 +48,7 @@ export class PermissionGuard {
         headers: { authorization: headers.authorization },
       });
       const data = result.data;
-
+      // console.log('xxxx', data);
       if (!data)
         throw new UnauthorizedException(
           result.data.error || 'authorization invalid',
@@ -79,7 +79,7 @@ export class PermissionGuard {
       throw new UnauthorizedException(
         result.data.error || 'authorization invalid',
       );
-console.log(data)
+
     try {
       if (
         !(
