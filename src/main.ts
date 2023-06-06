@@ -37,7 +37,7 @@ async function bootstrap() {
         whitelist: true,
       }),
     );
-    app.setGlobalPrefix('trs');
+    app.setGlobalPrefix('template');
 
     /* --------------------------------- Swagger -------------------------------- */
     const options = new DocumentBuilder()
@@ -49,7 +49,7 @@ async function bootstrap() {
       )
       .build();
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('trs/docs', app, document);
+    SwaggerModule.setup('template/docs', app, document);
 
     /* --------------------------------- Startup -------------------------------- */
     await app.listen(configService.get<number>('PORT') || 3100);
